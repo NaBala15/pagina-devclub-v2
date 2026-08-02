@@ -1,0 +1,189 @@
+/* =====================================================================
+   TEMA CLARO/ESCURO
+   1) O botão (componente do Uiverse, por JustCode14)
+   2) Overrides do tema claro
+
+   Princípio de design: as "telas" da página (editor de código, terminal,
+   chamada de vídeo, painéis das formações, molduras dos projetos)
+   CONTINUAM ESCURAS nos dois temas — é assim que ferramentas de dev de
+   verdade se comportam. Só o entorno da página troca de pele.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. BOTÃO DE TEMA
+   --------------------------------------------------------------------- */
+/* fica fixo no canto superior direito, acima de tudo e discreto:
+   translúcido em repouso, cheio quando o mouse chega perto */
+.tema-fixo{
+  position:fixed; top:15px; right:18px; z-index:70;
+  opacity:.5; transition:opacity .3s ease, transform .3s ease;
+}
+.tema-fixo:hover, .tema-fixo:focus-within{ opacity:1; transform:scale(1.06); }
+@media (max-width:420px){
+  .tema-fixo{ top:auto; bottom:16px; right:14px; }   /* não briga com a pílula */
+}
+
+.switch{
+  font-size:11px;
+  position:relative; display:inline-block;
+  width:4em; height:2.2em;
+  border-radius:30px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25);
+  flex:0 0 auto;
+}
+.switch input{ opacity:0; width:0; height:0; }
+
+.slider{
+  position:absolute; cursor:pointer;
+  inset:0;
+  background-color:#2a2a2a;
+  transition:.4s;
+  border-radius:30px;
+  overflow:hidden;
+}
+.slider:before{
+  position:absolute; content:"";
+  height:1.2em; width:1.2em;
+  border-radius:20px;
+  left:.5em; bottom:.5em;
+  transition:.4s;
+  transition-timing-function:cubic-bezier(.81,-.04,.38,1.5);
+  box-shadow:inset 8px -4px 0px 0px #fff;
+}
+.switch input:checked + .slider{ background-color:#00a6ff; }
+.switch input:checked + .slider:before{
+  transform:translateX(1.8em);
+  box-shadow:inset 15px -4px 0px 15px #ffcf48;
+}
+
+.star{
+  background-color:#fff; border-radius:50%;
+  position:absolute; width:5px; height:5px;
+  transition:all .4s;
+}
+.star_1{ left:2.5em; top:.5em; }
+.star_2{ left:2.2em; top:1.2em; }
+.star_3{ left:3em;   top:.9em; }
+.switch input:checked ~ .slider .star{ opacity:0; }
+
+.cloud{
+  width:3.5em; position:absolute;
+  bottom:-1.4em; left:-1.1em;
+  opacity:0; transition:all .4s;
+}
+.switch input:checked ~ .slider .cloud{ opacity:1; }
+
+/* foco visível pelo teclado (o input é invisível) */
+.switch input:focus-visible + .slider{
+  outline:2px solid var(--lime); outline-offset:3px;
+}
+
+/* ---------------------------------------------------------------------
+   2. TEMA CLARO
+   --------------------------------------------------------------------- */
+:root[data-theme="light"]{
+  --bg:#eceef6;
+  --glass:rgba(255,255,255,.72);
+  --glass-2:rgba(255,255,255,.95);
+  --line:rgba(14,17,32,.12);
+  --text:#0e1120;
+  --muted:#5a6178;
+  /* acentos escurecidos: os tons neon não têm contraste sobre claro */
+  --cyan:#0e91ad;
+  --violet:#6d3ce0;
+  --magenta:#a52fbe;
+  --lime-txt:#42690e;
+  --grad:linear-gradient(92deg, #0e91ad 0%, #6d3ce0 55%, #a52fbe 100%);
+  --grad-border:linear-gradient(140deg, rgba(14,145,173,.45), rgba(109,60,224,.3) 45%, rgba(165,47,190,.4));
+}
+:root{ --lime-txt:var(--lime); }   /* no escuro o lime já serve de texto */
+
+/* fundo da página */
+:root[data-theme="light"] body{
+  background:
+    radial-gradient(1200px 560px at 85% -12%, rgba(109,60,224,.13), transparent 62%),
+    radial-gradient(900px 500px at 4% 26%, rgba(14,145,173,.10), transparent 55%),
+    radial-gradient(1100px 640px at 62% 108%, rgba(165,47,190,.10), transparent 62%),
+    var(--bg);
+}
+
+/* troca suave entre os temas */
+body, .nav-pill, .stat, .panel, .marcos li, .jcard, .jinner,
+.fan-card, .co, .tut-card, .footer, .farrow{
+  transition:background-color .35s ease, color .35s ease, border-color .35s ease;
+}
+
+/* --- barra de navegação --- */
+:root[data-theme="light"] .nav-pill{
+  background:rgba(255,255,255,.82);
+  box-shadow:0 10px 34px -16px rgba(20,25,60,.35);
+}
+
+/* --- textos em lime viram verde-oliva (lime não se lê sobre claro) --- */
+:root[data-theme="light"] .eyebrow,
+:root[data-theme="light"] .card-go,
+:root[data-theme="light"] .story-tag,
+:root[data-theme="light"] .brand-prompt,
+:root[data-theme="light"] .brand-caret,
+:root[data-theme="light"] .footer .ok,
+:root[data-theme="light"] .fc-badge{ color:var(--lime-txt); }
+:root[data-theme="light"] .fc-badge{
+  background:rgba(66,105,14,.10); border-color:rgba(66,105,14,.28);
+}
+
+/* --- cartões que acompanham o tema --- */
+:root[data-theme="light"] .stat,
+:root[data-theme="light"] .panel,
+:root[data-theme="light"] .marcos li,
+:root[data-theme="light"] .tut-card,
+:root[data-theme="light"] .co{ background:rgba(255,255,255,.75); }
+:root[data-theme="light"] .tut-card.is-open{ background:#fff; }
+:root[data-theme="light"] .tut-seta{
+  background:rgba(255,255,255,.9); border-color:rgba(14,17,32,.14);
+}
+:root[data-theme="light"] .tut-tag{
+  background:rgba(66,105,14,.10); border-color:rgba(66,105,14,.28);
+}
+:root[data-theme="light"] .co:hover{ background:#fff; }
+
+:root[data-theme="light"] .jcard{
+  background:rgba(255,255,255,.9);
+  border-color:rgba(14,17,32,.10);
+  box-shadow:0 22px 50px -26px rgba(20,25,60,.45);
+}
+:root[data-theme="light"] .jnum{ color:color-mix(in srgb, var(--tone) 62%, #000); }
+:root[data-theme="light"] .jlines path{ stroke:rgba(14,17,32,.22); }
+
+:root[data-theme="light"] .fan-card{
+  background:linear-gradient(160deg, #fff, #f2f4fb);
+  box-shadow:0 26px 60px -28px rgba(20,25,60,.4);
+}
+:root[data-theme="light"] .fan-dot{ background:rgba(14,17,32,.16); }
+:root[data-theme="light"] .fan-dot.is-on,
+:root[data-theme="light"] .ddot.is-on,
+:root[data-theme="light"] .fdot.is-on{ background:var(--lime-txt); }
+:root[data-theme="light"] .ddot,
+:root[data-theme="light"] .fdot{ background:rgba(14,17,32,.16); }
+
+/* selo das empresas segue escuro: preserva a cor de cada marca */
+:root[data-theme="light"] .co-logo{
+  background:#12141f; border-color:rgba(255,255,255,.10);
+}
+
+/* --- história --- */
+:root[data-theme="light"] .story-step{ border-left-color:rgba(14,17,32,.14); }
+
+/* --- botões --- */
+:root[data-theme="light"] .btn-ghost{ border-color:rgba(14,17,32,.18); }
+:root[data-theme="light"] .btn-ghost:hover{ border-color:var(--violet); color:var(--violet); }
+:root[data-theme="light"] .farrow{
+  background:rgba(255,255,255,.8); border-color:rgba(14,17,32,.14);
+}
+
+/* --- marquee das empresas --- */
+:root[data-theme="light"] .marquee{ background:rgba(255,255,255,.5); }
+
+/* --- rodapé --- */
+:root[data-theme="light"] .footer a{ color:var(--violet); }
+
+/* as partículas de fundo são desenhadas por JS (js/v2.js lê o tema) */

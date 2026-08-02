@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevClub — a escola dentro da mente de um dev</title>
+  <meta name="description"
+    content="DevClub: formações práticas de programação com tutoria humana ao vivo. De 2009 até hoje, transformando ideias em código e pessoas em devs.">
+
+  <!-- ATENCAO: og:url e og:image precisam ser ABSOLUTOS. Trocar o dominio
+       abaixo pelo endereco real assim que a Vercel publicar. -->
+  <link rel="canonical" href="https://devclub-v2.vercel.app/">
+
+  <!-- ícones -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#04050b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#eceef6" media="(prefers-color-scheme: light)">
+
+  <!-- como o link aparece quando alguém compartilha -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DevClub">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://devclub-v2.vercel.app/">
+  <meta property="og:title" content="DevClub — a escola dentro da mente de um dev">
+  <meta property="og:description"
+    content="Formações práticas de programação com mentoria humana ao vivo: revisão de código na tela, plantão de dúvidas e simulação de entrevista.">
+  <meta property="og:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt"
+    content="Cabeça de perfil feita de partículas, com ícones de ideias orbitando, ao lado do texto: DevClub, a escola dentro da mente de um dev.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DevClub — a escola dentro da mente de um dev">
+  <meta name="twitter:description"
+    content="Formações práticas de programação com mentoria humana ao vivo.">
+  <meta name="twitter:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
+
+  <script src="js/theme.js?v=23"></script>
+  <link rel="stylesheet" href="css/v2.css?v=23">
+  <link rel="stylesheet" href="css/intro-head.css?v=23">
+  <link rel="stylesheet" href="css/polish.css?v=23">
+  <link rel="stylesheet" href="css/theme.css?v=23">
+
+  <!-- Three.js (intro 3D "dentro da mente") -->
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+  <script type="module" src="js/intro-head.js?v=23"></script>
+</head>
+
+<body>
+
+  <!-- véu escuro até a cabeça 3D assumir -->
+  <div id="introVeil" aria-hidden="true"></div>
+
+  <!-- campo de partículas contínuo (mesmo universo da intro) -->
+  <canvas id="mindField" aria-hidden="true"></canvas>
+
+  <!-- ================= NAV (pílula de vidro) ================= -->
+  <header class="nav">
+    <div class="nav-pill">
+      <a class="brand mono" href="#top"><span class="brand-prompt">&gt;</span>DevClub<span
+          class="brand-caret">_</span></a>
+      <nav class="nav-links mono" aria-label="navegação principal">
+        <a href="#plataforma">plataforma</a>
+        <a href="#mentorias">mentorias</a>
+        <a href="#historia">história</a>
+        <a href="#formacoes">formações</a>
+        <a href="#projetos">projetos</a>
+        <a href="#tutores">tutores</a>
+        <a href="#certificado">diploma</a>
+      </nav>
+      <a class="nav-cta mono" href="#cta">$ começar</a>
+    </div>
+  </header>
+
+  <!-- troca de tema — fixo no canto, discreto -->
+  <div class="tema-fixo">
+    <label class="switch" title="Alternar tema claro/escuro">
+      <input id="temaSwitch" type="checkbox" role="switch" aria-label="Alternar entre tema claro e escuro">
+      <span class="slider">
+        <div class="star star_1"></div>
+        <div class="star star_2"></div>
+        <div class="star star_3"></div>
+        <svg viewBox="0 0 16 16" class="cloud_1 cloud" aria-hidden="true">
+          <path transform="matrix(.77976 0 0 .78395-299.99-418.63)" fill="#fff"
+            d="m391.84 540.91c-.421-.329-.949-.524-1.523-.524-1.351 0-2.451 1.084-2.485 2.435-1.395.526-2.388 1.88-2.388 3.466 0 1.874 1.385 3.423 3.182 3.667v.034h12.73v-.006c1.775-.104 3.182-1.584 3.182-3.395 0-1.747-1.309-3.186-2.994-3.379.007-.106.011-.214.011-.322 0-2.707-2.271-4.901-5.072-4.901-2.073 0-3.856 1.202-4.643 2.925">
+          </path>
+        </svg>
+      </span>
+    </label>
+  </div>
+
+  <main id="top">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow mono hero-el">// você está dentro da mente de um dev</p>
+        <h1 class="hero-title hero-el">
+          Ideias viram <span class="grad">código</span>.<br>
+          Pessoas viram <span class="grad">devs</span>.
+        </h1>
+        <p class="hero-sub hero-el">
+          A DevClub é a escola que faz essa transformação desde <b>2009</b>:
+          aula 100% prática, projeto real no portfólio e tutoria humana ao vivo,
+          do primeiro <span class="mono">Hello&nbsp;World</span> à primeira vaga.
+        </p>
+        <div class="hero-cta hero-el">
+          <a class="btn" href="#formacoes">Ver formações <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="#plataforma">Conhecer a plataforma</a>
+        </div>
+      </div>
+      <div class="scroll-hint mono" aria-hidden="true">role pra explorar ↓</div>
+    </section>
+
+    <!-- ================= MÉTRICAS ================= -->
+    <section class="stats" aria-label="números da DevClub">
+      <div class="stat reveal"><span class="stat-n grad mono" data-count="42300" data-suffix="+">0</span><span
+          class="stat-l">alunos formados</span></div>
+      <div class="stat reveal"><span class="stat-n grad mono" data-count="89" data-suffix="%">0</span><span
+          class="stat-l">empregabilidade</span></div>
+      <div class="stat reveal"><span class="stat-n grad mono" data-count="340" data-suffix="+">0</span><span
+          class="stat-l">empresas contratando</span></div>
+      <div class="stat reveal"><span class="stat-n grad mono" data-count="17">0</span><span class="stat-l">anos formando
+          devs</span></div>
+    </section>
+
+    <!-- ================= PLATAFORMA (janelas dev) ================= -->
+    <section class="section" id="plataforma">
+      <p class="eyebrow mono reveal">plataforma.dev</p>
+      <h2 class="reveal">Você aprende <span class="grad">dentro das ferramentas</span> que o mercado usa.</h2>
+      <p class="section-sub reveal">Editor, terminal e navegador — o ambiente completo de um dev de verdade, com
+        desafios guiados e feedback do tutor em cada commit.</p>
+
+      <div class="devwin reveal" id="devwin">
+        <div class="devwin-chrome">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <div class="devwin-tabs mono" role="tablist">
+            <button class="devtab is-on" data-tab="editor" role="tab">projeto.tsx</button>
+            <button class="devtab" data-tab="terminal" role="tab">terminal</button>
+            <button class="devtab" data-tab="preview" role="tab">preview</button>
+          </div>
+          <span class="devwin-user mono">aluno@devclub</span>
+        </div>
+
+        <div class="devwin-body">
+          <!-- EDITOR -->
+          <div class="devpane is-on" data-pane="editor">
+            <div class="gutter mono" aria-hidden="true">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9</div>
+            <pre class="code mono" id="codeArea" aria-label="editor de código"></pre>
+          </div>
+          <!-- TERMINAL -->
+          <div class="devpane" data-pane="terminal">
+            <pre class="term mono" id="termArea"></pre>
+          </div>
+          <!-- PREVIEW -->
+          <div class="devpane" data-pane="preview">
+            <div class="mini-browser">
+              <div class="mini-url mono">https://meu-projeto.devclub.app</div>
+              <div class="mini-page">
+                <div class="mini-hero">
+                  <span class="mini-badge mono">meu primeiro projeto</span>
+                  <strong>Portfólio da Marina</strong>
+                  <span class="mini-line"></span><span class="mini-line w60"></span>
+                  <span class="mini-btn mono">contratar →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="devwin-foot mono">
+          <span><i class="ok">●</i> tutor online</span>
+          <span class="dim">feedback em até 12h úteis</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MENTORIAS (reunião humanizada) ================= -->
+    <section class="section" id="mentorias">
+      <p class="eyebrow mono reveal">mentorias.live</p>
+      <h2 class="reveal">Gente de verdade, <span class="grad">ao vivo</span>, do seu lado.</h2>
+      <p class="section-sub reveal">Mentorias semanais em grupo, revisão de código na tela e simulação de entrevista —
+        você nunca estuda sozinho.</p>
+
+      <div class="meet-room reveal" id="meet">
+        <div class="meet-header">
+          <h3 class="mono"><span class="live-dot"></span> Sala de Mentoria — revisão de código ao vivo</h3>
+          <p class="mono">👥 4 participantes ativos · toda terça, 20h</p>
+          <p class="meet-aviso mono" id="meetAviso" role="status" hidden></p>
+        </div>
+
+        <div class="meet-grid">
+          <!-- vídeo principal -->
+          <div class="vbox meet-main">
+            <!-- vídeo mudo, em loop: a sala parece realmente acontecendo.
+               poster = a foto antiga, pra não piscar preto enquanto carrega -->
+            <video class="meet-video" src="assets/video/mentoria-felipe.mp4" poster="assets/tutores/felipe.jpg" muted
+              loop playsinline preload="metadata" disablepictureinpicture
+              aria-label="Felipe Prado conduzindo a mentoria ao vivo"></video>
+            <div class="vtag mono">Felipe Prado · apresentando <span class="mic on" aria-hidden="true"></span></div>
+            <div class="meet-caption mono" id="meetCaption">"Compartilha a tela e roda o teste de novo — agora repara no
+              console."</div>
+            <div class="meet-bar">
+              <button class="mbtn" data-acao="pausar" aria-pressed="false" aria-label="pausar os vídeos da sala"><svg viewBox="0 0 24 24">
+                  <path d="M4 5h16v11H4z" fill="none" stroke="currentColor" stroke-width="2" />
+                  <path d="M8 21h8M12 16v5" stroke="currentColor" stroke-width="2" />
+                </svg></button>
+              <button class="mbtn" data-acao="mic" aria-pressed="false" aria-label="desligar o microfone"><svg viewBox="0 0 24 24">
+                  <rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="2" />
+                  <path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="currentColor" stroke-width="2" />
+                </svg></button>
+              <button class="mbtn hang" data-acao="sair" aria-label="sair da chamada"><svg viewBox="0 0 24 24">
+                  <path d="M4 15c5-4 11-4 16 0l-2.5 3.5c-3.5-2.6-7.5-2.6-11 0z" fill="currentColor" />
+                </svg></button>
+              <button class="mbtn" data-acao="camera" aria-pressed="false" aria-label="ligar a câmera"><svg viewBox="0 0 24 24">
+                  <rect x="3" y="6" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2" />
+                  <path d="M16 10l5-3v10l-5-3z" fill="none" stroke="currentColor" stroke-width="2" />
+                </svg></button>
+              <button class="mbtn" data-acao="ampliar" aria-pressed="false" aria-label="ampliar o vídeo de quem apresenta"><svg viewBox="0 0 24 24">
+                  <path d="M4 9V4h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" />
+                </svg></button>
+            </div>
+          </div>
+
+          <!-- coluna lateral -->
+          <div class="meet-side">
+            <figure class="vbox meet-thumb"><video class="meet-video" src="assets/video/mentoria-ana.mp4"
+                poster="assets/tutores/ana.jpg" muted loop playsinline preload="metadata" disablepictureinpicture
+                aria-label="Ana Paula na mentoria"></video>
+              <figcaption class="vtag mono">Ana Paula <span class="mic" aria-hidden="true"></span></figcaption>
+            </figure>
+            <figure class="vbox meet-thumb"><video class="meet-video" src="assets/video/mentoria-juliana.mp4"
+                poster="assets/tutores/juliana.jpg" muted loop playsinline preload="metadata" disablepictureinpicture
+                aria-label="Juliana Reis na mentoria"></video>
+              <figcaption class="vtag mono">Juliana Reis <span class="mic" aria-hidden="true"></span></figcaption>
+            </figure>
+            <figure class="vbox meet-thumb"><video class="meet-video" src="assets/video/mentoria-diego.mp4"
+                poster="assets/tutores/diego.jpg" muted loop playsinline preload="metadata" disablepictureinpicture
+                aria-label="Diego Tavares na mentoria"></video>
+              <figcaption class="vtag mono">Diego Tavares <span class="mic" aria-hidden="true"></span></figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- aparece quando clicam no botão vermelho -->
+        <div class="meet-fim" id="meetFim" hidden>
+          <div class="meet-fim-cartao">
+            <p class="mono meet-fim-tag">chamada encerrada</p>
+            <b>Você saiu da mentoria</b>
+            <p>A sala continua rolando toda terça, às 20h.</p>
+            <button class="mbtn-voltar mono" data-acao="voltar">entrar de novo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="meet-perks">
+        <div class="perk reveal"><span class="perk-ic mono">{ }</span><b>Revisão de código ao vivo</b>
+          <p>Seu PR aberto na tela, com o tutor apontando o que melhorar.</p>
+        </div>
+        <div class="perk reveal"><span class="perk-ic mono">?!</span><b>Plantão de dúvidas</b>
+          <p>Travou? Chama no chat e destrava no mesmo dia.</p>
+        </div>
+        <div class="perk reveal"><span class="perk-ic mono">&gt;_</span><b>Simulação de entrevista</b>
+          <p>Mock interview com quem já contratou muito dev.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HISTÓRIA (scroll com imagens) ================= -->
+    <section class="section" id="historia">
+      <p class="eyebrow mono reveal">historia.md</p>
+      <h2 class="reveal">De 2009 até aqui: <span class="grad">uma história de sala em sala</span>.</h2>
+
+      <div class="story">
+        <div class="story-media">
+          <div class="story-frame">
+            <img src="assets/historia/2009.png" alt="Rodolfo Mori na primeira sala de aula, em 2009"
+              class="story-img is-on" data-img="0">
+            <img src="assets/historia/2015.png" alt="Primeiro escritório oficial da DevClub, em 2015" class="story-img"
+              data-img="1">
+            <img src="assets/historia/2020.png" alt="A DevClub operando online em 2020" class="story-img" data-img="2">
+            <img src="assets/historia/2026.png" alt="A DevClub hoje, em escala nacional" class="story-img" data-img="3">
+            <span class="story-year mono" id="storyYear">2009</span>
+          </div>
+        </div>
+        <div class="story-steps">
+          <article class="story-step" data-step="0">
+            <span class="mono story-tag">2009 · o começo</span>
+            <h3>Uma sala, alguns computadores e uma ideia fixa.</h3>
+            <p>Rodolfo Mori junta o que ganhou dando aulas informais e monta a própria estrutura: computadores,
+              apostilas e uma sala pra chamar de sua. Nascem as primeiras turmas — e a regra que nunca mudou: não
+              pedimos diploma, pedimos vontade de aprender.</p>
+          </article>
+          <article class="story-step" data-step="1">
+            <span class="mono story-tag">2015 · vira empresa</span>
+            <h3>O projeto de bairro vira a DevClub.</h3>
+            <p>Plataforma online, tutores contratados e formações estruturadas. O método continua o mesmo da sala de
+              aula: prática desde o dia um, projeto real e alguém do lado pra responder dúvida.</p>
+          </article>
+          <article class="story-step" data-step="2">
+            <span class="mono story-tag">2020 · escala</span>
+            <h3>O mundo fica remoto — e a DevClub acelera.</h3>
+            <p>Como já operava online, a escola vira referência nacional da noite pro dia. Milhares de pessoas em
+              transição de carreira encontram aqui o caminho pra primeira vaga em tech.</p>
+          </article>
+          <article class="story-step" data-step="3">
+            <span class="mono story-tag">2026 · hoje</span>
+            <h3>+42 mil devs formados. E contando.</h3>
+            <p>17 anos depois da primeira sala, são mais de 340 empresas contratando nossos alunos. A missão segue
+              idêntica: transformar ideias em código e pessoas em devs.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FORMAÇÕES (deck de painéis pareados) ================= -->
+    <section class="section" id="formacoes">
+      <p class="eyebrow mono reveal">formacoes.json</p>
+      <h2 class="reveal">Escolha por onde sua mente vai <span class="grad">crescer</span>.</h2>
+      <p class="section-sub reveal">Cada formação, do briefing ao ambiente rodando. A de <b>Cibersegurança</b> é
+        interativa de verdade — teste você mesmo.</p>
+
+      <div class="fdeck reveal" id="fdeck">
+        <div class="fdeck-head">
+          <span class="fname" id="fname">Full Stack</span>
+        </div>
+        <div class="fstage">
+
+          <!-- 1. FULL STACK -->
+          <article class="fpair" data-i="0">
+            <div class="fpanel fbrief">
+              <header class="fp-head mono">Full Stack · briefing</header>
+              <div class="fp-body">
+                <div class="fchat"><span class="fwho mono">você</span>
+                  <p>Quero mudar de carreira. Consigo fazer um sistema inteiro sozinho?</p>
+                </div>
+                <div class="fchat fchat-t"><span class="fwho mono">tutor</span>
+                  <p>Consegue. Você monta a interface em React, a API em Node, o banco em SQL e sobe tudo em produção —
+                    com um projeto real no portfólio ao final.</p>
+                </div>
+                <ul class="fp-list mono">
+                  <li>HTML · CSS · JavaScript</li>
+                  <li>React · Node · SQL</li>
+                  <li>Git · deploy · testes</li>
+                  <li>320h + projeto final</li>
+                </ul>
+              </div>
+            </div>
+            <div class="fpanel fwork">
+              <header class="fp-head mono"><b>workspace</b><span class="fp-tabs"><i
+                    class="on">shell</i><i>editor</i><i>deploy</i></span></header>
+              <pre class="fp-term mono">$ npm run deploy
+<span class="d">» build de produção…</span>
+✓ 12 testes passando
+✓ bundle 84kb (gzip)
+✓ deploy: <span class="l">meu-sistema.devclub.app</span>
+<span class="d">» tutor notificado para review</span></pre>
+            </div>
+          </article>
+
+          <!-- 2. FRONT-END -->
+          <article class="fpair" data-i="1">
+            <div class="fpanel fbrief">
+              <header class="fp-head mono">Front-end · briefing</header>
+              <div class="fp-body">
+                <div class="fchat"><span class="fwho mono">você</span>
+                  <p>Nunca desenhei nada. Consigo fazer interface bonita?</p>
+                </div>
+                <div class="fchat fchat-t"><span class="fwho mono">tutora</span>
+                  <p>A gente ensina o olho junto com o código: layout, tipografia, animação e responsividade. Você sai
+                    fazendo interface que o mercado disputa.</p>
+                </div>
+                <ul class="fp-list mono">
+                  <li>HTML · CSS · Flex &amp; Grid</li>
+                  <li>JavaScript · React</li>
+                  <li>animações · responsivo</li>
+                  <li>180h + portfólio</li>
+                </ul>
+              </div>
+            </div>
+            <div class="fpanel fwork">
+              <header class="fp-head mono"><b>workspace</b><span class="fp-tabs"><i>shell</i><i
+                    class="on">editor</i><i>preview</i></span></header>
+              <pre class="fp-code mono"><span class="k">export function</span> <span class="f">Card</span>({ aluno }) {
+  <span class="k">return</span> (
+    &lt;<span class="t">article</span> <span class="a">className</span>=<span class="s">"card"</span>&gt;
+      &lt;<span class="t">h3</span>&gt;{aluno.nome}&lt;/<span class="t">h3</span>&gt;
+      &lt;<span class="t">span</span>&gt;{aluno.vaga}&lt;/<span class="t">span</span>&gt;
+    &lt;/<span class="t">article</span>&gt;
+  );
+}</pre>
+            </div>
+          </article>
+
+          <!-- 3. CIBERSEGURANÇA (interativa — no meio) -->
+          <article class="fpair fpair-live" data-i="2">
+            <div class="fpanel fbrief">
+              <header class="fp-head mono">Cibersegurança · briefing <span class="fp-live mono">interativo</span>
+              </header>
+              <div class="fp-body">
+                <div class="fchat"><span class="fwho mono">você</span>
+                  <p>Segurança não é coisa de filme? O que um site consegue saber de mim?</p>
+                </div>
+                <div class="fchat fchat-t"><span class="fwho mono">tutor</span>
+                  <p>Mais do que você imagina — e sem pedir permissão nenhuma. Roda o teste no painel ao lado: tudo que
+                    aparecer ali, <b>qualquer site</b> que você visita também vê.</p>
+                </div>
+                <ul class="fp-list mono">
+                  <li>fundamentos de redes · OWASP</li>
+                  <li>pentest · análise de vulnerabilidade</li>
+                  <li>hardening · resposta a incidente</li>
+                  <li>200h + laboratório real</li>
+                </ul>
+              </div>
+            </div>
+            <div class="fpanel fwork fwork-scan">
+              <header class="fp-head mono"><b>scanner.sh</b><span class="fp-tabs"><i class="on">terminal</i></span>
+              </header>
+              <div class="scan" id="scan">
+                <pre class="fp-term mono" id="scanOut">$ ./devclub-scan --alvo=voce
+<span class="d">» este terminal é real e roda no seu navegador</span>
+
+<span class="q">você está seguro?</span>
+<span class="d">clique abaixo para descobrir o que este site
+já consegue ver sobre você — sem pedir permissão.</span></pre>
+                <button class="scan-btn mono" id="scanBtn" type="button">▸ testar minha segurança</button>
+                <p class="scan-priv mono">// nada é salvo nem enviado a lugar nenhum — tudo roda e morre no seu
+                  navegador</p>
+              </div>
+            </div>
+          </article>
+
+          <!-- 4. BACK-END -->
+          <article class="fpair" data-i="3">
+            <div class="fpanel fbrief">
+              <header class="fp-head mono">Back-end · briefing</header>
+              <div class="fp-body">
+                <div class="fchat"><span class="fwho mono">você</span>
+                  <p>Quero fazer a parte que ninguém vê — a que aguenta tráfego.</p>
+                </div>
+                <div class="fchat fchat-t"><span class="fwho mono">tutora</span>
+                  <p>Então é aqui. APIs em Node, modelagem de banco, autenticação, cache e deploy em nuvem. Você aprende
+                    a pensar em arquitetura, não só em rota.</p>
+                </div>
+                <ul class="fp-list mono">
+                  <li>Node · Express · SQL</li>
+                  <li>autenticação · cache</li>
+                  <li>Docker · cloud</li>
+                  <li>160h + API em produção</li>
+                </ul>
+              </div>
+            </div>
+            <div class="fpanel fwork">
+              <header class="fp-head mono"><b>workspace</b><span class="fp-tabs"><i
+                    class="on">shell</i><i>editor</i><i>logs</i></span></header>
+              <pre class="fp-term mono">$ curl -i api.devclub.app/alunos/42
+<span class="d">HTTP/1.1 200 OK</span>
+<span class="d">x-response-time: 34ms</span>
+{
+  <span class="l">"nome"</span>: "Marina Costa",
+  <span class="l">"trilha"</span>: "back-end",
+  <span class="l">"status"</span>: "contratada"
+}</pre>
+            </div>
+          </article>
+
+          <!-- 5. IA & DADOS -->
+          <article class="fpair" data-i="4">
+            <div class="fpanel fbrief">
+              <header class="fp-head mono">IA &amp; Dados · briefing</header>
+              <div class="fp-body">
+                <div class="fchat"><span class="fwho mono">você</span>
+                  <p>IA vai roubar minha vaga ou virar minha ferramenta?</p>
+                </div>
+                <div class="fchat fchat-t"><span class="fwho mono">tutora</span>
+                  <p>Ferramenta — se você souber usar. Aqui você automatiza tarefa chata, analisa dado de verdade e
+                    coloca IA dentro dos seus projetos.</p>
+                </div>
+                <ul class="fp-list mono">
+                  <li>Python · pandas</li>
+                  <li>IA aplicada · APIs de LLM</li>
+                  <li>automações do dia a dia</li>
+                  <li>120h + projeto com dados reais</li>
+                </ul>
+              </div>
+            </div>
+            <div class="fpanel fwork">
+              <header class="fp-head mono"><b>notebook</b><span class="fp-tabs"><i
+                    class="on">python</i><i>saída</i></span></header>
+              <pre class="fp-code mono"><span class="k">import</span> pandas <span class="k">as</span> pd
+
+vagas = pd.read_csv(<span class="s">"vagas.csv"</span>)
+top = vagas.groupby(<span class="s">"stack"</span>).size()
+
+<span class="cm"># saída ▸</span>
+<span class="cm">&gt; react     1284</span>
+<span class="cm">&gt; node       977</span>
+<span class="cm">&gt; python     841</span></pre>
+            </div>
+          </article>
+        </div>
+
+        <div class="fdeck-nav">
+          <button class="farrow" id="fprev" aria-label="formação anterior">←</button>
+          <div class="fdeck-label">
+            <span class="fdots">
+              <button class="fdot is-on" data-go="0" aria-label="Full Stack"></button>
+              <button class="fdot" data-go="1" aria-label="Front-end"></button>
+              <button class="fdot" data-go="2" aria-label="Cibersegurança"></button>
+              <button class="fdot" data-go="3" aria-label="Back-end"></button>
+              <button class="fdot" data-go="4" aria-label="IA e Dados"></button>
+            </span>
+          </div>
+          <button class="farrow" id="fnext" aria-label="próxima formação">→</button>
+        </div>
+      </div>
+
+      <!-- as 15 trilhas do catálogo, em faixa contínua (mesmo chip das empresas) -->
+      <div class="tech-faixa reveal">
+        <p class="tech-titulo mono">// o catálogo completo — 15 formações e trilhas</p>
+        <div class="tech-row">
+          <div class="tech-track"><span class="co"><i class="co-logo tech-glifo mono" style="--c:#35d6e8" aria-hidden="true">&lt;/&gt;</i><span class="co-txt"><b>Front End</b><em>formação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#8b6cff" aria-hidden="true">api</i><span class="co-txt"><b>Back End</b><em>formação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c06ae2" aria-hidden="true">all</i><span class="co-txt"><b>Full Stack</b><em>formação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c6ff3d" aria-hidden="true">app</i><span class="co-txt"><b>Mobile</b><em>formação</em></span></span><span class="co"><i class="co-logo" style="--c:#61DAFB;--u:url('/assets/logos/tech-react.svg')" aria-hidden="true"></i><span class="co-txt"><b>React</b><em>biblioteca UI</em></span></span><span class="co"><i class="co-logo" style="--c:#5FA04E;--u:url('/assets/logos/tech-nodedotjs.svg')" aria-hidden="true"></i><span class="co-txt"><b>Node</b><em>runtime JS</em></span></span><span class="co"><i class="co-logo" style="--c:#F7DF1E;--u:url('/assets/logos/tech-javascript.svg')" aria-hidden="true"></i><span class="co-txt"><b>JavaScript</b><em>do zero ao avançado</em></span></span><span class="co"><i class="co-logo" style="--c:#E34F26;--u:url('/assets/logos/tech-html5.svg')" aria-hidden="true"></i><span class="co-txt"><b>HTML5</b><em>estrutura</em></span></span><span class="co"><i class="co-logo" style="--c:#1572B6;--u:url('/assets/logos/tech-css3.svg')" aria-hidden="true"></i><span class="co-txt"><b>CSS3</b><em>estilo</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#35d6e8" aria-hidden="true">ia:</i><span class="co-txt"><b>Gestor de IA</b><em>trilha</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#8b6cff" aria-hidden="true">bot</i><span class="co-txt"><b>IA e Automações</b><em>trilha</em></span></span><span class="co"><i class="co-logo" style="--c:#D97757;--u:url('/assets/logos/tech-claude.svg')" aria-hidden="true"></i><span class="co-txt"><b>Claude &amp; Claude Code</b><em>dev com IA</em></span></span><span class="co"><i class="co-logo" style="--c:#EA4B71;--u:url('/assets/logos/tech-n8n.svg')" aria-hidden="true"></i><span class="co-txt"><b>Trilha N8N</b><em>automação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c06ae2" aria-hidden="true">sql</i><span class="co-txt"><b>Análise de Dados</b><em>trilha</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c6ff3d" aria-hidden="true">bi</i><span class="co-txt"><b>Power BI</b><em>dashboards</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#35d6e8" aria-hidden="true">&lt;/&gt;</i><span class="co-txt"><b>Front End</b><em>formação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#8b6cff" aria-hidden="true">api</i><span class="co-txt"><b>Back End</b><em>formação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c06ae2" aria-hidden="true">all</i><span class="co-txt"><b>Full Stack</b><em>formação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c6ff3d" aria-hidden="true">app</i><span class="co-txt"><b>Mobile</b><em>formação</em></span></span><span class="co"><i class="co-logo" style="--c:#61DAFB;--u:url('/assets/logos/tech-react.svg')" aria-hidden="true"></i><span class="co-txt"><b>React</b><em>biblioteca UI</em></span></span><span class="co"><i class="co-logo" style="--c:#5FA04E;--u:url('/assets/logos/tech-nodedotjs.svg')" aria-hidden="true"></i><span class="co-txt"><b>Node</b><em>runtime JS</em></span></span><span class="co"><i class="co-logo" style="--c:#F7DF1E;--u:url('/assets/logos/tech-javascript.svg')" aria-hidden="true"></i><span class="co-txt"><b>JavaScript</b><em>do zero ao avançado</em></span></span><span class="co"><i class="co-logo" style="--c:#E34F26;--u:url('/assets/logos/tech-html5.svg')" aria-hidden="true"></i><span class="co-txt"><b>HTML5</b><em>estrutura</em></span></span><span class="co"><i class="co-logo" style="--c:#1572B6;--u:url('/assets/logos/tech-css3.svg')" aria-hidden="true"></i><span class="co-txt"><b>CSS3</b><em>estilo</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#35d6e8" aria-hidden="true">ia:</i><span class="co-txt"><b>Gestor de IA</b><em>trilha</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#8b6cff" aria-hidden="true">bot</i><span class="co-txt"><b>IA e Automações</b><em>trilha</em></span></span><span class="co"><i class="co-logo" style="--c:#D97757;--u:url('/assets/logos/tech-claude.svg')" aria-hidden="true"></i><span class="co-txt"><b>Claude &amp; Claude Code</b><em>dev com IA</em></span></span><span class="co"><i class="co-logo" style="--c:#EA4B71;--u:url('/assets/logos/tech-n8n.svg')" aria-hidden="true"></i><span class="co-txt"><b>Trilha N8N</b><em>automação</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c06ae2" aria-hidden="true">sql</i><span class="co-txt"><b>Análise de Dados</b><em>trilha</em></span></span><span class="co"><i class="co-logo tech-glifo mono" style="--c:#c6ff3d" aria-hidden="true">bi</i><span class="co-txt"><b>Power BI</b><em>dashboards</em></span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= JORNADA (sinapses) ================= -->
+    <section class="section" id="jornada">
+      <p class="eyebrow mono reveal">jornada.sh</p>
+      <h2 class="reveal">Do zero à vaga, em <span class="grad">4 sinapses</span>.</h2>
+
+      <div class="jboard" id="jboard">
+        <svg class="jlines" id="jlines" aria-hidden="true"></svg>
+        <article class="jcard reveal" style="--tone:var(--cyan); --tilt:-3deg">
+          <svg class="jpin" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.5 2.5h5l-.8 5.2 3.3 2.6v2.2H7V10.3l3.3-2.6-.8-5.2z" fill="currentColor" />
+            <path d="M12 12.5v8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="jinner">
+            <span class="jnum">01</span>
+            <h3 class="mono">instalar( )</h3>
+            <p>Semana 1 você já escreve código. Lógica, HTML, CSS e JavaScript com exercícios curtos e feedback do
+              tutor.</p>
+          </div>
+        </article>
+        <article class="jcard reveal" style="--tone:var(--violet); --tilt:2.4deg">
+          <svg class="jpin" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.5 2.5h5l-.8 5.2 3.3 2.6v2.2H7V10.3l3.3-2.6-.8-5.2z" fill="currentColor" />
+            <path d="M12 12.5v8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="jinner">
+            <span class="jnum">02</span>
+            <h3 class="mono">construir( )</h3>
+            <p>A cada módulo, um projeto real: landing, dashboard, API completa. Tudo commitado no seu GitHub.</p>
+          </div>
+        </article>
+        <article class="jcard reveal" style="--tone:var(--magenta); --tilt:-2.2deg">
+          <svg class="jpin" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.5 2.5h5l-.8 5.2 3.3 2.6v2.2H7V10.3l3.3-2.6-.8-5.2z" fill="currentColor" />
+            <path d="M12 12.5v8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="jinner">
+            <span class="jnum">03</span>
+            <h3 class="mono">revisar( )</h3>
+            <p>Tutor humano revisa seu código, aponta melhorias e responde dúvidas em até 12h úteis.</p>
+          </div>
+        </article>
+        <article class="jcard reveal" style="--tone:var(--lime); --tilt:3deg">
+          <svg class="jpin" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9.5 2.5h5l-.8 5.2 3.3 2.6v2.2H7V10.3l3.3-2.6-.8-5.2z" fill="currentColor" />
+            <path d="M12 12.5v8.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <div class="jinner">
+            <span class="jnum">04</span>
+            <h3 class="mono">contratar( )</h3>
+            <p>CV técnico, mock interview e a rede de +340 empresas parceiras. Pull request aprovado: bem-vindo ao
+              mercado.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= ALÉM DO CÓDIGO (gabarito do organizador) ================= -->
+    <section class="section" id="alem">
+      <p class="eyebrow mono reveal">alem_do_codigo.json</p>
+      <h2 class="reveal">Tudo que você precisa <span class="grad">além do código</span>.</h2>
+      <p class="section-sub reveal">Carreira não é só sintaxe — o resto do caminho também vem junto.</p>
+
+      <div class="alem-grid">
+        <div class="perk reveal" style="--tone:var(--cyan)"><span class="perk-ic mono">cv</span><b>Recrutadora no seu canto</b>
+          <p>Encontro semanal com a recrutadora da casa: currículo, LinkedIn e portfólio afiados pra vaga certa.</p>
+        </div>
+        <div class="perk reveal" style="--tone:var(--violet)"><span class="perk-ic mono">zen</span><b>Terapeuta de alta performance</b>
+          <p>Cabeça em ordem pra maratona: sessões em grupo sobre foco, ansiedade e constância nos estudos.</p>
+        </div>
+        <div class="perk reveal" style="--tone:var(--magenta)"><span class="perk-ic mono">ai*</span><b>Agentes de IA 24h</b>
+          <p>Tutor humano dorme; os agentes não. Tira-dúvidas treinado no conteúdo, a qualquer hora do dia.</p>
+        </div>
+        <div class="perk reveal" style="--tone:var(--lime); --tone-txt:var(--lime-txt)"><span class="perk-ic mono">sos</span><b>Suporte humano 7 dias</b>
+          <p>Gente de verdade respondendo todos os dias — inclusive no domingo de véspera de entrega.</p>
+        </div>
+        <div class="perk reveal" style="--tone:var(--cyan)"><span class="perk-ic mono">job</span><b>Vagas exclusivas</b>
+          <p>Mural com vagas que as empresas parceiras abrem só pra alunos DevClub, antes do LinkedIn.</p>
+        </div>
+        <div class="perk reveal" style="--tone:var(--violet)"><span class="perk-ic mono">++</span><b>Comunidade viva</b>
+          <p>Milhares de devs na mesma jornada: networking, duplas de estudo e code review entre alunos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ALUNOS (leque de depoimentos) ================= -->
+    <section class="section" id="alunos">
+      <p class="eyebrow mono reveal">alunos.log</p>
+      <h2 class="reveal">Mentes que já fizeram a <span class="grad">troca de carreira</span>.</h2>
+      <p class="section-sub reveal">Dez histórias de quem começou do zero — passe o mouse, arraste as setas e leia.</p>
+
+      <div class="fan" id="fan">
+        <div class="fan-layout" id="fanLayout">
+          <article class="fan-card">
+            <span class="fc-badge mono">caixa de supermercado → back-end</span>
+            <blockquote>“Eu achava que programar era coisa de gênio. A DevClub me mostrou que era só prática — e
+              constância.”</blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-a" src="assets/rostos/maria.avif" alt="Foto de Marina Costa" width="40" height="40"
+                decoding="async">
+              <span class="fc-id"><b>Marina Costa</b><em class="mono">Stone · 27 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">analista de RH → front-end</span>
+            <blockquote>“Estudei à noite, depois do expediente. Seis meses depois pedi demissão pro emprego novo.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-b" src="assets/rostos/thiago.avif" alt="Foto de Thiago Almeida" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Thiago Almeida</b><em class="mono">Magalu · 33 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">recepcionista → dev júnior</span>
+            <blockquote>“Ninguém perguntou meu diploma na entrevista. Perguntaram meu GitHub — e ele estava cheio.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-c" src="assets/rostos/bruna.avif" alt="Foto de Bruna Ferreira" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Bruna Ferreira</b><em class="mono">Nubank · 24 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">motorista de app → full stack</span>
+            <blockquote>“Comecei achando que era tarde demais. Hoje sou eu quem aprova o PR da galera nova.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-d" src="assets/rostos/carlos.avif" alt="Foto de Carlos Menezes" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Carlos Menezes</b><em class="mono">iFood · 41 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">professora de inglês → front-end</span>
+            <blockquote>“Troquei a sala de aula pelo VS Code sem perder o que eu amava: explicar as coisas direito.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-a" src="assets/rostos/ana.avif" alt="Foto de Ana Beatriz Rocha" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Ana Beatriz Rocha</b><em class="mono">QuintoAndar · 29 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">militar → cibersegurança</span>
+            <blockquote>“Passei a vida protegendo perímetro físico. Agora protejo sistema — e o salário triplicou.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-b" src="assets/rostos/rafael.avif" alt="Foto de Rafael Lima" width="40" height="40"
+                decoding="async">
+              <span class="fc-id"><b>Rafael Lima</b><em class="mono">Itaú · 36 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">enfermeira → dados &amp; IA</span>
+            <blockquote>“Plantão me ensinou a lidar com pressão. Aqui virou análise de dados que salva operação.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-c" src="assets/rostos/camila.avif" alt="Foto de Camila Rocha" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Camila Rocha</b><em class="mono">Ambev Tech · 31 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">entregador → dev mobile</span>
+            <blockquote>“Estudava no celular entre uma entrega e outra. O tutor respondia às 23h — e eu não parava.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-d" src="assets/rostos/diego.avif" alt="Foto de Diego Nunes" width="40" height="40"
+                decoding="async">
+              <span class="fc-id"><b>Diego Nunes</b><em class="mono">PicPay · 22 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">dona de casa → QA</span>
+            <blockquote>“Fiquei 6 anos fora do mercado. Voltei direto pra tecnologia, com carteira assinada.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-a" src="assets/rostos/patricia.avif" alt="Foto de Patrícia Souza" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Patrícia Souza</b><em class="mono">Mercado Livre · 34 anos</em></span>
+            </footer>
+          </article>
+          <article class="fan-card">
+            <span class="fc-badge mono">garçom → dev front-end</span>
+            <blockquote>“Meu portfólio saiu dos projetos da formação. Foi ele que abriu a porta da primeira vaga.”
+            </blockquote>
+            <footer class="fc-foot">
+              <img class="fc-av ring-b" src="assets/rostos/lucas.avif" alt="Foto de Lucas Ferreira" width="40"
+                height="40" decoding="async">
+              <span class="fc-id"><b>Lucas Ferreira</b><em class="mono">Loggi · 26 anos</em></span>
+            </footer>
+          </article>
+        </div>
+        <div class="fan-nav">
+          <button class="farrow" id="fanPrev" aria-label="depoimento anterior">←</button>
+          <div class="fdots">
+            <button class="fdot fan-dot" data-go="0" aria-label="depoimento 1"></button>
+            <button class="fdot fan-dot" data-go="1" aria-label="depoimento 2"></button>
+            <button class="fdot fan-dot" data-go="2" aria-label="depoimento 3"></button>
+            <button class="fdot fan-dot is-on" data-go="3" aria-label="depoimento 4"></button>
+            <button class="fdot fan-dot" data-go="4" aria-label="depoimento 5"></button>
+            <button class="fdot fan-dot" data-go="5" aria-label="depoimento 6"></button>
+            <button class="fdot fan-dot" data-go="6" aria-label="depoimento 7"></button>
+            <button class="fdot fan-dot" data-go="7" aria-label="depoimento 8"></button>
+            <button class="fdot fan-dot" data-go="8" aria-label="depoimento 9"></button>
+            <button class="fdot fan-dot" data-go="9" aria-label="depoimento 10"></button>
+          </div>
+          <button class="farrow" id="fanNext" aria-label="próximo depoimento">→</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PROJETOS DOS ALUNOS (deck arrastável) ================= -->
+    <section class="section" id="projetos">
+      <p class="eyebrow mono reveal">projetos.deploy</p>
+      <h2 class="reveal">O que sai da mente dos <span class="grad">nossos alunos</span>.</h2>
+      <p class="section-sub reveal">Projetos reais construídos durante as formações — do primeiro deploy ao site que
+        abriu a vaga. Arraste pra navegar.</p>
+
+      <div class="deck reveal" id="deck">
+        <article class="proj" data-i="0">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/peak-fitness.jpg"
+                alt="Landing page da academia PEAK Fitness, projeto do aluno Diego Nunes" loading="lazy"
+                decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>peakfitness.club</b><span>PEAK Fitness · landing de academia · Diego Nunes
+                · Front-end</span></footer>
+          </div>
+        </article>
+        <article class="proj" data-i="1">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/vitalcare-clinica.jpg"
+                alt="Site da clínica VitalCare, projeto da aluna Marina Costa" loading="lazy" decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>vitalcare.med.br</b><span>VitalCare · site de clínica · Marina Costa · Full
+                Stack</span></footer>
+          </div>
+        </article>
+        <article class="proj" data-i="2">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/digitix-agencia.jpg"
+                alt="Site institucional da agência Digitix, projeto do aluno Lucas Ferreira" loading="lazy"
+                decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>digitix.agency</b><span>Digitix · agência digital · Lucas Ferreira ·
+                Front-end</span></footer>
+          </div>
+        </article>
+        <article class="proj" data-i="3">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/tubik-viagens.jpg"
+                alt="Landing page de turismo tubik, projeto da aluna Ana Beatriz Rocha" loading="lazy" decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>tubik.travel</b><span>tubik · guia de viagens · Ana Beatriz Rocha ·
+                Front-end</span></footer>
+          </div>
+        </article>
+        <article class="proj" data-i="4">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/ai-design-patterns.jpg"
+                alt="Plataforma de curso AI Design Patterns, projeto da aluna Camila Rocha" loading="lazy"
+                decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>aidesignpatterns.io</b><span>AI Design Patterns · plataforma de curso ·
+                Camila Rocha · IA & Dados</span></footer>
+          </div>
+        </article>
+        <article class="proj" data-i="5">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/viral-accelerator.jpg"
+                alt="Landing de marketing Viral Accelerator, projeto do aluno Thiago Almeida" loading="lazy"
+                decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>viralaccelerator.co</b><span>Viral Accelerator · marketing · Thiago Almeida
+                · Front-end</span></footer>
+          </div>
+        </article>
+        <article class="proj" data-i="6">
+          <div class="proj-frame">
+            <div class="proj-view">
+              <img class="proj-page" src="assets/projetos/raven-partners.jpg"
+                alt="Site do programa de afiliados Raven, projeto do aluno Carlos Menezes" loading="lazy"
+                decoding="async">
+            </div>
+            <footer class="proj-bar mono"><b>ravenpartners.io</b><span>Raven · programa de afiliados · Carlos Menezes ·
+                Full Stack</span></footer>
+          </div>
+        </article>
+      </div>
+
+      <div class="deck-nav">
+        <div class="deck-dots" role="tablist">
+          <button class="ddot is-on" data-go="0" aria-label="projeto 1"></button>
+          <button class="ddot" data-go="1" aria-label="projeto 2"></button>
+          <button class="ddot" data-go="2" aria-label="projeto 3"></button>
+          <button class="ddot" data-go="3" aria-label="projeto 4"></button>
+          <button class="ddot" data-go="4" aria-label="projeto 5"></button>
+          <button class="ddot" data-go="5" aria-label="projeto 6"></button>
+          <button class="ddot" data-go="6" aria-label="projeto 7"></button>
+        </div>
+        <span class="deck-hint mono">← arraste →</span>
+      </div>
+      <p class="co-nota mono center">// projeto conceitual — telas usadas apenas como referência visual</p>
+    </section>
+
+    <!-- ================= EMPRESAS (3 faixas em direções alternadas) ================= -->
+    <section class="empresas" id="empresas">
+      <p class="eyebrow mono reveal center">// empresas que já contrataram nossos alunos</p>
+      <div class="co-wall" aria-label="empresas parceiras">
+        <div class="co-row" style="--dur:64s">
+          <div class="co-track"><span class="co"><i class="co-logo"
+                style="--c:#EA1D2C;--u:url('/assets/logos/ifood.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>iFood</b><em class="mono">delivery</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#A855F7;--u:url('/assets/logos/nubank.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Nubank</b><em class="mono">fintech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#4285F4;--u:url('/assets/logos/google.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Google</b><em class="mono">big tech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF9900;--u:url('/assets/logos/amazon.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Amazon</b><em class="mono">big tech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#0866FF;--u:url('/assets/logos/meta.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Meta</b><em class="mono">big tech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E50914;--u:url('/assets/logos/netflix.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Netflix</b><em class="mono">streaming</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#1DB954;--u:url('/assets/logos/spotify.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Spotify</b><em class="mono">streaming</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#D6D6D6;--u:url('/assets/logos/uber.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Uber</b><em class="mono">mobilidade</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF5A5F;--u:url('/assets/logos/airbnb.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Airbnb</b><em class="mono">turismo</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#8DC63F;--u:url('/assets/logos/shopify.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Shopify</b><em class="mono">e-commerce</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#7A73FF;--u:url('/assets/logos/stripe.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Stripe</b><em class="mono">pagamentos</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#76B900;--u:url('/assets/logos/nvidia.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>NVIDIA</b><em class="mono">hardware & IA</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#EA1D2C;--u:url('/assets/logos/ifood.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>iFood</b><em class="mono">delivery</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#A855F7;--u:url('/assets/logos/nubank.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Nubank</b><em class="mono">fintech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#4285F4;--u:url('/assets/logos/google.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Google</b><em class="mono">big tech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF9900;--u:url('/assets/logos/amazon.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Amazon</b><em class="mono">big tech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#0866FF;--u:url('/assets/logos/meta.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Meta</b><em class="mono">big tech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E50914;--u:url('/assets/logos/netflix.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Netflix</b><em class="mono">streaming</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#1DB954;--u:url('/assets/logos/spotify.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Spotify</b><em class="mono">streaming</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#D6D6D6;--u:url('/assets/logos/uber.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Uber</b><em class="mono">mobilidade</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF5A5F;--u:url('/assets/logos/airbnb.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Airbnb</b><em class="mono">turismo</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#8DC63F;--u:url('/assets/logos/shopify.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Shopify</b><em class="mono">e-commerce</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#7A73FF;--u:url('/assets/logos/stripe.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Stripe</b><em class="mono">pagamentos</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#76B900;--u:url('/assets/logos/nvidia.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>NVIDIA</b><em class="mono">hardware & IA</em></span></span></div>
+        </div>
+        <div class="co-row rev" style="--dur:78s">
+          <div class="co-track"><span class="co"><i class="co-logo"
+                style="--c:#21C25E;--u:url('/assets/logos/picpay.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>PicPay</b><em class="mono">fintech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#F71963;--u:url('/assets/logos/vtex.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>VTEX</b><em class="mono">e-commerce</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF3B3B;--u:url('/assets/logos/oracle.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Oracle</b><em class="mono">enterprise</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#00A1E0;--u:url('/assets/logos/salesforce.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Salesforce</b><em class="mono">CRM</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#3FAFFF;--u:url('/assets/logos/sap.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>SAP</b><em class="mono">enterprise</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#B44DFF;--u:url('/assets/logos/accenture.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Accenture</b><em class="mono">consultoria</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#3B9BE0;--u:url('/assets/logos/dell.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Dell</b><em class="mono">hardware</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#3B95E0;--u:url('/assets/logos/intel.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Intel</b><em class="mono">semicondutores</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#1BA0D7;--u:url('/assets/logos/cisco.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Cisco</b><em class="mono">redes</em></span></span><span class="co"><i class="co-logo"
+                style="--c:#FF4136;--u:url('/assets/logos/redhat.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Red Hat</b><em class="mono">open source</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF3B3B;--u:url('/assets/logos/adobe.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Adobe</b><em class="mono">software</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#2684FF;--u:url('/assets/logos/atlassian.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Atlassian</b><em class="mono">dev tools</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#21C25E;--u:url('/assets/logos/picpay.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>PicPay</b><em class="mono">fintech</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#F71963;--u:url('/assets/logos/vtex.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>VTEX</b><em class="mono">e-commerce</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF3B3B;--u:url('/assets/logos/oracle.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Oracle</b><em class="mono">enterprise</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#00A1E0;--u:url('/assets/logos/salesforce.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Salesforce</b><em class="mono">CRM</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#3FAFFF;--u:url('/assets/logos/sap.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>SAP</b><em class="mono">enterprise</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#B44DFF;--u:url('/assets/logos/accenture.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Accenture</b><em class="mono">consultoria</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#3B9BE0;--u:url('/assets/logos/dell.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Dell</b><em class="mono">hardware</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#3B95E0;--u:url('/assets/logos/intel.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Intel</b><em class="mono">semicondutores</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#1BA0D7;--u:url('/assets/logos/cisco.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Cisco</b><em class="mono">redes</em></span></span><span class="co"><i class="co-logo"
+                style="--c:#FF4136;--u:url('/assets/logos/redhat.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Red Hat</b><em class="mono">open source</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FF3B3B;--u:url('/assets/logos/adobe.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Adobe</b><em class="mono">software</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#2684FF;--u:url('/assets/logos/atlassian.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Atlassian</b><em class="mono">dev tools</em></span></span></div>
+        </div>
+        <div class="co-row" style="--dur:70s">
+          <div class="co-track"><span class="co"><i class="co-logo"
+                style="--c:#5B8DEF;--u:url('/assets/logos/totvs.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Totvs</b><em class="mono">software</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E6EDF3;--u:url('/assets/logos/github.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>GitHub</b><em class="mono">dev tools</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FC6D26;--u:url('/assets/logos/gitlab.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>GitLab</b><em class="mono">DevOps</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#4DB33D;--u:url('/assets/logos/mongodb.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>MongoDB</b><em class="mono">banco de dados</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#A78BFA;--u:url('/assets/logos/datadog.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Datadog</b><em class="mono">observabilidade</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#2496ED;--u:url('/assets/logos/docker.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Docker</b><em class="mono">infraestrutura</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#F24E1E;--u:url('/assets/logos/figma.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Figma</b><em class="mono">design</em></span></span><span class="co"><i class="co-logo"
+                style="--c:#36C5F0;--u:url('/assets/logos/slack.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Slack</b><em class="mono">colaboração</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E8E8E8;--u:url('/assets/logos/notion.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Notion</b><em class="mono">produtividade</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E8E8E8;--u:url('/assets/logos/vercel.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Vercel</b><em class="mono">cloud</em></span></span><span class="co"><i class="co-logo"
+                style="--c:#3FCF8E;--u:url('/assets/logos/supabase.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Supabase</b><em class="mono">backend</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#F38020;--u:url('/assets/logos/cloudflare.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Cloudflare</b><em class="mono">infraestrutura</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#5B8DEF;--u:url('/assets/logos/totvs.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Totvs</b><em class="mono">software</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E6EDF3;--u:url('/assets/logos/github.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>GitHub</b><em class="mono">dev tools</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#FC6D26;--u:url('/assets/logos/gitlab.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>GitLab</b><em class="mono">DevOps</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#4DB33D;--u:url('/assets/logos/mongodb.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>MongoDB</b><em class="mono">banco de dados</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#A78BFA;--u:url('/assets/logos/datadog.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Datadog</b><em class="mono">observabilidade</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#2496ED;--u:url('/assets/logos/docker.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Docker</b><em class="mono">infraestrutura</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#F24E1E;--u:url('/assets/logos/figma.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Figma</b><em class="mono">design</em></span></span><span class="co"><i class="co-logo"
+                style="--c:#36C5F0;--u:url('/assets/logos/slack.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Slack</b><em class="mono">colaboração</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E8E8E8;--u:url('/assets/logos/notion.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Notion</b><em class="mono">produtividade</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#E8E8E8;--u:url('/assets/logos/vercel.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Vercel</b><em class="mono">cloud</em></span></span><span class="co"><i class="co-logo"
+                style="--c:#3FCF8E;--u:url('/assets/logos/supabase.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Supabase</b><em class="mono">backend</em></span></span><span class="co"><i
+                class="co-logo" style="--c:#F38020;--u:url('/assets/logos/cloudflare.svg')" aria-hidden="true"></i><span
+                class="co-txt"><b>Cloudflare</b><em class="mono">infraestrutura</em></span></span></div>
+        </div>
+      </div>
+      <p class="co-nota mono center">// projeto conceitual — marcas citadas apenas de forma ilustrativa</p>
+    </section>
+
+    <!-- ================= TUTORES (trilho arrastável) ================= -->
+    <section class="section" id="tutores">
+      <p class="eyebrow mono reveal">tutores.team</p>
+      <h2 class="reveal">Quem responde suas dúvidas às <span class="grad">23h de uma terça</span>.</h2>
+      <p class="section-sub reveal">Arraste para o lado e clique num rosto para conhecer quem vai te acompanhar.</p>
+
+      <div class="tut-wrap reveal">
+        <button class="tut-seta tut-prev" aria-label="Tutores anteriores">‹</button>
+        <div class="tut-rail" id="tutRail">
+          <article class="tut-card" data-i="0" tabindex="0" role="button" aria-expanded="false"
+            aria-label="Ver informações de Felipe Prado">
+            <div class="tut-photo"><img src="assets/tutores/felipe.jpg" alt="Felipe Prado" decoding="async"></div>
+            <div class="tut-info">
+              <b>Felipe Prado</b>
+              <p>Conduz as mentorias ao vivo e revisa código de aluno todo dia. Foi de suporte técnico a tech lead em 4
+                anos.</p>
+              <div class="tut-rodape">
+                <span class="tut-tag mono">full stack</span>
+                <span class="tut-btn mono">ver perfil</span>
+              </div>
+            </div>
+            <span class="tut-nome mono">Felipe Prado <em>mentor-chefe</em></span>
+          </article>
+          <article class="tut-card" data-i="1" tabindex="0" role="button" aria-expanded="false"
+            aria-label="Ver informações de Ana Paula">
+            <div class="tut-photo"><img src="assets/tutores/ana.jpg" alt="Ana Paula" decoding="async"></div>
+            <div class="tut-info">
+              <b>Ana Paula</b>
+              <p>Ensina o olho junto com o código: layout, tipografia e animação. Já entregou interface pra banco e
+                e-commerce.</p>
+              <div class="tut-rodape">
+                <span class="tut-tag mono">front-end</span>
+                <span class="tut-btn mono">ver perfil</span>
+              </div>
+            </div>
+            <span class="tut-nome mono">Ana Paula <em>front-end · UI</em></span>
+          </article>
+          <article class="tut-card" data-i="2" tabindex="0" role="button" aria-expanded="false"
+            aria-label="Ver informações de Juliana Reis">
+            <div class="tut-photo"><img src="assets/tutores/juliana.jpg" alt="Juliana Reis" decoding="async"></div>
+            <div class="tut-info">
+              <b>Juliana Reis</b>
+              <p>Node, banco de dados e arquitetura que aguenta tráfego. Responde dúvida de API às 23h sem reclamar.</p>
+              <div class="tut-rodape">
+                <span class="tut-tag mono">back-end</span>
+                <span class="tut-btn mono">ver perfil</span>
+              </div>
+            </div>
+            <span class="tut-nome mono">Juliana Reis <em>back-end · cloud</em></span>
+          </article>
+          <article class="tut-card" data-i="3" tabindex="0" role="button" aria-expanded="false"
+            aria-label="Ver informações de Diego Tavares">
+            <div class="tut-photo"><img src="assets/tutores/diego.jpg" alt="Diego Tavares" decoding="async"></div>
+            <div class="tut-info">
+              <b>Diego Tavares</b>
+              <p>Prepara currículo, LinkedIn e simulação de entrevista. Já esteve do outro lado da mesa contratando
+                devs.</p>
+              <div class="tut-rodape">
+                <span class="tut-tag mono">carreira</span>
+                <span class="tut-btn mono">ver perfil</span>
+              </div>
+            </div>
+            <span class="tut-nome mono">Diego Tavares <em>carreira</em></span>
+          </article>
+          <article class="tut-card" data-i="4" tabindex="0" role="button" aria-expanded="false"
+            aria-label="Ver informações de Renata Lima">
+            <div class="tut-photo"><img src="assets/tutores/renata.jpg" alt="Renata Lima" decoding="async"></div>
+            <div class="tut-info">
+              <b>Renata Lima</b>
+              <p>Veio de big tech pra ensinar dados e IA aplicada. Mostra como automatizar o que ninguém quer fazer à
+                mão.</p>
+              <div class="tut-rodape">
+                <span class="tut-tag mono">dados & IA</span>
+                <span class="tut-btn mono">ver perfil</span>
+              </div>
+            </div>
+            <span class="tut-nome mono">Renata Lima <em>dados & IA</em></span>
+          </article>
+        </div>
+        <button class="tut-seta tut-next" aria-label="Próximos tutores">›</button>
+      </div>
+    </section>
+
+    <!-- ================= DIPLOMA (reconhecimento MEC) ================= -->
+    <section class="section" id="certificado">
+      <p class="eyebrow mono reveal">diploma.pdf</p>
+      <h2 class="reveal">Termina com diploma <span class="grad">de verdade</span>.</h2>
+      <p class="section-sub reveal">Escola reconhecida pelo MEC: além do portfólio no GitHub, você sai com certificado
+        oficial de conclusão.</p>
+
+      <div class="cert-palco reveal">
+        <div class="cert" data-tilt>
+          <header class="cert-topo">
+            <span class="cert-marca mono">&gt;DevClub</span>
+            <span class="cert-selo mono">MEC ✓ reconhecida</span>
+          </header>
+          <div class="cert-corpo">
+            <p class="cert-rotulo mono">certificado de conclusão</p>
+            <b class="cert-nome">Seu Nome Aqui</b>
+            <p class="cert-texto">concluiu a formação <b>Full Stack</b> — 480 horas de código,
+              projetos reais e mentorias ao vivo.</p>
+          </div>
+          <footer class="cert-base">
+            <span class="cert-serial mono">||||| dvc-2026-8f3a</span>
+            <span class="cert-ass">
+              <svg viewBox="0 0 120 34" aria-hidden="true"><path
+                  d="M6 26c14-16 22-18 26-12s-6 14-2 16 12-6 20-14 12-8 16-4-2 10 4 10 10-8 18-10 16 2 26 6"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+              Felipe Prado · coordenação
+            </span>
+          </footer>
+        </div>
+        <p class="co-nota mono center">// projeto conceitual — documento ilustrativo</p>
+      </div>
+    </section>
+
+    <!-- ================= CTA FINAL ================= -->
+    <section class="cta" id="cta">
+      <img class="float float-d" src="assets/icones/icon-envelope.png" alt="" aria-hidden="true">
+      <h2 class="cta-title reveal">Pronto pra entrar<br><span class="grad">de vez?</span></h2>
+      <div class="cta-term mono reveal"><span class="prompt">$</span> devclub --iniciar-carreira<span
+          class="caret"></span></div>
+      <a class="btn btn-big reveal" href="#top">Quero minha vaga no mercado</a>
+      <p class="cta-note mono reveal">// alguém do time te chama em até 1 dia útil</p>
+    </section>
+  </main>
+
+  <footer class="footer mono">
+    <span><span class="ok">●</span> main · <span class="ok">✓</span> build passing · <span class="dim">projeto
+        conceitual — dados ilustrativos</span></span>
+    <span>criado por <a href="https://github.com/NaBala15" target="_blank" rel="noopener">JeffDev</a> · © 2026 DevClub ·
+      desde 2009</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="js/v2.js?v=23"></script>
+  <script src="js/scanner.js?v=23"></script>
+  <script src="js/fan.js?v=23"></script>
+  <script src="js/polish.js?v=23"></script>
+</body>
+
+</html>

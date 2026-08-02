@@ -1,0 +1,16 @@
+{
+  "name": "DevClub — a escola dentro da mente de um dev",
+  "short_name": "DevClub",
+  "description": "Formações práticas de programação com mentoria humana ao vivo.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#04050b",
+  "theme_color": "#04050b",
+  "icons": [
+    { "src": "/favicon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

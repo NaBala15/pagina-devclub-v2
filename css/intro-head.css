@@ -1,0 +1,44 @@
+/* =====================================================================
+   INTRO "DENTRO DA MENTE" — overlay da cabeça de partículas
+   (fica entre a página e o PRESS START: 99997 < 99999)
+   ===================================================================== */
+
+.head-intro-canvas{
+  position:fixed; inset:0;
+  z-index:99997;
+  background:radial-gradient(ellipse at center, #071018 0%, #030509 72%);
+}
+
+/* véu que cobre a página do load até a cabeça 3D assumir (substitui o PRESS START) */
+#introVeil{
+  position:fixed; inset:0;
+  z-index:99996;
+  background:radial-gradient(ellipse at center, #071018 0%, #030509 72%);
+  transition:opacity .5s ease;
+}
+#introVeil.is-leaving{ opacity:0; pointer-events:none; }
+
+/* flash da "entrada no olho" — cobre tudo no clímax e some revelando o hero */
+.head-intro-flash{
+  position:fixed; inset:0;
+  z-index:99998;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(ellipse at center, #eaffd0 0%, #c6ff3d 45%, #05060a 100%);
+  transition:opacity .45s ease;
+}
+
+.head-intro-skip{
+  position:fixed; right:28px; bottom:24px;
+  z-index:99998;
+  font-family:'JetBrains Mono', monospace;
+  font-size:12px;
+  color:rgba(230,237,239,0.55);
+  background:rgba(5,6,10,0.5);
+  border:1px solid rgba(198,255,61,0.25);
+  border-radius:999px;
+  padding:8px 16px;
+  cursor:pointer;
+  transition:color .2s, border-color .2s;
+}
+.head-intro-skip:hover{ color:#c6ff3d; border-color:#c6ff3d; }
