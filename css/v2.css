@@ -1498,39 +1498,41 @@ img{ max-width:100%; display:block; }
   transition:opacity .45s ease, transform .45s ease;
 }
 .perg.is-sumindo{ opacity:0; transform:scale(.92); pointer-events:none; }
-.perg-arte{ position:relative; width:min(420px, 78vw); }
+.perg-arte{ position:relative; width:min(560px, 86vw); }
 .perg-arte > svg{ width:100%; height:auto; display:block;
   filter:drop-shadow(0 22px 30px rgba(0,0,0,.45)); }
 .perg-dica{ font-size:.7rem; color:var(--muted); letter-spacing:.06em; }
 
-/* --- selo de cera (botão) --- */
+/* --- selo de cera dourado (botão; posição vem do marcador #pgNo) --- */
 .perg-selo{
-  position:absolute; left:63.5%; top:40%;
-  width:84px; height:84px; margin:-42px 0 0 -42px;
-  background:none; border:none; cursor:pointer; z-index:2;
+  position:absolute; left:50%; top:52%;
+  width:clamp(64px, 17.5%, 96px); aspect-ratio:1;
+  transform:translate(-50%, -50%);
+  background:none; border:none; cursor:pointer; z-index:2; padding:0;
 }
 .perg-cera{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  background:radial-gradient(circle at 34% 30%, #f0685c, #cf3d33 52%, #8e1f1a);
-  border-radius:47% 53% 52% 48% / 49% 51% 47% 53%;
-  box-shadow:0 10px 22px rgba(120,20,10,.5), inset 0 3px 6px rgba(255,255,255,.28),
-             inset 0 -5px 10px rgba(90,10,5,.55);
+  background:radial-gradient(circle at 34% 28%, #f7e6a8, #d9b96a 48%, #9a7a35 82%, #7c6126);
+  clip-path:polygon(100.2% 50.0%, 95.4% 57.2%, 89.8% 62.9%, 91.0% 70.9%, 90.6% 79.5%, 82.5% 82.5%, 74.6% 83.8%, 70.9% 91.0%, 65.5% 97.7%, 57.2% 95.4%, 50.0% 91.8%, 42.8% 95.4%, 34.5% 97.7%, 29.1% 91.0%, 25.4% 83.8%, 17.5% 82.5%, 9.4% 79.5%, 9.0% 70.9%, 10.2% 62.9%, 4.6% 57.2%, -0.2% 50.0%, 4.6% 42.8%, 10.2% 37.1%, 9.0% 29.1%, 9.4% 20.5%, 17.5% 17.5%, 25.4% 16.2%, 29.1% 9.0%, 34.5% 2.3%, 42.8% 4.6%, 50.0% 8.2%, 57.2% 4.6%, 65.5% 2.3%, 70.9% 9.0%, 74.6% 16.2%, 82.5% 17.5%, 90.6% 20.5%, 91.0% 29.1%, 89.8% 37.1%, 95.4% 42.8%);
+  filter:drop-shadow(0 6px 10px rgba(70,45,0,.45));
   transition:transform .18s ease;
 }
 .perg-cera::before{
-  content:""; position:absolute; inset:12px;
-  border:2px solid rgba(255,235,220,.4); border-radius:50%;
+  content:""; position:absolute; inset:16%;
+  border:2px solid rgba(110,80,25,.55); border-radius:50%;
+  box-shadow:inset 0 2px 3px rgba(255,245,200,.5), inset 0 -3px 5px rgba(90,60,10,.4);
 }
 .perg-cera i{
-  font-style:normal; font-weight:700; font-size:1.35rem; color:#ffd9cf;
-  text-shadow:0 -1px 0 rgba(90,10,5,.8), 0 1px 1px rgba(255,255,255,.35);
+  font-style:normal; font-weight:700; font-size:1.15rem; color:#8a6d2a;
+  opacity:.55;
+  text-shadow:0 1px 0 rgba(255,245,200,.55), 0 -1px 0 rgba(90,60,10,.35);
 }
-.perg-selo:hover .perg-cera{ transform:scale(1.07); }
+.perg-selo:hover .perg-cera{ transform:scale(1.06); }
 .perg-selo:focus-visible{ outline:2px solid var(--lime); outline-offset:6px; border-radius:50%; }
 /* halo chamando o clique */
 .perg-selo::after{
   content:""; position:absolute; inset:-9px; border-radius:50%;
-  border:2px solid rgba(228,81,74,.55);
+  border:2px solid rgba(217,185,106,.6);
   animation:pergPulso 1.9s ease-out infinite;
 }
 @keyframes pergPulso{
@@ -1543,7 +1545,7 @@ img{ max-width:100%; display:block; }
 .perg-caco, .perg-faisca{ position:absolute; opacity:0; pointer-events:none; }
 .perg-caco{
   inset:0;
-  background:radial-gradient(circle at 34% 30%, #f0685c, #cf3d33 52%, #8e1f1a);
+  background:radial-gradient(circle at 34% 28%, #f7e6a8, #d9b96a 48%, #9a7a35 82%, #7c6126);
   border-radius:47% 53% 52% 48% / 49% 51% 47% 53%;
 }
 .perg-caco.k1{ clip-path:polygon(50% 50%, 0 0, 62% 0); }
@@ -1553,7 +1555,7 @@ img{ max-width:100%; display:block; }
 .perg-caco.k5{ clip-path:polygon(50% 50%, 18% 100%, 0 0); }
 .perg-faisca{
   left:50%; top:50%; width:7px; height:7px; border-radius:50%;
-  background:#e4514a;
+  background:#e6cd8a;
 }
 .is-quebrando .perg-cera, .is-quebrando.perg-selo::after{ display:none; }
 .is-quebrando .perg-caco{ animation:pergCaco .62s cubic-bezier(.2, .7, .3, 1) forwards; }
@@ -1578,14 +1580,29 @@ img{ max-width:100%; display:block; }
   100%{ opacity:0; transform:translate(calc(-50% + var(--vx)), calc(-50% + var(--vy))) scale(.3); }
 }
 
+/* --- laço se desatando (dispara junto com o estilhaço) --- */
+.pg-laco > *{ transform-box:fill-box; transform-origin:center; }
+.is-desatando .pg-alca-esq, .is-desatando .pg-alca-esq-luz{
+  animation:pgAlcaE .5s ease-in forwards; }
+.is-desatando .pg-alca-dir{ animation:pgAlcaD .5s ease-in .05s forwards; }
+.is-desatando .pg-cauda-esq{ animation:pgCaudaE .68s ease-in .08s forwards; }
+.is-desatando .pg-cauda-dir{ animation:pgCaudaD .68s ease-in .12s forwards; }
+.is-desatando .pg-banda, .is-desatando .pg-banda2, .is-desatando .pg-no{
+  animation:pgBanda .45s ease-in .1s forwards; }
+@keyframes pgAlcaE{ to{ transform:translate(-46px, 26px) rotate(-38deg) scale(.45); opacity:0; } }
+@keyframes pgAlcaD{ to{ transform:translate(48px, 24px) rotate(36deg) scale(.45); opacity:0; } }
+@keyframes pgCaudaE{ to{ transform:translate(-54px, 84px) rotate(-24deg); opacity:0; } }
+@keyframes pgCaudaD{ to{ transform:translate(56px, 80px) rotate(22deg); opacity:0; } }
+@keyframes pgBanda{ to{ transform:translateY(34px) scaleY(.5); opacity:0; } }
+
 @media (max-width:720px){
-  .perg-selo{ width:64px; height:64px; margin:-32px 0 0 -32px; }
   .perg-cera i{ font-size:1.05rem; }
 }
 @media (prefers-reduced-motion: reduce){
   .perg-selo::after{ animation:none; opacity:0; }
   .dip-envelope .dip, .dip-rolo, .perg{ transition:none; }
   .is-quebrando .perg-caco, .is-quebrando .perg-faisca{ animation:none; }
+  .is-desatando .pg-laco > *{ animation:none; }
 }
 
 /* ---------- ALUNOS: título e leque na mesma tela ---------- */

@@ -40,11 +40,11 @@
     content="Formações práticas de programação com mentoria humana ao vivo.">
   <meta name="twitter:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
 
-  <script src="js/theme.js?v=32"></script>
-  <link rel="stylesheet" href="css/v2.css?v=32">
-  <link rel="stylesheet" href="css/intro-head.css?v=32">
-  <link rel="stylesheet" href="css/polish.css?v=32">
-  <link rel="stylesheet" href="css/theme.css?v=32">
+  <script src="js/theme.js?v=33"></script>
+  <link rel="stylesheet" href="css/v2.css?v=33">
+  <link rel="stylesheet" href="css/intro-head.css?v=33">
+  <link rel="stylesheet" href="css/polish.css?v=33">
+  <link rel="stylesheet" href="css/theme.css?v=33">
 
   <!-- Three.js (intro 3D "dentro da mente") -->
   <script type="importmap">
@@ -55,7 +55,7 @@
   }
 }
 </script>
-  <script type="module" src="js/intro-head.js?v=32"></script>
+  <script type="module" src="js/intro-head.js?v=33"></script>
 </head>
 
 <body>
@@ -1108,41 +1108,76 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
           <!-- pergaminho fechado (só aparece com JS; sem JS o diploma já vem aberto) -->
           <div class="perg" id="perg">
             <div class="perg-arte">
-              <svg viewBox="0 0 360 260" aria-hidden="true">
+              <svg viewBox="0 0 520 380" aria-hidden="true">
                 <defs>
                   <linearGradient id="pgPapel" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#f7e9c0"/><stop offset=".45" stop-color="#eed9a0"/>
-                    <stop offset="1" stop-color="#d3b678"/>
+                    <stop offset="0" stop-color="#faf1d8"/><stop offset=".5" stop-color="#f2e2b6"/>
+                    <stop offset="1" stop-color="#d6ba88"/>
                   </linearGradient>
-                  <linearGradient id="pgFaixa" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#e4514a"/><stop offset="1" stop-color="#a72823"/>
+                  <linearGradient id="pgFita" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#a82330"/><stop offset="1" stop-color="#6e121b"/>
                   </linearGradient>
+                  <clipPath id="pgClip"><rect x="66" y="150" width="392" height="82" rx="38"/></clipPath>
                 </defs>
-                <g transform="rotate(-22 180 130)">
-                  <!-- corpo enrolado -->
-                  <rect x="26" y="96" width="308" height="70" rx="34" fill="url(#pgPapel)"/>
-                  <path d="M40 116 H320 M36 138 H324" stroke="#c9ab6c" stroke-width="1.4" opacity=".5" fill="none"/>
-                  <!-- ponta esquerda: espiral do rolo -->
-                  <circle cx="60" cy="131" r="34" fill="#ecd79e"/>
-                  <circle cx="60" cy="131" r="34" fill="none" stroke="#c9ab6c" stroke-width="2"/>
-                  <path d="M60 131 m-22,0 a22,22 0 1,1 44,0 a15,15 0 1,1 -30,0 a9,9 0 1,1 18,0"
-                    fill="none" stroke="#b6975a" stroke-width="2.4" stroke-linecap="round"/>
-                  <circle cx="63" cy="131" r="4.5" fill="#a3854c"/>
-                  <!-- ponta direita: aba solta do papel -->
-                  <path d="M318 96 L352 84 L344 131 L352 178 L318 166 Z" fill="#f2e2ae"/>
-                  <path d="M318 96 L344 131 L318 166" fill="none" stroke="#c9ab6c" stroke-width="1.6"/>
-                  <!-- faixa vermelha -->
-                  <path d="M216 92 h34 v78 h-34 z" fill="url(#pgFaixa)"/>
-                  <path d="M216 92 h34 v10 h-34 z" fill="#ffffff" opacity=".14"/>
-                  <!-- laço: duas alças e duas caudas com ponta em V -->
-                  <path d="M233 158 C196 150 186 186 214 196 C236 203 246 178 233 158 Z" fill="url(#pgFaixa)"/>
-                  <path d="M233 158 C270 152 282 188 254 197 C232 203 222 178 233 158 Z" fill="url(#pgFaixa)"/>
-                  <path d="M224 168 L204 226 L222 218 L230 236 Z" fill="#b32c26"/>
-                  <path d="M240 168 L262 228 L268 210 L286 220 Z" fill="#b32c26"/>
+                <g transform="rotate(-20 260 190)">
+                  <!-- folha de baixo aparecendo na borda -->
+                  <path d="M120 226 L470 210 L474 228 L124 246 Z" fill="#e9d6a4"/>
+                  <path d="M120 226 L470 210" stroke="#b6975a" stroke-width="1.4" opacity=".6"/>
+
+                  <!-- corpo do rolo -->
+                  <rect x="66" y="150" width="392" height="82" rx="38" fill="url(#pgPapel)"/>
+                  <rect x="66" y="150" width="392" height="82" rx="38" fill="none"
+                    stroke="#c9ab6c" stroke-width="1.2" opacity=".65"/>
+                  <path d="M80 218 Q260 232 452 210" stroke="#c19a5c" stroke-width="4"
+                    opacity=".25" fill="none"/>
+
+                  <!-- caligrafia apagada (fonte da página; some se a fonte faltar) -->
+                  <g clip-path="url(#pgClip)" class="pg-escrita" fill="#a5834b" opacity=".5"
+                     font-family="'Great Vibes', cursive" font-size="19">
+                    <text x="96" y="176" transform="rotate(-1.2 96 176)">por haver concluido a formacao com merito</text>
+                    <text x="132" y="199" transform="rotate(-.8 132 199)">outorga-lhe o presente diploma de honra</text>
+                    <text x="104" y="222" transform="rotate(-1 104 222)">direitos e prerrogativas que a lei confere</text>
+                  </g>
+
+                  <!-- espiral envelhecida (ponta esquerda) -->
+                  <circle cx="104" cy="191" r="42" fill="#efdcaa"/>
+                  <circle cx="104" cy="191" r="42" fill="none" stroke="#b99a5e" stroke-width="2.4"/>
+                  <path d="M104 191 m-29,0 a29,29 0 1,1 58,0 a20,20 0 1,1 -40,0 a12,12 0 1,1 24,0 a5,5 0 1,1 -10,0"
+                    fill="none" stroke="#a98850" stroke-width="2.6" stroke-linecap="round"/>
+                  <path d="M77 214 a42 42 0 0 0 34 18" fill="none" stroke="#8f7440"
+                    stroke-width="3.4" opacity=".55" stroke-linecap="round"/>
+                  <circle cx="106" cy="191" r="4" fill="#8f7440"/>
+
+                  <!-- ponta cônica com dobrinha (direita) -->
+                  <path d="M456 152 C486 158 502 166 508 176 C502 186 486 198 456 230 Z" fill="#f4e6bd"/>
+                  <path d="M456 152 C486 158 502 166 508 176" fill="none" stroke="#c9ab6c" stroke-width="1.4"/>
+                  <path d="M508 176 C512 168 508 160 498 158 C492 166 496 174 508 176 Z" fill="#d8bd8b"/>
+                  <path d="M456 230 C470 214 484 200 494 188" stroke="#c19a5c" stroke-width="2.6"
+                    opacity=".4" fill="none"/>
+
+                  <!-- fita bordô fina + laço (cada peça se desata sozinha) -->
+                  <g class="pg-laco">
+                    <path class="pg-banda" d="M252 148 q10 4 9 12 l-3 62 q-1 10 -11 12 l1 -14 q6 -2 6 -8 l3 -54 q0 -7 -5 -10 Z"
+                      fill="url(#pgFita)" transform="translate(6 0)"/>
+                    <path class="pg-banda2" d="M251 150 l16 0 -2 84 -16 0 Z" fill="url(#pgFita)" opacity=".92"/>
+                    <path class="pg-alca-esq" d="M258 196 C210 176 186 200 202 224 C216 244 250 228 258 200 Z"
+                      fill="#9c1f2a"/>
+                    <path class="pg-alca-esq-luz" d="M212 206 C222 194 240 192 252 199" fill="none"
+                      stroke="#c94b56" stroke-width="2.4" opacity=".7"/>
+                    <path class="pg-alca-dir" d="M262 196 C316 180 340 208 320 230 C302 248 268 228 262 200 Z"
+                      fill="#8e1a24"/>
+                    <path class="pg-cauda-esq" d="M256 208 C236 250 210 286 178 312 L200 300 L206 322 C232 292 252 252 262 214 Z"
+                      fill="#7c1520"/>
+                    <path class="pg-cauda-dir" d="M266 208 C288 252 314 288 352 316 L330 306 L326 328 C296 296 274 254 262 214 Z"
+                      fill="#8e1a24"/>
+                    <rect class="pg-no" x="250" y="192" width="22" height="18" rx="6" fill="#6e121b"/>
+                  </g>
+
+                  <!-- marcador invisível do nó: o selo se ancora aqui -->
+                  <circle id="pgNo" cx="261" cy="200" r="1" fill="none"/>
                 </g>
               </svg>
 
-              <!-- selo de cera (botão) + cacos do estilhaço -->
               <button class="perg-selo" id="pergSelo" aria-label="Quebrar o selo e abrir o diploma">
                 <span class="perg-cera" aria-hidden="true"><i class="mono">&gt;_</i></span>
                 <span class="perg-caco k1" aria-hidden="true"></span>
@@ -1305,10 +1340,10 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="js/v2.js?v=32"></script>
-  <script src="js/scanner.js?v=32"></script>
-  <script src="js/fan.js?v=32"></script>
-  <script src="js/polish.js?v=32"></script>
+  <script src="js/v2.js?v=33"></script>
+  <script src="js/scanner.js?v=33"></script>
+  <script src="js/fan.js?v=33"></script>
+  <script src="js/polish.js?v=33"></script>
 </body>
 
 </html>

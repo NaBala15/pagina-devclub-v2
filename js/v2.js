@@ -706,16 +706,36 @@
   var dipEnvelope = $('#dipEnvelope');
   if (pergEl && dipEnvelope) {
     var pergSelo = $('#pergSelo');
+
+    /* o selo gruda no nó do laço: mede o marcador #pgNo dentro do SVG.
+       Assim a âncora sobrevive a qualquer largura de tela. */
+    function ancorarSelo() {
+      var marca = $('#pgNo', pergEl);
+      var arte = $('.perg-arte', pergEl);
+      if (!marca || !arte) return;
+      var m = marca.getBoundingClientRect();
+      var a = arte.getBoundingClientRect();
+      if (!a.width) return;
+      pergSelo.style.left = ((m.left + m.width / 2 - a.left) / a.width * 100).toFixed(2) + '%';
+      pergSelo.style.top = ((m.top + m.height / 2 - a.top) / a.height * 100).toFixed(2) + '%';
+    }
+    ancorarSelo();
+    window.addEventListener('resize', ancorarSelo);
+    window.addEventListener('load', ancorarSelo);
+
+    /* linha do tempo sincronizada (fases sobrepostas, não em fila):
+       0ms cera estilhaça · 120ms laço se desata · 400ms papel desenrola */
     var abrindo = false;
     function abrirDiploma() {
       if (abrindo) return;
       abrindo = true;
       var rapido = REDUCED;
       pergSelo.classList.add('is-quebrando');
+      setTimeout(function () { pergEl.classList.add('is-desatando'); }, rapido ? 0 : 120);
       setTimeout(function () {
         dipEnvelope.classList.add('is-aberto');
         pergEl.classList.add('is-sumindo');
-      }, rapido ? 0 : 430);
+      }, rapido ? 0 : 400);
       setTimeout(function () {
         pergEl.hidden = true;
         var dip = $('.dip', dipEnvelope);
