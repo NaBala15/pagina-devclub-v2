@@ -1466,9 +1466,19 @@ img{ max-width:100%; display:block; }
    em vez de imitar papel antigo. Assim o único elemento quente da cena é a
    cera vermelha, e o olho vai direto pra onde se clica. */
 .dip-envelope{
+  /* uma batida só pra abertura inteira: a aba abre primeiro, e tudo que
+     vem do envelope (documento, altura da seção, saída da carta) entra
+     depois de --t-espera, quando a aba já está visivelmente aberta */
+  --t-aba:.75s;
+  --t-espera:.34s;
+  --t-subida:.9s;
+  --curva-subida:cubic-bezier(.2, .8, .25, 1);
+
   position:relative;
   max-height:4000px;
-  transition:max-height 1.05s cubic-bezier(.66, 0, .22, 1);
+  /* mesma duração, mesma curva e mesmo atraso do documento:
+     a seção e o diploma crescem como uma peça só */
+  transition:max-height var(--t-subida) var(--curva-subida) var(--t-espera);
 }
 /* fechado: só a altura da carta + dica */
 .js .dip-envelope:not(.is-aberto){ max-height:clamp(300px, 58vw, 640px); }
@@ -1481,7 +1491,7 @@ img{ max-width:100%; display:block; }
 .dip-envelope.is-aberto .dip{
   /* `backwards` e não `forwards`: terminada a animação o elemento volta ao
      estilo normal, e o tilt 3D (que escreve transform inline) volta a mandar */
-  animation:dipSobe .95s cubic-bezier(.2, .8, .25, 1) .06s backwards;
+  animation:dipSobe var(--t-subida) var(--curva-subida) var(--t-espera) backwards;
 }
 @keyframes dipSobe{
   from{ opacity:0; transform:translateY(56px) scale(.94); }
@@ -1493,9 +1503,16 @@ img{ max-width:100%; display:block; }
   position:absolute; inset:0; z-index:7;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:14px;
-  transition:opacity .5s ease .25s, transform .5s ease .25s;
+  transition:opacity .62s ease-in var(--t-espera),
+             transform .72s cubic-bezier(.45, 0, .7, .4) var(--t-espera);
 }
-.env.is-sumindo{ opacity:0; transform:translateY(18px) scale(.97); pointer-events:none; }
+/* desce e recua enquanto o diploma sobe: os dois se cruzam no meio */
+.dip-envelope.is-aberto .env{
+  opacity:0; transform:translateY(52px) scale(.96);
+  pointer-events:none;
+}
+/* a instrução some assim que deixa de ser verdade */
+.dip-envelope.is-aberto .env-dica{ opacity:0; transition:opacity .2s ease; }
 
 .env-corpo{
   position:relative; width:100%; aspect-ratio:2 / 1;
@@ -1557,7 +1574,7 @@ img{ max-width:100%; display:block; }
   border-radius:16px 16px 0 0;
   background:linear-gradient(178deg, rgba(38,45,76,.96), rgba(16,20,38,.98));
   box-shadow:0 14px 26px -14px rgba(0,0,0,.9);
-  transition:transform .72s cubic-bezier(.55, 0, .25, 1);
+  transition:transform var(--t-aba) cubic-bezier(.55, 0, .25, 1);
 }
 /* fio de luz na dobra: dá espessura ao papel */
 .env-aba::after{
@@ -1647,8 +1664,9 @@ img{ max-width:100%; display:block; }
   .env-postal{ width:52px; }
 }
 @media (prefers-reduced-motion: reduce){
+  .dip-envelope{ --t-espera:0s; --t-subida:0s; --t-aba:0s; }
   .env-lacre::after{ animation:none; opacity:0; }
-  .env-aba, .env, .dip-envelope{ transition:none; }
+  .env-aba, .env, .dip-envelope, .env-dica{ transition:none; }
   .dip-envelope.is-aberto .dip{ animation:none; }
   .is-rompendo .env-caco, .is-rompendo .env-po{ animation:none; }
 }

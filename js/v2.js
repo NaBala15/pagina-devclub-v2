@@ -711,19 +711,18 @@
       if (rompendo) return;
       rompendo = true;
       var rapido = REDUCED;
-      envLacre.classList.add('is-rompendo');          // 0ms  · a cera racha
-      setTimeout(function () {                        // 240ms · a aba abre e o diploma sobe
+      /* o JS marca só dois instantes; o resto da coreografia (quem espera
+         quanto, com que curva) vive no CSS, junto do desenho. */
+      envLacre.classList.add('is-rompendo');          // agora · a cera racha
+      setTimeout(function () {                        // +200ms · abre: aba, depois documento
         dipEnvelope.classList.add('is-aberto');
-      }, rapido ? 0 : 240);
-      setTimeout(function () {                        // 620ms · a carta se recolhe
-        envEl.classList.add('is-sumindo');
-      }, rapido ? 0 : 620);
-      setTimeout(function () {                        // fim   · limpeza e foco
+      }, rapido ? 0 : 200);
+      setTimeout(function () {                        // fim · limpeza e foco
         envEl.hidden = true;
         var dip = $('.dip', dipEnvelope);
         dip.setAttribute('tabindex', '-1');
         dip.focus({ preventScroll: true });
-      }, rapido ? 50 : 1600);
+      }, rapido ? 50 : 1650);
     }
     envLacre.addEventListener('click', abrirDiploma);
   }
