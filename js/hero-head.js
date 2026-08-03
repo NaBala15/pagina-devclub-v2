@@ -13,7 +13,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
-import { dotTexture, gradientColor, removeMouthInterior } from './intro-head.js';
+import { dotTexture, gradientColor, removeMouthInterior } from 'head-shared';
 
 const palco = document.getElementById('heroHead');
 const REDUZIDO = matchMedia('(prefers-reduced-motion: reduce)').matches;

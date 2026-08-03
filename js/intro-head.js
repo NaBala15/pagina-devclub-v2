@@ -17,28 +17,17 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
+import { gradientColor, dotTexture, removeMouthInterior } from 'head-shared';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { createDevLaptopIconModel } from './laptop-icon.js';
 import { createGlobeIcon, createBulbIcon, createGearIcon, createQuestionIcon, createEnvelopeIcon } from './idea-icons.js';
 
 const LIME = new THREE.Color('#c6ff3d');
 const CYAN = new THREE.Color('#4fe0ff');
 
-/* Degradê da cabeça (referência do Jeff): topo ciano → rosto azul → pescoço roxo/magenta */
-const GRAD_STOPS = [
-  { t: 0.0, c: new THREE.Color('#b44fd9') },   // base do pescoço: magenta-roxo
-  { t: 0.35, c: new THREE.Color('#7a4be0') },  // queixo: violeta
-  { t: 0.7, c: new THREE.Color('#3b57e6') },   // rosto: azul
-  { t: 1.0, c: new THREE.Color('#35d6e8') },   // topo do crânio: ciano
-];
-export function gradientColor(t, out) {
-  for (let i = 1; i < GRAD_STOPS.length; i++) {
-    if (t <= GRAD_STOPS[i].t) {
-      const a = GRAD_STOPS[i - 1], b = GRAD_STOPS[i];
-      return out.copy(a.c).lerp(b.c, (t - a.t) / (b.t - a.t));
-    }
-  }
-  return out.copy(GRAD_STOPS[GRAD_STOPS.length - 1].c);
-}
 
 /* Quantidade de partículas da cabeça (equilíbrio visual x performance) */
 const COUNT = 16000;
@@ -76,19 +65,6 @@ const phase = (now, a, b) => clamp01((now - a) / (b - a));
    TEXTURAS DESENHADAS EM CANVAS (sem assets externos)
    --------------------------------------------------------------------- */
 
-/* ponto redondo com halo — sprite de cada partícula */
-export function dotTexture() {
-  const c = document.createElement('canvas');
-  c.width = c.height = 64;
-  const g = c.getContext('2d');
-  const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grad.addColorStop(0, 'rgba(255,255,255,1)');
-  grad.addColorStop(0.35, 'rgba(255,255,255,0.85)');
-  grad.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 64, 64);
-  return new THREE.CanvasTexture(c);
-}
 
 /* "reflexo" do olho: telinha com código rolando, redesenhada a cada frame */
 function makeCodeScreen() {
@@ -300,6 +276,26 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
   const solid = new THREE.Mesh(headGeometry, solidMat);
   head.add(solid);
 
+  /* CONTORNO: uma casca por dentro-fora (BackSide) um pouco maior que o
+     rosto. Como só a parte de trás é desenhada, sobra exatamente a borda —
+     e o additive faz essa borda virar luz. É o "rim light" das referências,
+     sem precisar de shader próprio. */
+  const rimMat = new THREE.MeshBasicMaterial({
+    vertexColors: true,
+    side: THREE.BackSide,
+    transparent: true, opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    /* a cor vai acima de 1 de propósito: as cores do degradê sozinhas ficam
+       abaixo do limiar do bloom e a borda não acenderia. toneMapped:false
+       deixa esses valores passarem inteiros até o pós-processamento. */
+    toneMapped: false,
+  });
+  rimMat.color.setRGB(3, 3, 3);
+  const rim = new THREE.Mesh(headGeometry, rimMat);
+  rim.scale.setScalar(1.045);   // colada: a partir de ~1.10 descola da cabeça
+  head.add(rim);
+
   /* luzes de estúdio pro degradê ler como na referência */
   const keyLight = new THREE.DirectionalLight('#ffffff', 1.6);
   keyLight.position.set(-1.5, 2.2, 2.6);
@@ -369,41 +365,26 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
   iconLight.position.set(2, 3, 2.5);
   scene.add(iconLight, new THREE.AmbientLight('#334', 0.6));
 
-  return { scene, camera, renderer, head, points, geo, start, target, jitter, eye, eyeMat, leftEyeMat, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solid, solidMat };
+  /* --- BLOOM: o brilho vaza dos pontos claros ---
+     É a diferença entre "gradiente chapado" e neon. O OutputPass no fim
+     devolve o espaço de cor certo (senão a cena sai lavada). */
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  /* valores calibrados na tela: com limiar baixo (0.18) o rosto inteiro
+     passava do corte e a cabeça virava um borrão branco. Em 0.84 só os
+     olhos e a borda de luz acendem — o resto do degradê fica limpo. */
+  const bloom = new UnrealBloomPass(
+    new THREE.Vector2(innerWidth, innerHeight),
+    0.55,   // força
+    0.50,   // raio do halo
+    0.84    // limiar: só o que já é quase branco acende
+  );
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
+  return { scene, camera, renderer, composer, bloom, head, points, geo, start, target, jitter, eye, eyeMat, leftEyeMat, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solid, solidMat, rimMat };
 }
 
-/* O scan facecap tem o interior da boca (arcada dentária) modelado dentro
-   do crânio. Remove os triângulos totalmente dentro dessa região — caixa
-   em coordenadas de mundo do modelo, atrás dos lábios, sem tocar o rosto. */
-export function removeMouthInterior(geo, wide = false) {
-  const p = geo.attributes.position;
-  const idx = geo.index;
-  if (!idx) return;
-  /* wide=false: só a arcada (caixa mínima — segura pro SÓLIDO, não toca lábios)
-     wide=true: boca interna completa (pras PARTÍCULAS, remove o aglomerado
-     denso de superfícies dobradas; nicks minúsculos são invisíveis em pontos) */
-  const inside = wide
-    ? (i) => {
-        const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
-        return Math.abs(x) < 0.34 && y > -0.54 && y < -0.22 && z > 0.05 && z < 0.66;
-      }
-    : (i) => {
-        /* sólido: profundidade do corte varia com |x| — fundo no centro
-           (alcança os dentes frontais), raso nos cantos (poupa os lábios) */
-        const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
-        const ax = Math.abs(x);
-        if (ax >= 0.30 || y <= -0.50 || y >= -0.26 || z <= 0.08) return false;
-        const zMax = 0.66 - (ax / 0.30) * 0.18;
-        return z < zMax;
-      };
-  const keep = [];
-  for (let t = 0; t < idx.count; t += 3) {
-    const a = idx.getX(t), b = idx.getX(t + 1), c = idx.getX(t + 2);
-    if (inside(a) && inside(b) && inside(c)) continue;
-    keep.push(a, b, c);
-  }
-  geo.setIndex(keep);
-}
 
 /* ---------------------------------------------------------------------
    CARREGAMENTO (começa já no load da página, antes do PRESS START sair)
@@ -466,7 +447,7 @@ try {
    EXECUÇÃO DA SEQUÊNCIA
    --------------------------------------------------------------------- */
 /* garante canvas com tamanho válido (página pode ter carregado em aba oculta) */
-function ensureRendererSize(renderer, camera) {
+function ensureRendererSize(renderer, camera, composer) {
   const W = Math.max(innerWidth, 640);
   const H = Math.max(innerHeight, 480);
   if (renderer.domElement.width === 0 || renderer.domElement.height === 0 ||
@@ -474,13 +455,14 @@ function ensureRendererSize(renderer, camera) {
     renderer.setSize(W, H);
     camera.aspect = W / H;
     camera.updateProjectionMatrix();
+    if (composer) composer.setSize(W, H);      // o bloom tem alvos próprios
   }
 }
 
 function run(onDone) {
-  const { scene, camera, renderer, head, geo, start, target, jitter, eye, eyeMat, leftEyeMat, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat } = state;
+  const { scene, camera, renderer, composer, head, geo, start, target, jitter, eye, eyeMat, leftEyeMat, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat, rimMat } = state;
 
-  ensureRendererSize(renderer, camera);
+  ensureRendererSize(renderer, camera, composer);
   document.body.appendChild(renderer.domElement);
 
   /* flash de saída + botão de pular */
@@ -540,6 +522,9 @@ function run(onDone) {
     lastMs = nowMs;
     const now = simNow;
 
+    /* cintilação: com bloom, variar o tamanho do ponto vira brilho pulsando */
+    mat.size = 0.014 + Math.sin(now * 1.9) * 0.0022;
+
     /* 1. partículas convergem pra cabeça (+ respiração sutil depois) */
     const form = easeOut(phase(now, 0, T.FORM_END));
     const breathe = Math.min(1, form) * 0.006;
@@ -554,7 +539,7 @@ function run(onDone) {
 
     /* 1b. partículas se CONDENSAM na cabeça sólida com degradê */
     const solidIn = easeInOut(phase(now, T.FORM_END, T.FORM_END + 1.0));
-    solidMat.opacity = solidIn;
+    solidMat.opacity = solidIn; rimMat.opacity = (solidIn) * 0.85;
     mat.opacity = 1 - solidIn * 0.94;   // resta um brilho sutil de partículas
 
     /* 2. ideias orbitam em 3D; quando a cabeça vira, são ABSORVIDAS —
@@ -586,7 +571,7 @@ function run(onDone) {
        nada do interior (orelha, etc.) aparece quando a câmera entra */
     const melt = clamp01((dive - 0.62) / 0.26);
     if (melt > 0) {
-      solidMat.opacity = solidIn * (1 - melt);
+      solidMat.opacity = solidIn * (1 - melt); rimMat.opacity = (solidIn * (1 - melt)) * 0.85;
       mat.opacity = 0.06 + melt * 0.5;              // partículas voltam a brilhar
     }
 
@@ -608,7 +593,7 @@ function run(onDone) {
     if (now >= T.FLASH) flash.style.opacity = String(phase(now, T.FLASH, T.DIVE_END));
     if (now >= T.DIVE_END + 0.05) { finish(); return; }
 
-    renderer.render(scene, camera);
+    composer.render();
     rafId = requestAnimationFrame(frame);
   }
   rafId = requestAnimationFrame(frame);
@@ -619,13 +604,13 @@ function run(onDone) {
    posição do olho ao vivo antes de fixar a constante EYE. */
 function debugCapture(simNow = 3.8, eyePos = null) {
   if (!state) return null;
-  const { scene, camera, renderer, head, geo, target, eyeMat, leftEyeMat, eye, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat } = state;
-  ensureRendererSize(renderer, camera);
+  const { scene, camera, renderer, composer, head, geo, target, eyeMat, leftEyeMat, eye, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat, rimMat } = state;
+  ensureRendererSize(renderer, camera, composer);
   const pos = geo.getAttribute('position');
   pos.array.set(target);
   pos.needsUpdate = true;
   const solidInD = easeInOut(phase(simNow, T.FORM_END, T.FORM_END + 1.0));
-  solidMat.opacity = solidInD;
+  solidMat.opacity = solidInD; rimMat.opacity = (solidInD) * 0.85;
   mat.opacity = 1 - solidInD * 0.94;
   if (eyePos) { eye.position.set(...eyePos); halo.position.set(...eyePos); }
 
@@ -652,7 +637,7 @@ function debugCapture(simNow = 3.8, eyePos = null) {
   halo2Mat.opacity = eyeOnD * 0.22 * (1 - diveD);
   const meltD = clamp01((diveD - 0.62) / 0.26);
   if (meltD > 0) {
-    solidMat.opacity = solidInD * (1 - meltD);
+    solidMat.opacity = solidInD * (1 - meltD); rimMat.opacity = (solidInD * (1 - meltD)) * 0.85;
     mat.opacity = 0.06 + meltD * 0.5;
   }
   const turn = easeInOut(phase(simNow, T.TURN_START, T.TURN_END));
@@ -671,7 +656,7 @@ function debugCapture(simNow = 3.8, eyePos = null) {
     camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
   }
-  renderer.render(scene, camera);
+  composer.render();
   return renderer.domElement.toDataURL('image/jpeg', 0.85);
 }
 
