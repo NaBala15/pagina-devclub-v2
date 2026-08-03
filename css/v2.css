@@ -1478,16 +1478,24 @@ img{ max-width:100%; display:block; }
   background:linear-gradient(180deg, #f7ecc7, #e6cf98 45%, #bfa066);
   box-shadow:0 8px 18px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.5);
   opacity:0; pointer-events:none;
-  transition:top 1.05s cubic-bezier(.66, 0, .22, 1),
-             bottom 1.05s cubic-bezier(.66, 0, .22, 1),
-             opacity .25s ease .92s;
 }
-.js .dip-envelope:not(.is-aberto) .dip-rolo{ opacity:1; transition:none; }
 .dip-rolo.r1{ top:calc(49.2% - 15px); }
 .dip-rolo.r2{ top:auto; bottom:calc(49.2% - 15px); }
-.dip-envelope.is-aberto .dip-rolo.r1{ top:-14px; }
-.dip-envelope.is-aberto .dip-rolo.r2{ bottom:-14px; }
-.dip-envelope.is-aberto .dip-rolo{ opacity:0; }
+/* só existem durante o desenrolar: nascem na fresta e viajam às bordas */
+.dip-envelope.is-aberto .dip-rolo.r1{
+  animation:roloSobe 1.05s cubic-bezier(.66, 0, .22, 1) forwards; }
+.dip-envelope.is-aberto .dip-rolo.r2{
+  animation:roloDesce 1.05s cubic-bezier(.66, 0, .22, 1) forwards; }
+@keyframes roloSobe{
+  0%{ top:calc(49.2% - 15px); opacity:1; }
+  82%{ opacity:1; }
+  100%{ top:-14px; opacity:0; }
+}
+@keyframes roloDesce{
+  0%{ bottom:calc(49.2% - 15px); opacity:1; }
+  82%{ opacity:1; }
+  100%{ bottom:-14px; opacity:0; }
+}
 
 /* o pergaminho só existe com JS (sem JS o diploma já nasce aberto) */
 .perg{ display:none; }
@@ -1498,7 +1506,7 @@ img{ max-width:100%; display:block; }
   transition:opacity .45s ease, transform .45s ease;
 }
 .perg.is-sumindo{ opacity:0; transform:scale(.92); pointer-events:none; }
-.perg-arte{ position:relative; width:min(560px, 86vw); }
+.perg-arte{ position:relative; width:100%; }
 .perg-arte > svg{ width:100%; height:auto; display:block;
   filter:drop-shadow(0 22px 30px rgba(0,0,0,.45)); }
 .perg-dica{ font-size:.7rem; color:var(--muted); letter-spacing:.06em; }
@@ -1603,6 +1611,7 @@ img{ max-width:100%; display:block; }
   .dip-envelope .dip, .dip-rolo, .perg{ transition:none; }
   .is-quebrando .perg-caco, .is-quebrando .perg-faisca{ animation:none; }
   .is-desatando .pg-laco > *{ animation:none; }
+  .dip-envelope.is-aberto .dip-rolo{ animation:none; }
 }
 
 /* ---------- ALUNOS: título e leque na mesma tela ---------- */
