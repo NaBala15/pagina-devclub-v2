@@ -12,6 +12,8 @@
   font-weight:100 800; font-display:swap; }
 @font-face{ font-family:'Inter'; src:url('../assets/fonts/inter.woff2') format('woff2');
   font-weight:100 900; font-display:swap; }
+@font-face{ font-family:'Great Vibes'; src:url('../assets/fonts/great-vibes.woff2') format('woff2');
+  font-display:swap; }
 
 /* ---------- tokens ---------- */
 :root{
@@ -1158,70 +1160,280 @@ img{ max-width:100%; display:block; }
   .tech-track > .co:nth-child(n+16){ display:none; }   /* esconde a cópia do laço */
 }
 
-/* ---------- ALÉM DO CÓDIGO ---------- */
-.alem-grid{
-  display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
-  gap:16px; max-width:1080px;
+/* ---------- ALÉM DO CÓDIGO: trilho lateral preso na tela ----------
+   A pista dá o percurso vertical; o palco gruda (sticky) e o scroll
+   empurra o trilho pro lado. O card mais perto do centro fica em foco. */
+#alem{ padding-top:0; padding-bottom:0; }
+.alem-pista{ height:280vh; }
+.alem-palco{
+  position:sticky; top:0; height:100svh;
+  display:flex; flex-direction:column; justify-content:center;
+  overflow:hidden;
 }
+.alem-vitrine{
+  overflow:hidden;
+  margin-top:clamp(26px, 3.4vw, 44px);
+  /* as pontas somem num degradê curto; a folga do trilho (72px) é maior
+     que o degradê (56px), então card em posição nunca fica apagado */
+  -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 56px,
+                     #000 calc(100% - 56px), transparent 100%);
+  mask-image:linear-gradient(90deg, transparent 0, #000 56px,
+             #000 calc(100% - 56px), transparent 100%);
+}
+.alem-track{
+  display:flex; gap:clamp(16px, 2vw, 24px); width:max-content;
+  padding-inline:72px;
+  will-change:transform;
+}
+.alem-track .perk{
+  width:clamp(305px, 32.5vw, 400px); flex:0 0 auto; padding:26px 24px;
+  /* o driver controla opacity/scale; sem transição pra não "boiar" atrás do scroll */
+}
+#alem .perk b{ font-size:1.02rem; }
+#alem .perk p{ font-size:.9rem; }
+.alem-progresso{
+  width:min(260px, 40%); height:2px; margin-top:clamp(22px, 3vw, 34px);
+  background:var(--line); border-radius:2px;
+}
+.alem-progresso i{
+  display:block; height:100%; width:0;
+  background:var(--grad); border-radius:inherit;
+}
+
 /* cada card colore o próprio ícone com --tone (o .perk padrão é ciano) */
-.alem-grid .perk-ic{
+#alem .perk-ic{
   background:color-mix(in srgb, var(--tone, var(--cyan)) 11%, transparent);
   color:var(--tone, var(--cyan));
 }
-:root[data-theme="light"] .alem-grid .perk-ic{
+:root[data-theme="light"] #alem .perk-ic{
   /* escurece o tom pra ler sobre claro; o lime não escurece bem com
      color-mix, então o card informa --tone-txt (verde-oliva) direto */
   color:var(--tone-txt, color-mix(in srgb, var(--tone, var(--cyan)) 72%, #000));
 }
 
-/* ---------- DIPLOMA (papel lime, como a referência do organizador) ---------- */
-.cert-palco{ max-width:760px; }
-.cert{
+/* celular: sem sequestro de rolagem — trilho nativo com snap */
+@media (max-width:760px){
+  #alem{ padding-top:clamp(100px, 12vw, 180px); padding-bottom:clamp(100px, 12vw, 180px); }
+  .alem-pista{ height:auto; }
+  .alem-palco{ position:static; height:auto; overflow:visible; }
+  .alem-vitrine{
+    -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 28px,
+                       #000 calc(100% - 28px), transparent 100%);
+    mask-image:linear-gradient(90deg, transparent 0, #000 28px,
+               #000 calc(100% - 28px), transparent 100%);
+  }
+  .alem-track{
+    width:auto; overflow-x:auto; scroll-snap-type:x proximity;
+    padding:4px 40px 14px; scrollbar-width:none;
+    transform:none !important;   /* o driver de desktop nunca manda aqui */
+  }
+  .alem-track .perk{
+    width:min(82vw, 330px); scroll-snap-align:center;
+    opacity:1 !important; transform:none !important;
+  }
+  .alem-progresso{ display:none; }
+}
+/* movimento reduzido: grade parada, tudo visível */
+@media (prefers-reduced-motion: reduce){
+  #alem{ padding-top:clamp(100px, 12vw, 180px); padding-bottom:clamp(100px, 12vw, 180px); }
+  .alem-pista{ height:auto; }
+  .alem-palco{ position:static; height:auto; overflow:visible; }
+  .alem-vitrine{ -webkit-mask-image:none; mask-image:none; }
+  .alem-track{ width:auto; flex-wrap:wrap; padding-inline:0; transform:none !important; }
+  .alem-track .perk{ opacity:1 !important; transform:none !important; }
+  .alem-progresso{ display:none; }
+}
+
+/* ---------- DIPLOMA CLÁSSICO (referência visual enviada pelo usuário) ----------
+   Documento de papel: as cores são fixas nos dois temas, como um PDF.
+   Tudo desenhado em CSS/SVG — nenhuma imagem. */
+.dip-palco{ max-width:1080px; }
+.dip{
+  --serif:Georgia, 'Times New Roman', serif;
+  --tinta:#17293e;            /* azul-marinho do texto */
+  --ouro-txt:#7a5c1c;         /* dourado legível sobre o creme */
+  --creme:#f8f1de;
   position:relative;
-  background:var(--lime); color:#0a1204;
-  border-radius:20px;
-  padding:clamp(22px, 3.4vw, 40px);
-  display:flex; flex-direction:column; gap:clamp(20px, 3vw, 34px);
-  box-shadow:0 40px 110px -35px rgba(0,0,0,.85), 0 0 90px -30px rgba(198,255,61,.4);
-  transition:box-shadow .3s ease;
+  font-family:var(--serif);
+  background:linear-gradient(160deg, #16273f, #0c1a30 60%, #0a1526);
+  border-radius:10px;
+  padding:clamp(14px, 2vw, 22px);
+  box-shadow:0 46px 110px -38px rgba(0,0,0,.85), 0 0 80px -30px rgba(217,185,106,.28);
 }
-/* o papel é lime nos dois temas — é um documento, não uma superfície da página */
-.cert:hover{ box-shadow:0 46px 120px -32px rgba(0,0,0,.9), 0 0 120px -26px rgba(198,255,61,.55); }
-.cert-topo{
-  display:flex; justify-content:space-between; align-items:center; gap:12px;
-  border-bottom:1.5px solid rgba(10,18,4,.28); padding-bottom:14px;
+/* filetes dourados duplos da moldura */
+.dip::before{
+  content:""; position:absolute; inset:clamp(7px, 1vw, 11px);
+  border:1px solid rgba(217,185,106,.9); border-radius:7px;
+  box-shadow:inset 0 0 0 3px rgba(217,185,106,.25);
+  pointer-events:none; z-index:2;
 }
-.cert-marca{ font-weight:700; font-size:.95rem; }
-.cert-selo{
-  font-size:.66rem; font-weight:700; letter-spacing:.04em;
-  border:1.5px solid rgba(10,18,4,.55); border-radius:999px;
-  padding:5px 12px; white-space:nowrap;
+.dip-canto{
+  position:absolute; width:34px; height:34px; z-index:3; pointer-events:none;
 }
-.cert-rotulo{
-  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase;
-  opacity:.75; margin-bottom:10px;
+.dip-canto::before{
+  content:""; position:absolute; inset:0;
+  border-top:2px solid #d9b96a; border-left:2px solid #d9b96a;
 }
-.cert-nome{
-  display:block; font-family:var(--display); font-weight:800;
-  font-size:clamp(1.7rem, 4vw, 2.6rem); letter-spacing:-.02em;
-  line-height:1.05; margin-bottom:12px;
+.dip-canto::after{
+  content:""; position:absolute; top:7px; left:7px; width:9px; height:9px;
+  background:linear-gradient(135deg, #f2dc96, #9a7a35);
+  transform:rotate(45deg);
 }
-.cert-texto{ font-size:.92rem; max-width:46ch; line-height:1.55; }
-.cert-texto b{ font-weight:800; }
-.cert-base{
-  display:flex; justify-content:space-between; align-items:flex-end; gap:16px;
-  border-top:1.5px solid rgba(10,18,4,.28); padding-top:14px;
+.dip-canto.c1{ top:14px; left:14px; }
+.dip-canto.c2{ top:14px; right:14px; transform:scaleX(-1); }
+.dip-canto.c3{ bottom:44px; left:14px; transform:scaleY(-1); }
+.dip-canto.c4{ bottom:44px; right:14px; transform:scale(-1); }
+
+/* o papel */
+.dip-papel{
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0, rgba(255,255,255,.5), transparent 55%),
+    radial-gradient(140% 120% at 100% 100%, rgba(170,140,80,.20), transparent 55%),
+    radial-gradient(140% 120% at 0 100%, rgba(170,140,80,.16), transparent 55%),
+    repeating-linear-gradient(0deg, rgba(160,130,70,.045) 0 1px, transparent 1px 8px),
+    var(--creme);
+  border-radius:5px;
+  padding:clamp(20px, 4vw, 40px) clamp(18px, 8vw, 110px) clamp(16px, 2.6vw, 26px);
+  text-align:center;
+  color:var(--tinta);
 }
-.cert-serial{ font-size:.66rem; letter-spacing:.12em; opacity:.75; }
-.cert-ass{
-  display:flex; flex-direction:column; align-items:center; gap:2px;
-  font-size:.7rem; font-weight:600;
+
+/* marcas d'água e fantasma */
+.dip-agua{
+  position:absolute; top:34%; z-index:0;
+  font-weight:bold; font-size:clamp(44px, 8vw, 92px); letter-spacing:.08em;
+  color:rgba(178,146,84,.16); transform:rotate(-9deg); pointer-events:none;
 }
-.cert-ass svg{ width:104px; height:30px; }
-.cert-palco .co-nota{ margin-top:16px; }
-@media (max-width:560px){
-  .cert-base{ flex-direction:column; align-items:flex-start; }
-  .cert-selo{ font-size:.6rem; }
+.dip-agua.a1{ left:2%; }
+.dip-agua.a2{ right:1%; }
+.dip-fantasma{
+  position:absolute; right:2%; top:26%; z-index:0;
+  font-family:var(--serif); font-style:italic;
+  font-size:clamp(120px, 18vw, 230px); line-height:1;
+  color:rgba(178,146,84,.10); pointer-events:none;
+}
+/* só o CONTEÚDO sobe acima das marcas d'água; as peças absolutas
+   (águas, fantasma, selos, fita, registro) mantêm o próprio position */
+.dip-cab, .dip-lei, .dip-titulo, .dip-a, .dip-nome,
+.dip-curso, .dip-data, .dip-pe{ position:relative; z-index:1; }
+
+/* carimbo MEC e registro */
+.dip-selo-mec{ position:absolute; top:16px; left:18px; width:clamp(74px, 9vw, 104px); height:auto; }
+.dip-registro{
+  position:absolute; top:22px; right:22px;
+  font-size:.58rem; letter-spacing:.14em; color:#6b5a34; text-align:right; line-height:1.7;
+}
+.dip-registro b{ font-size:.66rem; color:#4c3a12; }
+
+/* fita lateral com medalha */
+.dip-fita{
+  position:absolute; left:clamp(40px, 6vw, 74px); top:0; bottom:32%;
+  width:clamp(44px, 5.4vw, 64px); z-index:2;
+  background:linear-gradient(90deg, #0d1c33, #1d3557 45%, #0d1c33);
+  clip-path:polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 22px), 0 100%);
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+}
+.dip-selo-fita{
+  position:absolute; left:50%; top:44%;
+  width:clamp(88px, 10.4vw, 126px); height:auto;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 8px 14px rgba(60,40,0,.4));
+}
+
+/* cabeçalho */
+.dip-brasao{ width:clamp(74px, 8.4vw, 100px); height:auto; margin:0 auto 4px; display:block; }
+.dip-inst{
+  font-size:clamp(1.14rem, 2.6vw, 1.72rem); font-weight:700;
+  letter-spacing:.035em; color:#14293f; text-transform:uppercase;
+}
+.dip-sub{
+  font-size:.66rem; letter-spacing:.32em; color:var(--ouro-txt);
+  margin:5px 0 clamp(12px, 1.8vw, 18px);
+}
+
+/* corpo do texto */
+.dip-lei{
+  font-size:clamp(.56rem, 1.1vw, .7rem); letter-spacing:.06em;
+  line-height:1.75; color:#4c4335; margin:0 auto 6px; max-width:88ch;
+}
+.dip-titulo{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  font-size:clamp(.94rem, 2vw, 1.3rem); font-weight:700;
+  letter-spacing:.3em; color:var(--ouro-txt);
+  margin:10px 0 2px; text-indent:.3em;   /* compensa o letter-spacing final */
+}
+.dip-titulo::before, .dip-titulo::after{
+  content:"—✦—"; font-size:.72em; letter-spacing:0; text-indent:0;
+  color:#b28c3e; flex:0 0 auto;
+}
+.dip-a{ font-size:.72rem; letter-spacing:.4em; color:#4c4335; margin-bottom:2px; text-indent:.4em; }
+.dip-nome{
+  font-family:'Great Vibes', 'Segoe Script', cursive;
+  font-size:clamp(2.3rem, 5.6vw, 3.6rem); line-height:1.15; color:#17324e;
+  margin:0 auto 12px; max-width:90%;
+}
+.dip-nome::after{
+  content:""; display:block; width:min(420px, 76%); height:1px; margin:2px auto 0;
+  background:linear-gradient(90deg, transparent, #b28c3e 20%, #b28c3e 80%, transparent);
+}
+.dip-curso{
+  font-size:clamp(.98rem, 2.1vw, 1.34rem); font-weight:700;
+  letter-spacing:.05em; color:#14293f; text-transform:uppercase; margin:8px 0;
+}
+.dip-data{ font-style:italic; font-size:.8rem; color:#3f3a2e; margin:10px 0 clamp(14px, 2.4vw, 22px); }
+
+/* rodapé: verificação · assinatura · medalha · assinatura · aviso */
+.dip-pe{
+  display:grid; grid-template-columns:auto 1fr auto 1fr auto;
+  gap:clamp(10px, 1.6vw, 18px); align-items:end;
+}
+.dip-caixa{
+  border:1px solid #c8ab6a; border-radius:4px;
+  background:rgba(255,255,255,.42);
+  padding:8px 10px; text-align:left;
+  font-size:.5rem; letter-spacing:.1em; line-height:1.7; color:#4c4335;
+}
+.dip-verif{ display:flex; align-items:center; gap:9px; }
+.dip-qr{ width:52px; height:52px; flex:0 0 auto; background:#fff;
+  border:3px solid #fff; box-sizing:content-box; image-rendering:pixelated; }
+.dip-verif b{ font-size:.56rem; color:#17293e; }
+.dip-aviso{ text-align:center; }
+.dip-aviso b{ display:block; font-size:.56rem; color:#7a1d1d; letter-spacing:.08em; margin-bottom:4px; }
+.dip-ass{ display:flex; flex-direction:column; align-items:center; gap:2px; padding-bottom:2px; }
+.dip-firma{
+  font-family:'Great Vibes', 'Segoe Script', cursive;
+  font-size:clamp(1.3rem, 2.4vw, 1.7rem); color:#1d3557; line-height:1;
+  transform:rotate(-3deg);
+}
+.dip-linha{ width:min(180px, 90%); height:1px; background:#8a7648; margin-top:3px; }
+.dip-ass b{ font-size:.66rem; letter-spacing:.04em; color:#2b2417; }
+.dip-ass small{ font-size:.52rem; letter-spacing:.14em; color:#6b5a34; }
+.dip-selo-centro{ width:clamp(70px, 8.4vw, 96px); height:auto; justify-self:center;
+  filter:drop-shadow(0 6px 12px rgba(60,40,0,.35)); }
+
+/* lema na faixa azul de baixo */
+.dip-lema{
+  margin-top:clamp(10px, 1.6vw, 14px);
+  text-align:center; font-size:.62rem; letter-spacing:.26em;
+  color:#d9b96a; text-transform:uppercase;
+}
+
+/* respiro pro conteúdo não brigar com a fita em telas médias */
+@media (max-width:1060px){
+  .dip-agua{ font-size:clamp(38px, 7vw, 70px); }
+}
+@media (max-width:720px){
+  .dip-fita, .dip-fantasma{ display:none; }
+  .dip-papel{ padding-inline:clamp(14px, 4vw, 26px); }
+  .dip-selo-mec{ width:64px; top:10px; left:10px; }
+  .dip-registro{ top:14px; right:12px; font-size:.5rem; }
+  .dip-pe{ grid-template-columns:1fr 1fr; }
+  .dip-verif{ order:4; }
+  .dip-aviso{ order:5; }
+  .dip-selo-centro{ order:3; grid-column:1 / -1; }
+  .dip-ass{ padding-top:8px; }
+  .dip-lema{ letter-spacing:.14em; }
 }
 
 /* ---------- ALUNOS: título e leque na mesma tela ---------- */

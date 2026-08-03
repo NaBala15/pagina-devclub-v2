@@ -649,6 +649,56 @@
     }
   }
 
+  /* ---------- 9d. ALÉM DO CÓDIGO: o scroll vertical empurra o trilho de lado ----------
+     Nada de rAF nem de roubar a roda do mouse: o driver lê a posição da
+     pista a cada evento de scroll (que já chega no ritmo dos frames) e
+     traduz o progresso vertical em deslocamento horizontal. */
+  var alemPista = $('#alemPista');
+  if (alemPista && !REDUCED) {
+    var alemPalco = $('#alemPalco');
+    var alemTrack = $('#alemTrack');
+    var alemBarra = $('#alemBarra');
+    var alemCards = $$('.perk', alemTrack);
+    var alemMobile = window.matchMedia('(max-width: 760px)');
+
+    function limparAlem() {
+      alemTrack.style.transform = '';
+      alemCards.forEach(function (c) { c.style.opacity = ''; c.style.transform = ''; });
+    }
+
+    function moverAlem() {
+      if (alemMobile.matches) return;         // celular: scroll nativo cuida
+      var r = alemPista.getBoundingClientRect();
+      var percurso = r.height - window.innerHeight;
+      if (percurso <= 0) return;
+      var p = Math.min(1, Math.max(0, -r.top / percurso));
+      var sobra = alemTrack.scrollWidth - alemPalco.clientWidth;
+      alemTrack.style.transform = 'translate3d(' + (-p * sobra) + 'px,0,0)';
+      alemBarra.style.width = (p * 100).toFixed(2) + '%';
+
+      /* foco: o card mais perto do centro da tela fica inteiro; os outros
+         recuam um pouco — dá profundidade sem esconder ninguém */
+      var centro = window.innerWidth / 2;
+      alemCards.forEach(function (card) {
+        var b = card.getBoundingClientRect();
+        var dist = Math.abs(b.left + b.width / 2 - centro) / centro;
+        var perto = Math.max(0, 1 - Math.min(dist, 1));
+        card.style.opacity = (0.55 + 0.45 * Math.min(1, perto * 1.7)).toFixed(3);
+        card.style.transform = 'scale(' + (0.93 + 0.07 * Math.min(1, perto * 1.5)).toFixed(4) + ')';
+      });
+    }
+
+    window.addEventListener('scroll', moverAlem, { passive: true });
+    window.addEventListener('resize', moverAlem);
+    if (alemMobile.addEventListener) {
+      alemMobile.addEventListener('change', function (e) {
+        if (e.matches) limparAlem(); else moverAlem();
+      });
+    }
+    window.addEventListener('load', moverAlem);
+    moverAlem();
+  }
+
   /* ---------- 10. DECK DE PROJETOS: arrasta, auto-avança, navega ---------- */
   var deck = $('#deck');
   if (deck) {

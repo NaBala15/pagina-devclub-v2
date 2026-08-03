@@ -40,11 +40,11 @@
     content="Formações práticas de programação com mentoria humana ao vivo.">
   <meta name="twitter:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
 
-  <script src="js/theme.js?v=23"></script>
-  <link rel="stylesheet" href="css/v2.css?v=23">
-  <link rel="stylesheet" href="css/intro-head.css?v=23">
-  <link rel="stylesheet" href="css/polish.css?v=23">
-  <link rel="stylesheet" href="css/theme.css?v=23">
+  <script src="js/theme.js?v=30"></script>
+  <link rel="stylesheet" href="css/v2.css?v=30">
+  <link rel="stylesheet" href="css/intro-head.css?v=30">
+  <link rel="stylesheet" href="css/polish.css?v=30">
+  <link rel="stylesheet" href="css/theme.css?v=30">
 
   <!-- Three.js (intro 3D "dentro da mente") -->
   <script type="importmap">
@@ -55,7 +55,7 @@
   }
 }
 </script>
-  <script type="module" src="js/intro-head.js?v=23"></script>
+  <script type="module" src="js/intro-head.js?v=30"></script>
 </head>
 
 <body>
@@ -593,28 +593,32 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
     <!-- ================= ALÉM DO CÓDIGO (gabarito do organizador) ================= -->
     <section class="section" id="alem">
-      <p class="eyebrow mono reveal">alem_do_codigo.json</p>
-      <h2 class="reveal">Tudo que você precisa <span class="grad">além do código</span>.</h2>
-      <p class="section-sub reveal">Carreira não é só sintaxe — o resto do caminho também vem junto.</p>
-
-      <div class="alem-grid">
-        <div class="perk reveal" style="--tone:var(--cyan)"><span class="perk-ic mono">cv</span><b>Recrutadora no seu canto</b>
+      <div class="alem-pista" id="alemPista">
+        <div class="alem-palco" id="alemPalco">
+          <p class="eyebrow mono reveal">alem_do_codigo.json</p>
+          <h2 class="reveal">Tudo que você precisa <span class="grad">além do código</span>.</h2>
+          <p class="section-sub reveal">Carreira não é só sintaxe — role e veja o resto do caminho vir junto.</p>
+          <div class="alem-vitrine"><div class="alem-track" id="alemTrack">
+        <div class="perk" style="--tone:var(--cyan)"><span class="perk-ic mono">cv</span><b>Recrutadora no seu canto</b>
           <p>Encontro semanal com a recrutadora da casa: currículo, LinkedIn e portfólio afiados pra vaga certa.</p>
         </div>
-        <div class="perk reveal" style="--tone:var(--violet)"><span class="perk-ic mono">zen</span><b>Terapeuta de alta performance</b>
+        <div class="perk" style="--tone:var(--violet)"><span class="perk-ic mono">zen</span><b>Terapeuta de alta performance</b>
           <p>Cabeça em ordem pra maratona: sessões em grupo sobre foco, ansiedade e constância nos estudos.</p>
         </div>
-        <div class="perk reveal" style="--tone:var(--magenta)"><span class="perk-ic mono">ai*</span><b>Agentes de IA 24h</b>
+        <div class="perk" style="--tone:var(--magenta)"><span class="perk-ic mono">ai*</span><b>Agentes de IA 24h</b>
           <p>Tutor humano dorme; os agentes não. Tira-dúvidas treinado no conteúdo, a qualquer hora do dia.</p>
         </div>
-        <div class="perk reveal" style="--tone:var(--lime); --tone-txt:var(--lime-txt)"><span class="perk-ic mono">sos</span><b>Suporte humano 7 dias</b>
+        <div class="perk" style="--tone:var(--lime); --tone-txt:var(--lime-txt)"><span class="perk-ic mono">sos</span><b>Suporte humano 7 dias</b>
           <p>Gente de verdade respondendo todos os dias — inclusive no domingo de véspera de entrega.</p>
         </div>
-        <div class="perk reveal" style="--tone:var(--cyan)"><span class="perk-ic mono">job</span><b>Vagas exclusivas</b>
+        <div class="perk" style="--tone:var(--cyan)"><span class="perk-ic mono">job</span><b>Vagas exclusivas</b>
           <p>Mural com vagas que as empresas parceiras abrem só pra alunos DevClub, antes do LinkedIn.</p>
         </div>
-        <div class="perk reveal" style="--tone:var(--violet)"><span class="perk-ic mono">++</span><b>Comunidade viva</b>
+        <div class="perk" style="--tone:var(--violet)"><span class="perk-ic mono">++</span><b>Comunidade viva</b>
           <p>Milhares de devs na mesma jornada: networking, duplas de estudo e code review entre alunos.</p>
+        </div>
+          </div></div>
+          <div class="alem-progresso" aria-hidden="true"><i id="alemBarra"></i></div>
         </div>
       </div>
     </section>
@@ -1098,29 +1102,124 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
       <p class="section-sub reveal">Escola reconhecida pelo MEC: além do portfólio no GitHub, você sai com certificado
         oficial de conclusão.</p>
 
-      <div class="cert-palco reveal">
-        <div class="cert" data-tilt>
-          <header class="cert-topo">
-            <span class="cert-marca mono">&gt;DevClub</span>
-            <span class="cert-selo mono">MEC ✓ reconhecida</span>
-          </header>
-          <div class="cert-corpo">
-            <p class="cert-rotulo mono">certificado de conclusão</p>
-            <b class="cert-nome">Seu Nome Aqui</b>
-            <p class="cert-texto">concluiu a formação <b>Full Stack</b> — 480 horas de código,
-              projetos reais e mentorias ao vivo.</p>
+      <div class="dip-palco reveal">
+        <div class="dip" data-tilt>
+          <span class="dip-canto c1" aria-hidden="true"></span>
+          <span class="dip-canto c2" aria-hidden="true"></span>
+          <span class="dip-canto c3" aria-hidden="true"></span>
+          <span class="dip-canto c4" aria-hidden="true"></span>
+
+          <div class="dip-papel">
+            <span class="dip-agua a1" aria-hidden="true">MODELO</span>
+            <span class="dip-agua a2" aria-hidden="true">FICTÍCIO</span>
+            <span class="dip-fantasma" aria-hidden="true">&lt;/&gt;</span>
+
+            <!-- carimbo MEC (canto sup. esq.) -->
+            <svg class="dip-selo dip-selo-mec" width="104" height="104" viewBox="0 0 120 120" aria-hidden="true">
+              <defs>
+                <radialGradient id="mecRad" cx="38%" cy="30%" r="80%">
+                  <stop offset="0" stop-color="#f7e6a8"/><stop offset=".55" stop-color="#d9b96a"/>
+                  <stop offset="1" stop-color="#9a7a35"/>
+                </radialGradient>
+                <linearGradient id="mecLin" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#f2dc96"/><stop offset=".5" stop-color="#c9a552"/>
+                  <stop offset="1" stop-color="#8a6d2a"/>
+                </linearGradient>
+              </defs>
+              <circle cx="60" cy="60" r="53" fill="none" stroke="url(#mecLin)" stroke-width="7"
+                stroke-dasharray="2.6 2.1"/>
+              <circle cx="60" cy="60" r="47" fill="url(#mecRad)"/>
+              <circle cx="60" cy="60" r="40" fill="none" stroke="#7c6126" stroke-width="1"/>
+              <text x="60" y="47" text-anchor="middle" font-size="9" letter-spacing="1"
+                fill="#4c3a12" font-family="Georgia, serif">RECONHECIDO</text>
+              <text x="60" y="62" text-anchor="middle" font-size="13" font-weight="bold"
+                fill="#3f2f0d" font-family="Georgia, serif">PELO MEC</text>
+              <text x="60" y="75" text-anchor="middle" font-size="6.4" letter-spacing=".6"
+                fill="#4c3a12" font-family="Georgia, serif">PORTARIA Nº 2.009</text>
+              <text x="60" y="84" text-anchor="middle" font-size="6.4" letter-spacing=".6"
+                fill="#4c3a12" font-family="Georgia, serif">DE 12/03/2009</text>
+              <text x="60" y="96" text-anchor="middle" font-size="8" fill="#4c3a12">★</text>
+            </svg>
+
+            <p class="dip-registro">CÓDIGO DE REGISTRO<br><b>DVC 2026 / 000123</b></p>
+
+            <!-- fita lateral com medalha -->
+            <div class="dip-fita" aria-hidden="true">
+              <svg class="dip-selo dip-selo-fita" width="126" height="126" viewBox="0 0 140 140"><defs><radialGradient id="fitaRad" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#f7e6a8"/><stop offset=".55" stop-color="#d9b96a"/><stop offset="1" stop-color="#9a7a35"/></radialGradient></defs>
+                <path id="arcoFita" fill="none" d="M70,70 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/>
+                <circle cx="70" cy="70" r="62" fill="url(#fitaRad)"/>
+                <circle cx="70" cy="70" r="55" fill="none" stroke="#7c6126" stroke-width="1.4"/>
+                <circle cx="70" cy="70" r="34" fill="none" stroke="#7c6126" stroke-width="1"/>
+                <text font-size="10.5" letter-spacing="2.1" fill="#4c3a12" font-family="Georgia, serif">
+                  <textPath href="#arcoFita">DEVCLUB ✦ ESCOLA DE TECNOLOGIA ✦ DESDE 2009</textPath>
+                </text>
+                <text x="70" y="80" text-anchor="middle" font-size="26" font-weight="bold"
+                  fill="#3f2f0d" font-family="'JetBrains Mono', monospace">&gt;_</text>
+              </svg>
+            </div>
+
+            <header class="dip-cab">
+              <svg class="dip-brasao" width="100" height="69" viewBox="0 0 140 96" aria-hidden="true"><defs><linearGradient id="braLin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2dc96"/><stop offset=".5" stop-color="#c9a552"/><stop offset="1" stop-color="#8a6d2a"/></linearGradient></defs>
+                <path d="M70 10 L102 18 V47 C102 66 89 78 70 86 C51 78 38 66 38 47 V18 Z"
+                  fill="#14293f" stroke="url(#braLin)" stroke-width="2.5"/>
+                <text x="70" y="58" text-anchor="middle" font-size="26" font-weight="bold"
+                  fill="url(#braLin)" font-family="'JetBrains Mono', monospace">&gt;_</text>
+                <path d="M30 66 C18 52 16 36 24 22" fill="none" stroke="url(#braLin)"
+                  stroke-width="3" stroke-linecap="round" stroke-dasharray=".1 7.5"/>
+                <path d="M110 66 C122 52 124 36 116 22" fill="none" stroke="url(#braLin)"
+                  stroke-width="3" stroke-linecap="round" stroke-dasharray=".1 7.5"/>
+                <text x="70" y="8" text-anchor="middle" font-size="9" fill="#b28c3e">★ ★ ★</text>
+              </svg>
+              <h3 class="dip-inst">DevClub — Instituto de Tecnologia</h3>
+              <p class="dip-sub">ENSINO PRÁTICO DE EXCELÊNCIA · DESDE 2009</p>
+            </header>
+
+            <p class="dip-lei">A DIREÇÃO DO DEVCLUB — INSTITUTO DE TECNOLOGIA, NO USO DE SUAS ATRIBUIÇÕES E TENDO EM VISTA A CONCLUSÃO DA FORMAÇÃO, CONFERE O TÍTULO DE</p>
+            <p class="dip-titulo">DESENVOLVEDOR FULL STACK</p>
+            <p class="dip-a">A</p>
+            <p class="dip-nome">Seu Nome Aqui</p>
+            <p class="dip-lei">NACIONALIDADE BRASILEIRA, NATURAL DE SÃO PAULO – SP, NASCIDO EM 01 DE JANEIRO DE 1998, RG 12.345.678-9 SSP/SP, CPF 123.456.789-00, POR HAVER CONCLUÍDO EM 12 DE DEZEMBRO DE 2026, COM 480 HORAS, A FORMAÇÃO DE</p>
+            <p class="dip-curso">Tecnologia em Desenvolvimento de Software</p>
+            <p class="dip-lei">E POR TER INTEGRALIZADO TODOS OS PROJETOS E MENTORIAS PREVISTOS NA TRILHA, DE ACORDO COM AS DISPOSIÇÕES DO PROGRAMA, OUTORGA-LHE O PRESENTE DIPLOMA, A FIM DE QUE POSSA GOZAR DE TODOS OS DIREITOS E PRERROGATIVAS LEGAIS.</p>
+            <p class="dip-data">São Paulo – SP, 12 de dezembro de 2026.</p>
+
+            <footer class="dip-pe">
+              <div class="dip-caixa dip-verif">
+                <svg class="dip-qr" viewBox="0 0 21 21" aria-hidden="true"><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM12 0h1v1h-1zM14 0h1v1h-1zM15 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h1v1h-1zM12 1h1v1h-1zM14 1h1v1h-1zM20 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM11 2h1v1h-1zM14 2h1v1h-1zM16 2h1v1h-1zM17 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM14 3h1v1h-1zM16 3h1v1h-1zM17 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM9 4h1v1h-1zM12 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM17 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM14 5h1v1h-1zM20 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM16 6h1v1h-1zM17 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM8 7h1v1h-1zM9 7h1v1h-1zM12 7h1v1h-1zM1 8h1v1h-1zM6 8h1v1h-1zM8 8h1v1h-1zM9 8h1v1h-1zM13 8h1v1h-1zM14 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM1 9h1v1h-1zM4 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM1 10h1v1h-1zM2 10h1v1h-1zM4 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM15 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM1 11h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM19 11h1v1h-1zM0 12h1v1h-1zM2 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM11 12h1v1h-1zM12 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM20 12h1v1h-1zM8 13h1v1h-1zM10 13h1v1h-1zM11 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM16 13h1v1h-1zM17 13h1v1h-1zM18 13h1v1h-1zM0 14h1v1h-1zM1 14h1v1h-1zM2 14h1v1h-1zM3 14h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM0 15h1v1h-1zM6 15h1v1h-1zM11 15h1v1h-1zM13 15h1v1h-1zM14 15h1v1h-1zM16 15h1v1h-1zM18 15h1v1h-1zM0 16h1v1h-1zM2 16h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM9 16h1v1h-1zM11 16h1v1h-1zM14 16h1v1h-1zM15 16h1v1h-1zM16 16h1v1h-1zM18 16h1v1h-1zM0 17h1v1h-1zM2 17h1v1h-1zM3 17h1v1h-1zM4 17h1v1h-1zM6 17h1v1h-1zM10 17h1v1h-1zM15 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM20 17h1v1h-1zM0 18h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM6 18h1v1h-1zM8 18h1v1h-1zM12 18h1v1h-1zM17 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM13 19h1v1h-1zM17 19h1v1h-1zM19 19h1v1h-1zM0 20h1v1h-1zM1 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM9 20h1v1h-1zM11 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM17 20h1v1h-1zM18 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1z" fill="#1d2a3a"/></svg>
+                <p>VERIFICAÇÃO<br>DE AUTENTICIDADE<br><b>devclub.dev/validar</b><br>DVC-2026-8F3A</p>
+              </div>
+              <div class="dip-ass">
+                <span class="dip-firma">Felipe Prado</span>
+                <span class="dip-linha"></span>
+                <b>Felipe Prado</b>
+                <small>COORDENADOR DE ENSINO</small>
+              </div>
+              <svg class="dip-selo dip-selo-centro" width="96" height="96" viewBox="0 0 120 120" aria-hidden="true"><defs><radialGradient id="cenRad" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#f7e6a8"/><stop offset=".55" stop-color="#d9b96a"/><stop offset="1" stop-color="#9a7a35"/></radialGradient></defs>
+                <path id="arcoCentro" fill="none" d="M60,60 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/>
+                <circle cx="60" cy="60" r="52" fill="url(#cenRad)"/>
+                <circle cx="60" cy="60" r="45" fill="none" stroke="#7c6126" stroke-width="1.2"/>
+                <circle cx="60" cy="60" r="27" fill="none" stroke="#7c6126" stroke-width="1"/>
+                <text font-size="9.5" letter-spacing="1.8" fill="#4c3a12" font-family="Georgia, serif">
+                  <textPath href="#arcoCentro">DEVCLUB ✦ INSTITUTO DE TECNOLOGIA ✦ DESDE 2009</textPath>
+                </text>
+                <text x="60" y="68" text-anchor="middle" font-size="20" font-weight="bold"
+                  fill="#3f2f0d" font-family="'JetBrains Mono', monospace">&gt;_</text>
+              </svg>
+              <div class="dip-ass">
+                <span class="dip-firma">Renata Lima</span>
+                <span class="dip-linha"></span>
+                <b>Renata Lima</b>
+                <small>DIREÇÃO ACADÊMICA</small>
+              </div>
+              <div class="dip-caixa dip-aviso">
+                <b>ESTE DOCUMENTO É<br>UM MODELO FICTÍCIO</b>
+                <small>SEM VALIDADE OFICIAL<br>EXEMPLO DE DESIGN</small>
+              </div>
+            </footer>
           </div>
-          <footer class="cert-base">
-            <span class="cert-serial mono">||||| dvc-2026-8f3a</span>
-            <span class="cert-ass">
-              <svg viewBox="0 0 120 34" aria-hidden="true"><path
-                  d="M6 26c14-16 22-18 26-12s-6 14-2 16 12-6 20-14 12-8 16-4-2 10 4 10 10-8 18-10 16 2 26 6"
-                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-              Felipe Prado · coordenação
-            </span>
-          </footer>
+
+          <p class="dip-lema">IDEIAS VIRAM CÓDIGO. PESSOAS VIRAM DEVS.</p>
         </div>
-        <p class="co-nota mono center">// projeto conceitual — documento ilustrativo</p>
       </div>
     </section>
 
@@ -1144,10 +1243,10 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="js/v2.js?v=23"></script>
-  <script src="js/scanner.js?v=23"></script>
-  <script src="js/fan.js?v=23"></script>
-  <script src="js/polish.js?v=23"></script>
+  <script src="js/v2.js?v=30"></script>
+  <script src="js/scanner.js?v=30"></script>
+  <script src="js/fan.js?v=30"></script>
+  <script src="js/polish.js?v=30"></script>
 </body>
 
 </html>
