@@ -116,6 +116,7 @@ img{ max-width:100%; display:block; }
   .hero-sub{ margin-inline:auto; }
   .hero-cta{ justify-content:center; }
   .hero-cabeca{ display:none; }
+  .hero-texto{ max-width:none; }
 }
 
 /* ---------- HERO ---------- */
@@ -125,18 +126,20 @@ img{ max-width:100%; display:block; }
   padding:0 clamp(20px, 5vw, 60px); overflow:hidden;
 }
 .hero-inner{
-  max-width:1180px; width:100%; position:relative; z-index:2;
-  display:grid; grid-template-columns:minmax(0, 1.04fr) minmax(0, .96fr);
-  gap:clamp(16px, 3vw, 48px); align-items:center;
+  /* mais largo que o hero centralizado antigo: em duas colunas, 1180px
+     deixava sobra nas laterais e espremia o texto */
+  max-width:min(1680px, 100%); width:100%; position:relative; z-index:2;
+  display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.12fr);
+  gap:clamp(16px, 3vw, 44px); align-items:center;
   text-align:left;
 }
 .hero-texto{ min-width:0; }
-/* palco da cabeça: quadrado-ish, encostado no topo da coluna */
+/* palco da cabeça: encostado na direita, ocupando o espaço que sobrava */
 .hero-cabeca{
   position:relative; min-width:0;
-  aspect-ratio:1 / 1.04;
-  max-height:min(78svh, 620px);
-  justify-self:center; width:100%;
+  aspect-ratio:1 / 1.02;
+  max-height:min(88svh, 780px);
+  justify-self:end; width:100%;
 }
 .hero-cabeca canvas{
   position:absolute; inset:0; width:100% !important; height:100% !important;
@@ -156,6 +159,17 @@ img{ max-width:100%; display:block; }
 .hero-sub b{ color:var(--cyan); font-weight:600; }
 .hero-sub .mono{ color:var(--cyan); font-size:.92em; }
 .hero-cta{ margin-top:42px; display:flex; gap:16px; flex-wrap:wrap; }
+
+/* Em duas colunas o título precisa da própria escala: o tamanho de tela
+   cheia (até 7.6rem) quebrava "Ideias viram código." em seis linhas.
+   Este bloco vem DEPOIS das regras base de propósito — media query não
+   soma especificidade, quem vence é quem aparece por último. */
+@media (min-width:901px){
+  .hero-title{ font-size:clamp(2.6rem, 3.55vw, 4.3rem); line-height:1.04; }
+  .hero .eyebrow{ margin-bottom:18px; }
+  .hero-sub{ margin-top:26px; font-size:clamp(.95rem, 1.1vw, 1.06rem); }
+  .hero-cta{ margin-top:32px; }
+}
 
 .js .hero-el{ opacity:0; transform:translateY(34px); }
 .hero-el.in{

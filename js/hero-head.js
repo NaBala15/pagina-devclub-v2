@@ -31,7 +31,7 @@ if (palco) iniciar();
 function iniciar() {
   const cena = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 50);
-  camera.position.set(0, 0, 3.25);
+  camera.position.set(0, 0, 2.86);   // perto: a cabeça ocupa mais o palco
 
   let renderer;
   try {
