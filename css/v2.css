@@ -319,7 +319,15 @@ img{ max-width:100%; display:block; }
   display:grid; grid-template-columns:repeat(2, minmax(0, 1fr));
   gap:clamp(16px, 2.2vw, 28px);
 }
-.plat-item{ margin:0; }
+.plat-item{
+  margin:0; position:relative; z-index:1;
+  /* transform não mexe no fluxo: a caixa cresce sem empurrar a grade */
+  transition:transform .45s cubic-bezier(.2, .8, .25, 1), opacity .45s ease;
+}
+/* a caixa toda cresce e passa por cima do vizinho */
+.plat-item:hover{ transform:scale(1.15); z-index:5; }
+/* e o vizinho recua, pra atenção ficar em uma tela só */
+.plat-grid:hover .plat-item:not(:hover){ transform:scale(.965); opacity:.45; }
 
 .plat-frame{
   position:relative;
@@ -327,7 +335,7 @@ img{ max-width:100%; display:block; }
   border-radius:14px; padding:0 0 1px;
   overflow:hidden;
   box-shadow:0 34px 80px -34px rgba(0,0,0,.9);
-  transition:transform .4s cubic-bezier(.2,.8,.3,1), box-shadow .4s ease;
+  transition:box-shadow .45s ease;
 }
 .plat-frame::before{
   content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
@@ -337,8 +345,7 @@ img{ max-width:100%; display:block; }
   pointer-events:none; z-index:3;
 }
 .plat-item:hover .plat-frame{
-  transform:translateY(-6px);
-  box-shadow:0 44px 100px -30px rgba(0,0,0,.95), 0 0 80px -34px rgba(139,108,255,.55);
+  box-shadow:0 54px 120px -30px rgba(0,0,0,.98), 0 0 100px -30px rgba(139,108,255,.6);
 }
 
 .plat-chrome{
@@ -356,27 +363,28 @@ img{ max-width:100%; display:block; }
 }
 
 .plat-view{ overflow:hidden; background:#0b0e18; }
-.plat-view img{
-  width:100%; height:auto; display:block;
-  transition:transform .55s cubic-bezier(.2,.8,.3,1);
-}
-/* aproxima pelo topo: é onde mora a navegação, que dá o contexto da tela */
-.plat-item:hover .plat-view img{ transform:scale(1.06); transform-origin:50% 12%; }
+.plat-view img{ width:100%; height:auto; display:block; }
 
 .plat-item figcaption{ padding:16px 4px 0; }
 .plat-item figcaption b{
   display:block; font-family:var(--display); font-size:1rem; margin-bottom:5px;
 }
 .plat-item figcaption p{ color:var(--muted); font-size:.85rem; }
+.plat-item figcaption b{ transition:color .45s ease; }
+.plat-item:hover figcaption b{ color:var(--cyan); }
 .plat .co-nota{ margin-top:clamp(16px, 2vw, 24px); }
 
 @media (max-width:820px){
   .plat-grid{ grid-template-columns:1fr; }
+  /* em coluna única não há vizinho pra sobrepor, e crescer só empurraria
+     a caixa pra fora da tela */
+  .plat-item:hover{ transform:none; }
+  .plat-grid:hover .plat-item:not(:hover){ transform:none; opacity:1; }
 }
 @media (prefers-reduced-motion: reduce){
-  .plat-frame, .plat-view img{ transition:none; }
-  .plat-item:hover .plat-frame{ transform:none; }
-  .plat-item:hover .plat-view img{ transform:none; }
+  .plat-item, .plat-frame{ transition:none; }
+  .plat-item:hover{ transform:none; }
+  .plat-grid:hover .plat-item:not(:hover){ transform:none; opacity:1; }
 }
 
 /* ---------- MENTORIAS: sala de reunião (layout do Jeff + nossa pele) ---------- */
