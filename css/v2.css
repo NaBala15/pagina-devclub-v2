@@ -600,15 +600,16 @@ img{ max-width:100%; display:block; }
 
 /* ---------- HISTÓRIA (scroll com imagens à esquerda) ---------- */
 .story{
-  display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px, 5vw, 70px);
+  /* a imagem manda: é ela que conta a passagem do tempo */
+  display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(24px, 4vw, 58px);
   align-items:start;
 }
-@media (max-width:860px){ .story{ grid-template-columns:1fr; } }
+@media (max-width:860px){ .story{ grid-template-columns:1fr; gap:clamp(28px, 5vw, 70px); } }
 .story-media{ position:sticky; top:90px; }
 @media (max-width:860px){ .story-media{ position:relative; top:0; } }
 .story-frame{
   position:relative; border-radius:var(--radius); overflow:hidden;
-  aspect-ratio:4/3.4;
+  aspect-ratio:4/3.5;
   box-shadow:0 50px 110px -40px rgba(0,0,0,.9), 0 0 80px -30px rgba(180,79,217,.35);
 }
 .story-frame::before{
@@ -625,8 +626,8 @@ img{ max-width:100%; display:block; }
 }
 .story-img.is-on{ opacity:1; transform:scale(1); }
 .story-year{
-  position:absolute; right:16px; bottom:12px; z-index:5;
-  font-size:clamp(2rem, 4vw, 3rem); font-weight:800; color:#fff;
+  position:absolute; right:20px; bottom:14px; z-index:5;
+  font-size:clamp(2.1rem, 4.4vw, 3.4rem); font-weight:800; color:#fff;
   text-shadow:0 4px 30px rgba(0,0,0,.8);
 }
 .story-steps{ display:flex; flex-direction:column; }
