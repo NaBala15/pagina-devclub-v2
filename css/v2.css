@@ -1287,16 +1287,32 @@ img{ max-width:100%; display:block; }
 /* o papel */
 .dip-papel{
   position:relative; overflow:hidden;
+  /* pergaminho com relevo: grão de ruído por cima, trama diagonal fina,
+     luz no topo e vinheta amadeirada nos cantos */
   background:
-    radial-gradient(120% 90% at 50% 0, rgba(255,255,255,.5), transparent 55%),
-    radial-gradient(140% 120% at 100% 100%, rgba(170,140,80,.20), transparent 55%),
-    radial-gradient(140% 120% at 0 100%, rgba(170,140,80,.16), transparent 55%),
-    repeating-linear-gradient(0deg, rgba(160,130,70,.045) 0 1px, transparent 1px 8px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .44 0 0 0 0 .35 0 0 0 0 .18 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)' opacity='.55'/%3E%3C/svg%3E"),
+    radial-gradient(120% 90% at 50% 0, rgba(255,255,255,.55), transparent 55%),
+    radial-gradient(140% 120% at 100% 100%, rgba(168,134,72,.26), transparent 56%),
+    radial-gradient(140% 120% at 0 100%, rgba(168,134,72,.22), transparent 56%),
+    radial-gradient(160% 100% at 50% 50%, transparent 62%, rgba(150,115,55,.18) 100%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.05) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(0deg, rgba(160,130,70,.05) 0 1px, transparent 1px 7px),
     var(--creme);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.65),
+    inset 0 0 52px rgba(150,115,55,.22);
   border-radius:5px;
   padding:clamp(20px, 4vw, 40px) clamp(18px, 8vw, 110px) clamp(16px, 2.6vw, 26px);
   text-align:center;
   color:var(--tinta);
+}
+/* placa interna em baixo-relevo: risco escuro com fio de luz por baixo */
+.dip-papel::after{
+  content:""; position:absolute; inset:11px; border-radius:3px;
+  border:1px solid rgba(146,114,58,.5);
+  box-shadow:0 1px 0 rgba(255,255,255,.55), inset 0 1px 0 rgba(120,90,40,.28),
+             inset 0 -1px 0 rgba(255,255,255,.5);
+  pointer-events:none;
 }
 
 /* marcas d'água e fantasma */
@@ -1319,7 +1335,11 @@ img{ max-width:100%; display:block; }
 .dip-curso, .dip-data, .dip-pe{ position:relative; z-index:1; }
 
 /* carimbo MEC e registro */
-.dip-selo-mec{ position:absolute; top:16px; left:18px; width:clamp(74px, 9vw, 104px); height:auto; }
+.dip-selo-mec{
+  position:absolute; top:20px; z-index:3;
+  left:calc(clamp(40px, 6vw, 74px) + clamp(44px, 5.4vw, 64px) + 16px);
+  width:clamp(74px, 9vw, 104px); height:auto;
+}
 .dip-registro{
   position:absolute; top:22px; right:22px;
   font-size:.58rem; letter-spacing:.14em; color:#6b5a34; text-align:right; line-height:1.7;
@@ -1328,14 +1348,19 @@ img{ max-width:100%; display:block; }
 
 /* fita lateral com medalha */
 .dip-fita{
-  position:absolute; left:clamp(40px, 6vw, 74px); top:0; bottom:32%;
+  position:absolute; left:clamp(40px, 6vw, 74px); top:0; bottom:30%;
   width:clamp(44px, 5.4vw, 64px); z-index:2;
-  background:linear-gradient(90deg, #0d1c33, #1d3557 45%, #0d1c33);
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.06) 0 3px, transparent 3px 7px),
+    linear-gradient(90deg, #0b1830, #1d3557 45%, #0b1830);
   clip-path:polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 22px), 0 100%);
   box-shadow:0 10px 24px rgba(0,0,0,.35);
 }
+/* a medalha fica FORA da fita: o clip-path da ponta em V recorta os filhos */
 .dip-selo-fita{
-  position:absolute; left:50%; top:44%;
+  position:absolute; z-index:3;
+  left:calc(clamp(40px, 6vw, 74px) + clamp(22px, 2.7vw, 32px));
+  top:31%;
   width:clamp(88px, 10.4vw, 126px); height:auto;
   transform:translateX(-50%);
   filter:drop-shadow(0 8px 14px rgba(60,40,0,.4));
@@ -1424,9 +1449,9 @@ img{ max-width:100%; display:block; }
   .dip-agua{ font-size:clamp(38px, 7vw, 70px); }
 }
 @media (max-width:720px){
-  .dip-fita, .dip-fantasma{ display:none; }
+  .dip-fita, .dip-selo-fita, .dip-fantasma{ display:none; }
   .dip-papel{ padding-inline:clamp(14px, 4vw, 26px); }
-  .dip-selo-mec{ width:64px; top:10px; left:10px; }
+  .dip-selo-mec{ width:64px; top:10px; left:10px !important; }
   .dip-registro{ top:14px; right:12px; font-size:.5rem; }
   .dip-pe{ grid-template-columns:1fr 1fr; }
   .dip-verif{ order:4; }
