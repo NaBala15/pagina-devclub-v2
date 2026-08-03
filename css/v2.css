@@ -1462,11 +1462,19 @@ img{ max-width:100%; display:block; }
 }
 
 /* ---------- PERGAMINHO LACRADO (abre o diploma ao quebrar o selo) ---------- */
-.dip-envelope{ position:relative; }
+.dip-envelope{
+  position:relative;
+  max-height:4000px;
+  transition:max-height 1.05s cubic-bezier(.66, 0, .22, 1);
+}
+/* fechado: só a altura do rolo + dica — sem o vão escuro do diploma inteiro */
+.js .dip-envelope:not(.is-aberto){
+  max-height:clamp(300px, 52vw, 560px);
+}
 
 /* fechado: o diploma vira uma fenda no meio (clip) e os rolos a emolduram */
 .js .dip-envelope:not(.is-aberto) .dip{
-  clip-path:inset(49.2% 1.2% round 16px);
+  clip-path:inset(50% 1.2% round 16px);   /* altura zero: nada vaza nas pontas */
   pointer-events:none;
 }
 .dip-envelope .dip{
@@ -1612,6 +1620,7 @@ img{ max-width:100%; display:block; }
   .is-quebrando .perg-caco, .is-quebrando .perg-faisca{ animation:none; }
   .is-desatando .pg-laco > *{ animation:none; }
   .dip-envelope.is-aberto .dip-rolo{ animation:none; }
+  .dip-envelope{ transition:none; }
 }
 
 /* ---------- ALUNOS: título e leque na mesma tela ---------- */
