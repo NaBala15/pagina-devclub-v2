@@ -40,22 +40,23 @@
     content="Formações práticas de programação com mentoria humana ao vivo.">
   <meta name="twitter:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
 
-  <script src="js/theme.js?v=38"></script>
-  <link rel="stylesheet" href="css/v2.css?v=38">
-  <link rel="stylesheet" href="css/intro-head.css?v=38">
-  <link rel="stylesheet" href="css/polish.css?v=38">
-  <link rel="stylesheet" href="css/theme.css?v=38">
+  <script src="js/theme.js?v=42"></script>
+  <link rel="stylesheet" href="css/v2.css?v=42">
+  <link rel="stylesheet" href="css/intro-head.css?v=42">
+  <link rel="stylesheet" href="css/polish.css?v=42">
+  <link rel="stylesheet" href="css/theme.css?v=42">
 
   <!-- Three.js (intro 3D "dentro da mente") -->
   <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/"
   }
 }
 </script>
-  <script type="module" src="js/intro-head.js?v=38"></script>
+  <script type="module" src="js/intro-head.js?v=42"></script>
+  <script type="module" src="js/hero-head.js?v=42"></script>
 </head>
 
 <body>
@@ -106,6 +107,7 @@
     <!-- ================= HERO ================= -->
     <section class="hero">
       <div class="hero-inner">
+        <div class="hero-texto">
         <p class="eyebrow mono hero-el">// você está dentro da mente de um dev</p>
         <h1 class="hero-title hero-el">
           Ideias viram <span class="grad">código</span>.<br>
@@ -120,6 +122,10 @@
           <a class="btn" href="#formacoes">Ver formações <span class="arrow">→</span></a>
           <a class="btn btn-ghost" href="#plataforma">Conhecer a plataforma</a>
         </div>
+        </div>
+
+        <!-- a mesma cabeça da intro, agora acompanhando o mouse -->
+        <div class="hero-cabeca hero-el" id="heroHead" aria-hidden="true"></div>
       </div>
       <div class="scroll-hint mono" aria-hidden="true">role pra explorar ↓</div>
     </section>
@@ -1323,10 +1329,10 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="js/v2.js?v=38"></script>
-  <script src="js/scanner.js?v=38"></script>
-  <script src="js/fan.js?v=38"></script>
-  <script src="js/polish.js?v=38"></script>
+  <script src="js/v2.js?v=42"></script>
+  <script src="js/scanner.js?v=42"></script>
+  <script src="js/fan.js?v=42"></script>
+  <script src="js/polish.js?v=42"></script>
 </body>
 
 </html>

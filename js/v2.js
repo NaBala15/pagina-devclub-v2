@@ -20,6 +20,9 @@
     $$('.hero-el').forEach(function (el, i) {
       setTimeout(function () { el.classList.add('in'); }, 120 + i * 130);
     });
+    /* a cabeça de partículas do hero só liga a GPU a partir daqui:
+       durante a intro ela estaria desenhando atrás do véu, à toa */
+    dispatchEvent(new CustomEvent('heroreveal'));
   }
   function removeVeil() {
     if (!veil) return;

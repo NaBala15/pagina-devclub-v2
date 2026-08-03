@@ -30,7 +30,7 @@ const GRAD_STOPS = [
   { t: 0.7, c: new THREE.Color('#3b57e6') },   // rosto: azul
   { t: 1.0, c: new THREE.Color('#35d6e8') },   // topo do crânio: ciano
 ];
-function gradientColor(t, out) {
+export function gradientColor(t, out) {
   for (let i = 1; i < GRAD_STOPS.length; i++) {
     if (t <= GRAD_STOPS[i].t) {
       const a = GRAD_STOPS[i - 1], b = GRAD_STOPS[i];
@@ -77,7 +77,7 @@ const phase = (now, a, b) => clamp01((now - a) / (b - a));
    --------------------------------------------------------------------- */
 
 /* ponto redondo com halo — sprite de cada partícula */
-function dotTexture() {
+export function dotTexture() {
   const c = document.createElement('canvas');
   c.width = c.height = 64;
   const g = c.getContext('2d');
@@ -375,7 +375,7 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
 /* O scan facecap tem o interior da boca (arcada dentária) modelado dentro
    do crânio. Remove os triângulos totalmente dentro dessa região — caixa
    em coordenadas de mundo do modelo, atrás dos lábios, sem tocar o rosto. */
-function removeMouthInterior(geo, wide = false) {
+export function removeMouthInterior(geo, wide = false) {
   const p = geo.attributes.position;
   const idx = geo.index;
   if (!idx) return;
