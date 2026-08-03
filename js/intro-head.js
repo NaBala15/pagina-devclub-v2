@@ -18,6 +18,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 import { gradientColor, dotTexture, removeMouthInterior } from 'head-shared';
+import { thermalColor, thermalRamp, xrayMaterial, fazCerebro, fazColuna } from 'head-xray';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -28,82 +29,6 @@ import { createGlobeIcon, createBulbIcon, createGearIcon, createQuestionIcon, cr
 const LIME = new THREE.Color('#c6ff3d');
 const CYAN = new THREE.Color('#4fe0ff');
 
-
-/* --- SINAPSES: os fios de luz da referência 5 ---------------------------
-   Textura de 1px de altura que se repete ao longo do tubo: a base fica
-   acesa fraca (o fio existe sempre) e dois pulsos correm por cima. Animar
-   o offset dela faz a luz viajar pelo fio. */
-function strandTexture() {
-  const c = document.createElement('canvas');
-  c.width = 256; c.height = 1;
-  const g = c.getContext('2d');
-  const grad = g.createLinearGradient(0, 0, 256, 0);
-  grad.addColorStop(0.00, 'rgba(255,255,255,.28)');
-  grad.addColorStop(0.14, 'rgba(255,255,255,1)');
-  grad.addColorStop(0.24, 'rgba(255,255,255,.28)');
-  grad.addColorStop(0.55, 'rgba(255,255,255,.22)');
-  grad.addColorStop(0.66, 'rgba(255,255,255,.85)');
-  grad.addColorStop(0.76, 'rgba(255,255,255,.24)');
-  grad.addColorStop(1.00, 'rgba(255,255,255,.28)');
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 256, 1);
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(3, 1);
-  return tex;
-}
-
-/* Cada fio dá pouco mais de uma volta na cabeça, subindo enquanto gira, com
-   o raio ondulando pra ora encostar no crânio, ora se soltar dele. */
-function fazSinapses() {
-  const grupo = new THREE.Group();
-  const CORES = ['#35d6e8', '#b44fd9', '#8b6cff', '#35d6e8', '#e2409f', '#5ce1ff', '#8b6cff'];
-  for (let s = 0; s < CORES.length; s++) {
-    const semente = s * 1.37;
-    const pontos = [];
-    const K = 90;
-    /* medidas reais do modelo: meia-largura 0.63 em X, 0.79 em Z (a cabeça
-       é mais funda que larga) e o raio cai perto do topo do crânio */
-    const RX = 0.63, RZ = 0.79, TOPO = 0.8;
-    for (let k = 0; k <= K; k++) {
-      const t = k / K;
-      const a = t * Math.PI * 2.3 + semente;
-      /* começa mais alto: concentra os fios na calota, longe do queixo */
-      const y = -0.28 + t * (0.95 + (s % 3) * 0.07) + Math.sin(a * 0.85 + semente) * 0.08;
-      const kk = Math.min(1, Math.abs(y) / TOPO);
-      const perfil = 1 - 0.42 * kk * kk;        // estreita em direção ao topo
-      /* folga > 1 mantém o fio POR FORA da pele; varia por fio e ao longo
-         do trajeto, então uns encostam e outros se soltam */
-      let folga = 1.09 + (s % 4) * 0.055 + Math.sin(a * 1.6 + semente) * 0.05;
-      /* passando na FRENTE do rosto o fio arqueia pra longe, em vez de
-         deitar sobre os olhos — lá é onde a cena tem seu clímax */
-      const frente = Math.max(0, Math.sin(a));
-      const naAlturaDoRosto = y < 0.3 ? 1 : 0.25;
-      folga += frente * naAlturaDoRosto * 0.34;
-      pontos.push(new THREE.Vector3(
-        Math.cos(a) * RX * perfil * folga,
-        y,
-        Math.sin(a) * RZ * perfil * folga
-      ));
-    }
-    const curva = new THREE.CatmullRomCurve3(pontos);
-    const geo = new THREE.TubeGeometry(curva, 170, 0.0088 + (s % 2) * 0.0026, 7, false);
-    const tex = strandTexture();
-    tex.offset.x = s * 0.31;
-    const mat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(CORES[s]).multiplyScalar(2.6),  // passa do limiar do bloom
-      map: tex,
-      transparent: true, opacity: 0,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      toneMapped: false,
-    });
-    const fio = new THREE.Mesh(geo, mat);
-    fio.userData.vel = 0.09 + (s % 4) * 0.035;    // cada pulso corre num ritmo
-    grupo.add(fio);
-  }
-  return grupo;
-}
 
 /* Quantidade de partículas da cabeça (equilíbrio visual x performance) */
 const COUNT = 16000;
@@ -311,7 +236,7 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
     jitter[i] = Math.random() * Math.PI * 2;
 
     /* cada partícula já voa na cor do degradê do seu destino */
-    gradientColor((p.y + HEAD_H / 2) / HEAD_H, tint);
+    thermalColor((0.85 - p.z) / 1.7, tint);   // frente ciano, nuca laranja
     colors[i * 3] = tint.r; colors[i * 3 + 1] = tint.g; colors[i * 3 + 2] = tint.b;
   }
 
@@ -345,36 +270,36 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
     solidColors[i * 3] = tint.r; solidColors[i * 3 + 1] = tint.g; solidColors[i * 3 + 2] = tint.b;
   }
   headGeometry.setAttribute('color', new THREE.BufferAttribute(solidColors, 3));
-  const solidMat = new THREE.MeshStandardMaterial({
-    vertexColors: true, roughness: 0.5, metalness: 0.0,
-    transparent: true, opacity: 0,
+  /* --- RAIO-X: a pele fica transparente e só as bordas acendem ---
+     A rampa térmica é lida pelo eixo frente→trás: min=+0.85 (rosto) dá o
+     ciano e max=-0.85 (nuca) dá o laranja, como na referência. */
+  const rampa = thermalRamp();
+  const solidMat = xrayMaterial({
+    rampa, eixo: 'z', min: 0.85, max: -0.85, poder: 1.9, brilho: 2.9,
   });
   const solid = new THREE.Mesh(headGeometry, solidMat);
   head.add(solid);
 
-  /* CONTORNO: uma casca por dentro-fora (BackSide) um pouco maior que o
-     rosto. Como só a parte de trás é desenhada, sobra exatamente a borda —
-     e o additive faz essa borda virar luz. É o "rim light" das referências,
-     sem precisar de shader próprio. */
-  const rimMat = new THREE.MeshBasicMaterial({
-    vertexColors: true,
-    side: THREE.BackSide,
-    transparent: true, opacity: 0,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    /* a cor vai acima de 1 de propósito: as cores do degradê sozinhas ficam
-       abaixo do limiar do bloom e a borda não acenderia. toneMapped:false
-       deixa esses valores passarem inteiros até o pós-processamento. */
-    toneMapped: false,
+  /* --- CÉREBRO: o .glb traz só a pele, então o miolo é gerado --- */
+  const cerebroMat = xrayMaterial({
+    rampa, eixo: 'z', min: 1.6, max: -0.9, poder: 1.5, brilho: 2.2,
   });
-  rimMat.color.setRGB(3, 3, 3);
-  const rim = new THREE.Mesh(headGeometry, rimMat);
-  rim.scale.setScalar(1.045);   // colada: a partir de ~1.10 descola da cabeça
-  head.add(rim);
+  const cerebro = fazCerebro(cerebroMat);
+  cerebro.position.set(0, 0.27, -0.05);
+  head.add(cerebro);
 
-  /* sinapses: entram no grupo da cabeça, então giram junto com ela */
-  const sinapses = fazSinapses();
-  head.add(sinapses);
+  /* --- COLUNA CERVICAL: a parte mais quente da imagem --- */
+  const colunaMat = xrayMaterial({
+    rampa, eixo: 'y', min: 1.0, max: -0.05, poder: 1.4, brilho: 2.7,
+  });
+  const coluna = fazColuna(colunaMat);
+  coluna.position.set(0, -0.16, -0.34);   // atrás e mais baixo: desce pela nuca
+  head.add(coluna);
+
+  const xrayMats = [solidMat, cerebroMat, colunaMat];
+
+
+
 
   /* luzes de estúdio pro degradê ler como na referência */
   const keyLight = new THREE.DirectionalLight('#ffffff', 1.6);
@@ -462,7 +387,7 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
-  return { scene, camera, renderer, composer, bloom, head, points, geo, start, target, jitter, eye, eyeMat, leftEyeMat, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solid, solidMat, rimMat, sinapses };
+  return { scene, camera, renderer, composer, bloom, head, points, geo, start, target, jitter, eye, eyeMat, leftEyeMat, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solid, solidMat, xrayMats };
 }
 
 
@@ -523,19 +448,9 @@ try {
   );
 } catch (e) { failed = true; }
 
-/* opacidade dos fios: acompanham o rosto sólido */
-function acendeSinapses(grupo, k) {
-  for (let i = 0; i < grupo.children.length; i++) {
-    grupo.children[i].material.opacity = k * 0.9;
-  }
-}
-
-/* os pulsos correm ao longo de cada fio, cada um no seu ritmo */
-function correSinapses(grupo, t) {
-  for (let i = 0; i < grupo.children.length; i++) {
-    const fio = grupo.children[i];
-    fio.material.map.offset.x = -t * fio.userData.vel;
-  }
+/* pele, cérebro e coluna acendem juntos (a opacidade do raio-X é uniform) */
+function acendeRaioX(mats, k) {
+  for (let i = 0; i < mats.length; i++) mats[i].uniforms.uOpacidade.value = k;
 }
 
 /* ---------------------------------------------------------------------
@@ -555,7 +470,7 @@ function ensureRendererSize(renderer, camera, composer) {
 }
 
 function run(onDone) {
-  const { scene, camera, renderer, composer, head, geo, start, target, jitter, eye, eyeMat, leftEyeMat, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat, rimMat, sinapses } = state;
+  const { scene, camera, renderer, composer, head, geo, start, target, jitter, eye, eyeMat, leftEyeMat, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat, xrayMats } = state;
 
   ensureRendererSize(renderer, camera, composer);
   document.body.appendChild(renderer.domElement);
@@ -619,7 +534,6 @@ function run(onDone) {
 
     /* cintilação: com bloom, variar o tamanho do ponto vira brilho pulsando */
     mat.size = 0.014 + Math.sin(now * 1.9) * 0.0022;
-    correSinapses(sinapses, now);
 
     /* 1. partículas convergem pra cabeça (+ respiração sutil depois) */
     const form = easeOut(phase(now, 0, T.FORM_END));
@@ -635,7 +549,7 @@ function run(onDone) {
 
     /* 1b. partículas se CONDENSAM na cabeça sólida com degradê */
     const solidIn = easeInOut(phase(now, T.FORM_END, T.FORM_END + 1.0));
-    solidMat.opacity = solidIn; rimMat.opacity = (solidIn) * 0.85; acendeSinapses(sinapses, (solidIn));
+    acendeRaioX(xrayMats, solidIn);
     mat.opacity = 1 - solidIn * 0.94;   // resta um brilho sutil de partículas
 
     /* 2. ideias orbitam em 3D; quando a cabeça vira, são ABSORVIDAS —
@@ -667,7 +581,7 @@ function run(onDone) {
        nada do interior (orelha, etc.) aparece quando a câmera entra */
     const melt = clamp01((dive - 0.62) / 0.26);
     if (melt > 0) {
-      solidMat.opacity = solidIn * (1 - melt); rimMat.opacity = (solidIn * (1 - melt)) * 0.85; acendeSinapses(sinapses, (solidIn * (1 - melt)));
+      acendeRaioX(xrayMats, solidIn * (1 - melt));
       mat.opacity = 0.06 + melt * 0.5;              // partículas voltam a brilhar
     }
 
@@ -700,14 +614,13 @@ function run(onDone) {
    posição do olho ao vivo antes de fixar a constante EYE. */
 function debugCapture(simNow = 3.8, eyePos = null) {
   if (!state) return null;
-  const { scene, camera, renderer, composer, head, geo, target, eyeMat, leftEyeMat, eye, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat, rimMat, sinapses } = state;
+  const { scene, camera, renderer, composer, head, geo, target, eyeMat, leftEyeMat, eye, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat, xrayMats } = state;
   ensureRendererSize(renderer, camera, composer);
   const pos = geo.getAttribute('position');
   pos.array.set(target);
   pos.needsUpdate = true;
-  correSinapses(sinapses, simNow);
   const solidInD = easeInOut(phase(simNow, T.FORM_END, T.FORM_END + 1.0));
-  solidMat.opacity = solidInD; rimMat.opacity = (solidInD) * 0.85; acendeSinapses(sinapses, (solidInD));
+  acendeRaioX(xrayMats, solidInD);
   mat.opacity = 1 - solidInD * 0.94;
   if (eyePos) { eye.position.set(...eyePos); halo.position.set(...eyePos); }
 
@@ -734,7 +647,7 @@ function debugCapture(simNow = 3.8, eyePos = null) {
   halo2Mat.opacity = eyeOnD * 0.22 * (1 - diveD);
   const meltD = clamp01((diveD - 0.62) / 0.26);
   if (meltD > 0) {
-    solidMat.opacity = solidInD * (1 - meltD); rimMat.opacity = (solidInD * (1 - meltD)) * 0.85; acendeSinapses(sinapses, (solidInD * (1 - meltD)));
+    acendeRaioX(xrayMats, solidInD * (1 - meltD));
     mat.opacity = 0.06 + meltD * 0.5;
   }
   const turn = easeInOut(phase(simNow, T.TURN_START, T.TURN_END));
