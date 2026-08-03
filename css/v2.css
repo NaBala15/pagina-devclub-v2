@@ -1461,6 +1461,133 @@ img{ max-width:100%; display:block; }
   .dip-lema{ letter-spacing:.14em; }
 }
 
+/* ---------- PERGAMINHO LACRADO (abre o diploma ao quebrar o selo) ---------- */
+.dip-envelope{ position:relative; }
+
+/* fechado: o diploma vira uma fenda no meio (clip) e os rolos a emolduram */
+.js .dip-envelope:not(.is-aberto) .dip{
+  clip-path:inset(49.2% 1.2% round 16px);
+  pointer-events:none;
+}
+.dip-envelope .dip{
+  transition:clip-path 1.05s cubic-bezier(.66, 0, .22, 1);
+}
+.dip-rolo{
+  position:absolute; left:-6px; right:-6px; height:30px; z-index:6;
+  border-radius:999px;
+  background:linear-gradient(180deg, #f7ecc7, #e6cf98 45%, #bfa066);
+  box-shadow:0 8px 18px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.5);
+  opacity:0; pointer-events:none;
+  transition:top 1.05s cubic-bezier(.66, 0, .22, 1),
+             bottom 1.05s cubic-bezier(.66, 0, .22, 1),
+             opacity .25s ease .92s;
+}
+.js .dip-envelope:not(.is-aberto) .dip-rolo{ opacity:1; transition:none; }
+.dip-rolo.r1{ top:calc(49.2% - 15px); }
+.dip-rolo.r2{ top:auto; bottom:calc(49.2% - 15px); }
+.dip-envelope.is-aberto .dip-rolo.r1{ top:-14px; }
+.dip-envelope.is-aberto .dip-rolo.r2{ bottom:-14px; }
+.dip-envelope.is-aberto .dip-rolo{ opacity:0; }
+
+/* o pergaminho só existe com JS (sem JS o diploma já nasce aberto) */
+.perg{ display:none; }
+.js .perg{
+  position:absolute; inset:0; z-index:7;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:6px;
+  transition:opacity .45s ease, transform .45s ease;
+}
+.perg.is-sumindo{ opacity:0; transform:scale(.92); pointer-events:none; }
+.perg-arte{ position:relative; width:min(420px, 78vw); }
+.perg-arte > svg{ width:100%; height:auto; display:block;
+  filter:drop-shadow(0 22px 30px rgba(0,0,0,.45)); }
+.perg-dica{ font-size:.7rem; color:var(--muted); letter-spacing:.06em; }
+
+/* --- selo de cera (botão) --- */
+.perg-selo{
+  position:absolute; left:63.5%; top:40%;
+  width:84px; height:84px; margin:-42px 0 0 -42px;
+  background:none; border:none; cursor:pointer; z-index:2;
+}
+.perg-cera{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 34% 30%, #f0685c, #cf3d33 52%, #8e1f1a);
+  border-radius:47% 53% 52% 48% / 49% 51% 47% 53%;
+  box-shadow:0 10px 22px rgba(120,20,10,.5), inset 0 3px 6px rgba(255,255,255,.28),
+             inset 0 -5px 10px rgba(90,10,5,.55);
+  transition:transform .18s ease;
+}
+.perg-cera::before{
+  content:""; position:absolute; inset:12px;
+  border:2px solid rgba(255,235,220,.4); border-radius:50%;
+}
+.perg-cera i{
+  font-style:normal; font-weight:700; font-size:1.35rem; color:#ffd9cf;
+  text-shadow:0 -1px 0 rgba(90,10,5,.8), 0 1px 1px rgba(255,255,255,.35);
+}
+.perg-selo:hover .perg-cera{ transform:scale(1.07); }
+.perg-selo:focus-visible{ outline:2px solid var(--lime); outline-offset:6px; border-radius:50%; }
+/* halo chamando o clique */
+.perg-selo::after{
+  content:""; position:absolute; inset:-9px; border-radius:50%;
+  border:2px solid rgba(228,81,74,.55);
+  animation:pergPulso 1.9s ease-out infinite;
+}
+@keyframes pergPulso{
+  0%{ transform:scale(.82); opacity:0; }
+  40%{ opacity:.9; }
+  100%{ transform:scale(1.22); opacity:0; }
+}
+
+/* --- estilhaço: 5 cacos da mesma cera + faíscas --- */
+.perg-caco, .perg-faisca{ position:absolute; opacity:0; pointer-events:none; }
+.perg-caco{
+  inset:0;
+  background:radial-gradient(circle at 34% 30%, #f0685c, #cf3d33 52%, #8e1f1a);
+  border-radius:47% 53% 52% 48% / 49% 51% 47% 53%;
+}
+.perg-caco.k1{ clip-path:polygon(50% 50%, 0 0, 62% 0); }
+.perg-caco.k2{ clip-path:polygon(50% 50%, 62% 0, 100% 38%); }
+.perg-caco.k3{ clip-path:polygon(50% 50%, 100% 38%, 78% 100%); }
+.perg-caco.k4{ clip-path:polygon(50% 50%, 78% 100%, 18% 100%); }
+.perg-caco.k5{ clip-path:polygon(50% 50%, 18% 100%, 0 0); }
+.perg-faisca{
+  left:50%; top:50%; width:7px; height:7px; border-radius:50%;
+  background:#e4514a;
+}
+.is-quebrando .perg-cera, .is-quebrando.perg-selo::after{ display:none; }
+.is-quebrando .perg-caco{ animation:pergCaco .62s cubic-bezier(.2, .7, .3, 1) forwards; }
+.is-quebrando .perg-caco.k1{ --vx:-56px; --vy:-64px; --rot:-38deg; }
+.is-quebrando .perg-caco.k2{ --vx:58px;  --vy:-52px; --rot:34deg;  animation-delay:.03s; }
+.is-quebrando .perg-caco.k3{ --vx:66px;  --vy:34px;  --rot:46deg;  animation-delay:.05s; }
+.is-quebrando .perg-caco.k4{ --vx:6px;   --vy:72px;  --rot:-22deg; animation-delay:.02s; }
+.is-quebrando .perg-caco.k5{ --vx:-64px; --vy:40px;  --rot:-46deg; animation-delay:.04s; }
+@keyframes pergCaco{
+  0%{ opacity:1; transform:none; }
+  100%{ opacity:0; transform:translate(var(--vx), var(--vy)) rotate(var(--rot)) scale(.72); }
+}
+.is-quebrando .perg-faisca{ animation:pergFaisca .55s ease-out forwards; }
+.is-quebrando .perg-faisca.f1{ --vx:-74px; --vy:-30px; }
+.is-quebrando .perg-faisca.f2{ --vx:74px;  --vy:-36px; animation-delay:.02s; }
+.is-quebrando .perg-faisca.f3{ --vx:84px;  --vy:22px;  animation-delay:.05s; }
+.is-quebrando .perg-faisca.f4{ --vx:-82px; --vy:26px;  animation-delay:.03s; }
+.is-quebrando .perg-faisca.f5{ --vx:-30px; --vy:-84px; animation-delay:.06s; }
+.is-quebrando .perg-faisca.f6{ --vx:34px;  --vy:80px;  animation-delay:.04s; }
+@keyframes pergFaisca{
+  0%{ opacity:1; transform:translate(-50%, -50%) scale(1); }
+  100%{ opacity:0; transform:translate(calc(-50% + var(--vx)), calc(-50% + var(--vy))) scale(.3); }
+}
+
+@media (max-width:720px){
+  .perg-selo{ width:64px; height:64px; margin:-32px 0 0 -32px; }
+  .perg-cera i{ font-size:1.05rem; }
+}
+@media (prefers-reduced-motion: reduce){
+  .perg-selo::after{ animation:none; opacity:0; }
+  .dip-envelope .dip, .dip-rolo, .perg{ transition:none; }
+  .is-quebrando .perg-caco, .is-quebrando .perg-faisca{ animation:none; }
+}
+
 /* ---------- ALUNOS: título e leque na mesma tela ---------- */
 #alunos{
   padding-top:clamp(44px, 5vw, 70px);

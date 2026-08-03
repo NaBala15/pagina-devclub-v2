@@ -40,11 +40,11 @@
     content="Formações práticas de programação com mentoria humana ao vivo.">
   <meta name="twitter:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
 
-  <script src="js/theme.js?v=31"></script>
-  <link rel="stylesheet" href="css/v2.css?v=31">
-  <link rel="stylesheet" href="css/intro-head.css?v=31">
-  <link rel="stylesheet" href="css/polish.css?v=31">
-  <link rel="stylesheet" href="css/theme.css?v=31">
+  <script src="js/theme.js?v=32"></script>
+  <link rel="stylesheet" href="css/v2.css?v=32">
+  <link rel="stylesheet" href="css/intro-head.css?v=32">
+  <link rel="stylesheet" href="css/polish.css?v=32">
+  <link rel="stylesheet" href="css/theme.css?v=32">
 
   <!-- Three.js (intro 3D "dentro da mente") -->
   <script type="importmap">
@@ -55,7 +55,7 @@
   }
 }
 </script>
-  <script type="module" src="js/intro-head.js?v=31"></script>
+  <script type="module" src="js/intro-head.js?v=32"></script>
 </head>
 
 <body>
@@ -1103,7 +1103,69 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
         oficial de conclusão.</p>
 
       <div class="dip-palco reveal">
-        <div class="dip" data-tilt>
+        <div class="dip-envelope" id="dipEnvelope">
+
+          <!-- pergaminho fechado (só aparece com JS; sem JS o diploma já vem aberto) -->
+          <div class="perg" id="perg">
+            <div class="perg-arte">
+              <svg viewBox="0 0 360 260" aria-hidden="true">
+                <defs>
+                  <linearGradient id="pgPapel" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#f7e9c0"/><stop offset=".45" stop-color="#eed9a0"/>
+                    <stop offset="1" stop-color="#d3b678"/>
+                  </linearGradient>
+                  <linearGradient id="pgFaixa" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e4514a"/><stop offset="1" stop-color="#a72823"/>
+                  </linearGradient>
+                </defs>
+                <g transform="rotate(-22 180 130)">
+                  <!-- corpo enrolado -->
+                  <rect x="26" y="96" width="308" height="70" rx="34" fill="url(#pgPapel)"/>
+                  <path d="M40 116 H320 M36 138 H324" stroke="#c9ab6c" stroke-width="1.4" opacity=".5" fill="none"/>
+                  <!-- ponta esquerda: espiral do rolo -->
+                  <circle cx="60" cy="131" r="34" fill="#ecd79e"/>
+                  <circle cx="60" cy="131" r="34" fill="none" stroke="#c9ab6c" stroke-width="2"/>
+                  <path d="M60 131 m-22,0 a22,22 0 1,1 44,0 a15,15 0 1,1 -30,0 a9,9 0 1,1 18,0"
+                    fill="none" stroke="#b6975a" stroke-width="2.4" stroke-linecap="round"/>
+                  <circle cx="63" cy="131" r="4.5" fill="#a3854c"/>
+                  <!-- ponta direita: aba solta do papel -->
+                  <path d="M318 96 L352 84 L344 131 L352 178 L318 166 Z" fill="#f2e2ae"/>
+                  <path d="M318 96 L344 131 L318 166" fill="none" stroke="#c9ab6c" stroke-width="1.6"/>
+                  <!-- faixa vermelha -->
+                  <path d="M216 92 h34 v78 h-34 z" fill="url(#pgFaixa)"/>
+                  <path d="M216 92 h34 v10 h-34 z" fill="#ffffff" opacity=".14"/>
+                  <!-- laço: duas alças e duas caudas com ponta em V -->
+                  <path d="M233 158 C196 150 186 186 214 196 C236 203 246 178 233 158 Z" fill="url(#pgFaixa)"/>
+                  <path d="M233 158 C270 152 282 188 254 197 C232 203 222 178 233 158 Z" fill="url(#pgFaixa)"/>
+                  <path d="M224 168 L204 226 L222 218 L230 236 Z" fill="#b32c26"/>
+                  <path d="M240 168 L262 228 L268 210 L286 220 Z" fill="#b32c26"/>
+                </g>
+              </svg>
+
+              <!-- selo de cera (botão) + cacos do estilhaço -->
+              <button class="perg-selo" id="pergSelo" aria-label="Quebrar o selo e abrir o diploma">
+                <span class="perg-cera" aria-hidden="true"><i class="mono">&gt;_</i></span>
+                <span class="perg-caco k1" aria-hidden="true"></span>
+                <span class="perg-caco k2" aria-hidden="true"></span>
+                <span class="perg-caco k3" aria-hidden="true"></span>
+                <span class="perg-caco k4" aria-hidden="true"></span>
+                <span class="perg-caco k5" aria-hidden="true"></span>
+                <span class="perg-faisca f1" aria-hidden="true"></span>
+                <span class="perg-faisca f2" aria-hidden="true"></span>
+                <span class="perg-faisca f3" aria-hidden="true"></span>
+                <span class="perg-faisca f4" aria-hidden="true"></span>
+                <span class="perg-faisca f5" aria-hidden="true"></span>
+                <span class="perg-faisca f6" aria-hidden="true"></span>
+              </button>
+            </div>
+            <p class="perg-dica mono">clique no selo para abrir o diploma</p>
+          </div>
+
+          <!-- rolos que "desenrolam" o papel durante a abertura -->
+          <span class="dip-rolo r1" aria-hidden="true"></span>
+          <span class="dip-rolo r2" aria-hidden="true"></span>
+
+          <div class="dip" data-tilt>
           <span class="dip-canto c1" aria-hidden="true"></span>
           <span class="dip-canto c2" aria-hidden="true"></span>
           <span class="dip-canto c3" aria-hidden="true"></span>
@@ -1219,6 +1281,7 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
           <p class="dip-lema">IDEIAS VIRAM CÓDIGO. PESSOAS VIRAM DEVS.</p>
         </div>
+        </div>
       </div>
     </section>
 
@@ -1242,10 +1305,10 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="js/v2.js?v=31"></script>
-  <script src="js/scanner.js?v=31"></script>
-  <script src="js/fan.js?v=31"></script>
-  <script src="js/polish.js?v=31"></script>
+  <script src="js/v2.js?v=32"></script>
+  <script src="js/scanner.js?v=32"></script>
+  <script src="js/fan.js?v=32"></script>
+  <script src="js/polish.js?v=32"></script>
 </body>
 
 </html>

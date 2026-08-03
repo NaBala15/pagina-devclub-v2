@@ -699,6 +699,33 @@
     moverAlem();
   }
 
+  /* ---------- 9e. PERGAMINHO: quebrar o selo desenrola o diploma ----------
+     Sequência por setTimeout (não por transitionend: transição congelada
+     em aba oculta nunca dispararia o evento e o diploma ficaria preso). */
+  var pergEl = $('#perg');
+  var dipEnvelope = $('#dipEnvelope');
+  if (pergEl && dipEnvelope) {
+    var pergSelo = $('#pergSelo');
+    var abrindo = false;
+    function abrirDiploma() {
+      if (abrindo) return;
+      abrindo = true;
+      var rapido = REDUCED;
+      pergSelo.classList.add('is-quebrando');
+      setTimeout(function () {
+        dipEnvelope.classList.add('is-aberto');
+        pergEl.classList.add('is-sumindo');
+      }, rapido ? 0 : 430);
+      setTimeout(function () {
+        pergEl.hidden = true;
+        var dip = $('.dip', dipEnvelope);
+        dip.setAttribute('tabindex', '-1');
+        dip.focus({ preventScroll: true });
+      }, rapido ? 50 : 1500);
+    }
+    pergSelo.addEventListener('click', abrirDiploma);
+  }
+
   /* ---------- 10. DECK DE PROJETOS: arrasta, auto-avança, navega ---------- */
   var deck = $('#deck');
   if (deck) {
