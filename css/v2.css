@@ -1461,166 +1461,196 @@ img{ max-width:100%; display:block; }
   .dip-lema{ letter-spacing:.14em; }
 }
 
-/* ---------- PERGAMINHO LACRADO (abre o diploma ao quebrar o selo) ---------- */
+/* ---------- CARTA LACRADA (abre o diploma ao romper o lacre) ----------
+   A carta usa o material da página — vidro escuro com borda em degradê —
+   em vez de imitar papel antigo. Assim o único elemento quente da cena é a
+   cera vermelha, e o olho vai direto pra onde se clica. */
 .dip-envelope{
   position:relative;
   max-height:4000px;
   transition:max-height 1.05s cubic-bezier(.66, 0, .22, 1);
 }
-/* fechado: só a altura do rolo + dica — sem o vão escuro do diploma inteiro */
-.js .dip-envelope:not(.is-aberto){
-  max-height:clamp(300px, 52vw, 560px);
-}
+/* fechado: só a altura da carta + dica */
+.js .dip-envelope:not(.is-aberto){ max-height:clamp(300px, 58vw, 640px); }
 
-/* fechado: o diploma vira uma fenda no meio (clip) e os rolos a emolduram */
+/* o diploma nasce lá dentro e sobe */
 .js .dip-envelope:not(.is-aberto) .dip{
-  clip-path:inset(50% 1.2% round 16px);   /* altura zero: nada vaza nas pontas */
+  opacity:0; transform:translateY(56px) scale(.94);
   pointer-events:none;
 }
-.dip-envelope .dip{
-  transition:clip-path 1.05s cubic-bezier(.66, 0, .22, 1);
+.dip-envelope.is-aberto .dip{
+  /* `backwards` e não `forwards`: terminada a animação o elemento volta ao
+     estilo normal, e o tilt 3D (que escreve transform inline) volta a mandar */
+  animation:dipSobe .95s cubic-bezier(.2, .8, .25, 1) .06s backwards;
 }
-.dip-rolo{
-  position:absolute; left:-6px; right:-6px; height:30px; z-index:6;
-  border-radius:999px;
-  background:linear-gradient(180deg, #f7ecc7, #e6cf98 45%, #bfa066);
-  box-shadow:0 8px 18px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.5);
-  opacity:0; pointer-events:none;
-}
-.dip-rolo.r1{ top:calc(49.2% - 15px); }
-.dip-rolo.r2{ top:auto; bottom:calc(49.2% - 15px); }
-/* só existem durante o desenrolar: nascem na fresta e viajam às bordas */
-.dip-envelope.is-aberto .dip-rolo.r1{
-  animation:roloSobe 1.05s cubic-bezier(.66, 0, .22, 1) forwards; }
-.dip-envelope.is-aberto .dip-rolo.r2{
-  animation:roloDesce 1.05s cubic-bezier(.66, 0, .22, 1) forwards; }
-@keyframes roloSobe{
-  0%{ top:calc(49.2% - 15px); opacity:1; }
-  82%{ opacity:1; }
-  100%{ top:-14px; opacity:0; }
-}
-@keyframes roloDesce{
-  0%{ bottom:calc(49.2% - 15px); opacity:1; }
-  82%{ opacity:1; }
-  100%{ bottom:-14px; opacity:0; }
+@keyframes dipSobe{
+  from{ opacity:0; transform:translateY(56px) scale(.94); }
 }
 
-/* o pergaminho só existe com JS (sem JS o diploma já nasce aberto) */
-.perg{ display:none; }
-.js .perg{
+/* ---- a carta ---- */
+.env{ display:none; }
+.js .env{
   position:absolute; inset:0; z-index:7;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
-  gap:6px;
-  transition:opacity .45s ease, transform .45s ease;
+  gap:14px;
+  transition:opacity .5s ease .25s, transform .5s ease .25s;
 }
-.perg.is-sumindo{ opacity:0; transform:scale(.92); pointer-events:none; }
-.perg-arte{ position:relative; width:100%; }
-.perg-arte > svg{ width:100%; height:auto; display:block;
-  filter:drop-shadow(0 22px 30px rgba(0,0,0,.45)); }
-.perg-dica{ font-size:.7rem; color:var(--muted); letter-spacing:.06em; }
+.env.is-sumindo{ opacity:0; transform:translateY(18px) scale(.97); pointer-events:none; }
 
-/* --- selo de cera dourado (botão; posição vem do marcador #pgNo) --- */
-.perg-selo{
-  position:absolute; left:50%; top:52%;
-  width:clamp(64px, 17.5%, 96px); aspect-ratio:1;
+.env-corpo{
+  position:relative; width:100%; aspect-ratio:2 / 1;
+  perspective:1500px;
+  background:linear-gradient(158deg, rgba(24,29,52,.94), rgba(9,12,24,.97));
+  border-radius:16px;
+  box-shadow:0 46px 110px -38px rgba(0,0,0,.9), 0 0 90px -34px rgba(139,108,255,.4);
+}
+/* borda em degradê: a assinatura da página */
+.env-corpo::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+  background:var(--grad-border);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  pointer-events:none; z-index:4;
+}
+/* miolo escuro que aparece quando a aba levanta */
+.env-interior{
+  position:absolute; inset:0; border-radius:inherit;
+  background:linear-gradient(180deg, #05070f 0 52%, transparent 52%);
+  opacity:.9;
+}
+
+/* selo postal, canto superior direito */
+.env-postal{
+  position:absolute; top:6.5%; right:5%; z-index:3;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+  width:clamp(52px, 7.4%, 78px); aspect-ratio:.84;
+  background:var(--grad); border-radius:4px;
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.8);
+}
+.env-postal::before{
+  content:""; position:absolute; inset:4px;
+  border:1.5px dashed rgba(6,8,18,.5); border-radius:2px;
+}
+.env-postal b{ font-size:1rem; color:#0a0d1a; line-height:1; }
+.env-postal em{
+  font-style:normal; font-size:.42rem; letter-spacing:.1em;
+  color:rgba(10,13,26,.75); text-align:center; line-height:1.3;
+}
+
+/* endereçamento, embaixo à esquerda */
+.env-para{
+  position:absolute; left:7%; bottom:9%; z-index:3;
+  font-size:clamp(.6rem, 1.05vw, .76rem); line-height:2.1;
+  color:var(--muted); text-align:left;
+}
+.env-para span{
+  display:inline-block; min-width:3.4em;
+  color:var(--cyan); opacity:.75;
+}
+.env-para p + p{ opacity:.72; }
+
+/* a aba triangular */
+.env-aba{
+  position:absolute; left:0; right:0; top:0; height:52%;
+  z-index:2; transform-origin:top center;
+  clip-path:polygon(0 0, 100% 0, 50% 100%);
+  border-radius:16px 16px 0 0;
+  background:linear-gradient(178deg, rgba(38,45,76,.96), rgba(16,20,38,.98));
+  box-shadow:0 14px 26px -14px rgba(0,0,0,.9);
+  transition:transform .72s cubic-bezier(.55, 0, .25, 1);
+}
+/* fio de luz na dobra: dá espessura ao papel */
+.env-aba::after{
+  content:""; position:absolute; inset:0;
+  clip-path:polygon(0 0, 100% 0, 50% 100%);
+  background:linear-gradient(178deg, rgba(139,108,255,.22), transparent 34%);
+}
+.dip-envelope.is-aberto .env-aba{ transform:rotateX(-168deg); }
+
+/* ---- lacre de cera: o único ponto quente da cena ---- */
+.env-lacre{
+  position:absolute; left:50%; top:52%; z-index:5;
+  width:clamp(62px, 9.6%, 96px); aspect-ratio:1;
   transform:translate(-50%, -50%);
-  background:none; border:none; cursor:pointer; z-index:2; padding:0;
+  background:none; border:none; padding:0; cursor:pointer;
 }
-.perg-cera{
+.env-cera{
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  background:radial-gradient(circle at 34% 28%, #f7e6a8, #d9b96a 48%, #9a7a35 82%, #7c6126);
-  clip-path:polygon(100.2% 50.0%, 95.4% 57.2%, 89.8% 62.9%, 91.0% 70.9%, 90.6% 79.5%, 82.5% 82.5%, 74.6% 83.8%, 70.9% 91.0%, 65.5% 97.7%, 57.2% 95.4%, 50.0% 91.8%, 42.8% 95.4%, 34.5% 97.7%, 29.1% 91.0%, 25.4% 83.8%, 17.5% 82.5%, 9.4% 79.5%, 9.0% 70.9%, 10.2% 62.9%, 4.6% 57.2%, -0.2% 50.0%, 4.6% 42.8%, 10.2% 37.1%, 9.0% 29.1%, 9.4% 20.5%, 17.5% 17.5%, 25.4% 16.2%, 29.1% 9.0%, 34.5% 2.3%, 42.8% 4.6%, 50.0% 8.2%, 57.2% 4.6%, 65.5% 2.3%, 70.9% 9.0%, 74.6% 16.2%, 82.5% 17.5%, 90.6% 20.5%, 91.0% 29.1%, 89.8% 37.1%, 95.4% 42.8%);
-  filter:drop-shadow(0 6px 10px rgba(70,45,0,.45));
-  transition:transform .18s ease;
+  background:radial-gradient(circle at 34% 28%, #e2604f, #bd3227 46%, #7d1a16 86%);
+  clip-path:polygon(100.0% 50.0%, 95.0% 56.5%, 89.3% 61.6%, 91.4% 68.9%, 92.1% 77.0%, 84.4% 79.8%, 76.8% 81.0%, 74.6% 88.3%, 70.8% 95.5%, 62.8% 93.7%, 55.8% 90.6%, 50.0% 95.5%, 42.9% 99.5%, 37.2% 93.7%, 33.0% 87.3%, 25.4% 88.3%, 17.3% 87.8%, 15.6% 79.8%, 15.5% 72.2%, 8.6% 68.9%, 2.0% 64.1%, 5.0% 56.5%, 9.0% 50.0%, 5.0% 43.5%, 2.0% 35.9%, 8.6% 31.1%, 15.5% 27.8%, 15.6% 20.2%, 17.3% 12.2%, 25.4% 11.7%, 33.0% 12.7%, 37.2% 6.3%, 42.9% 0.5%, 50.0% 4.5%, 55.8% 9.4%, 62.8% 6.3%, 70.8% 4.5%, 74.6% 11.7%, 76.8% 19.0%, 84.4% 20.2%, 92.1% 23.0%, 91.4% 31.1%, 89.3% 38.4%, 95.0% 43.5%);
+  box-shadow:0 10px 24px -8px rgba(120,20,12,.9);
+  transition:transform .2s ease;
 }
-.perg-cera::before{
-  content:""; position:absolute; inset:16%;
-  border:2px solid rgba(110,80,25,.55); border-radius:50%;
-  box-shadow:inset 0 2px 3px rgba(255,245,200,.5), inset 0 -3px 5px rgba(90,60,10,.4);
+.env-cera::before{
+  content:""; position:absolute; inset:15%;
+  border:2px solid rgba(255,190,175,.28); border-radius:50%;
+  box-shadow:inset 0 2px 4px rgba(255,200,185,.22), inset 0 -3px 6px rgba(80,10,6,.5);
 }
-.perg-cera i{
-  font-style:normal; font-weight:700; font-size:1.15rem; color:#8a6d2a;
-  opacity:.55;
-  text-shadow:0 1px 0 rgba(255,245,200,.55), 0 -1px 0 rgba(90,60,10,.35);
+.env-cera i{
+  font-style:normal; font-weight:700; font-size:1.15rem; color:#5f120e;
+  text-shadow:0 1px 0 rgba(255,190,175,.35);
 }
-.perg-selo:hover .perg-cera{ transform:scale(1.06); }
-.perg-selo:focus-visible{ outline:2px solid var(--lime); outline-offset:6px; border-radius:50%; }
-/* halo chamando o clique */
-.perg-selo::after{
-  content:""; position:absolute; inset:-9px; border-radius:50%;
-  border:2px solid rgba(217,185,106,.6);
-  animation:pergPulso 1.9s ease-out infinite;
+.env-lacre:hover .env-cera{ transform:scale(1.07); }
+.env-lacre:focus-visible{ outline:2px solid var(--lime); outline-offset:7px; border-radius:50%; }
+.env-lacre::after{
+  content:""; position:absolute; inset:-10px; border-radius:50%;
+  border:2px solid rgba(226,96,79,.5);
+  animation:envPulso 2s ease-out infinite;
 }
-@keyframes pergPulso{
+@keyframes envPulso{
   0%{ transform:scale(.82); opacity:0; }
   40%{ opacity:.9; }
-  100%{ transform:scale(1.22); opacity:0; }
+  100%{ transform:scale(1.24); opacity:0; }
 }
 
-/* --- estilhaço: 5 cacos da mesma cera + faíscas --- */
-.perg-caco, .perg-faisca{ position:absolute; opacity:0; pointer-events:none; }
-.perg-caco{
+/* ---- a cera racha: 5 cacos + poîra ---- */
+.env-caco, .env-po{ position:absolute; opacity:0; pointer-events:none; }
+.env-caco{
   inset:0;
-  background:radial-gradient(circle at 34% 28%, #f7e6a8, #d9b96a 48%, #9a7a35 82%, #7c6126);
-  border-radius:47% 53% 52% 48% / 49% 51% 47% 53%;
+  background:radial-gradient(circle at 34% 28%, #e2604f, #bd3227 46%, #7d1a16 86%);
+  clip-path:polygon(100.0% 50.0%, 95.0% 56.5%, 89.3% 61.6%, 91.4% 68.9%, 92.1% 77.0%, 84.4% 79.8%, 76.8% 81.0%, 74.6% 88.3%, 70.8% 95.5%, 62.8% 93.7%, 55.8% 90.6%, 50.0% 95.5%, 42.9% 99.5%, 37.2% 93.7%, 33.0% 87.3%, 25.4% 88.3%, 17.3% 87.8%, 15.6% 79.8%, 15.5% 72.2%, 8.6% 68.9%, 2.0% 64.1%, 5.0% 56.5%, 9.0% 50.0%, 5.0% 43.5%, 2.0% 35.9%, 8.6% 31.1%, 15.5% 27.8%, 15.6% 20.2%, 17.3% 12.2%, 25.4% 11.7%, 33.0% 12.7%, 37.2% 6.3%, 42.9% 0.5%, 50.0% 4.5%, 55.8% 9.4%, 62.8% 6.3%, 70.8% 4.5%, 74.6% 11.7%, 76.8% 19.0%, 84.4% 20.2%, 92.1% 23.0%, 91.4% 31.1%, 89.3% 38.4%, 95.0% 43.5%);
 }
-.perg-caco.k1{ clip-path:polygon(50% 50%, 0 0, 62% 0); }
-.perg-caco.k2{ clip-path:polygon(50% 50%, 62% 0, 100% 38%); }
-.perg-caco.k3{ clip-path:polygon(50% 50%, 100% 38%, 78% 100%); }
-.perg-caco.k4{ clip-path:polygon(50% 50%, 78% 100%, 18% 100%); }
-.perg-caco.k5{ clip-path:polygon(50% 50%, 18% 100%, 0 0); }
-.perg-faisca{
-  left:50%; top:50%; width:7px; height:7px; border-radius:50%;
-  background:#e6cd8a;
+.env-po{
+  left:50%; top:50%; width:6px; height:6px; border-radius:50%;
+  background:var(--lime);   /* faíscas na cor da página, ligando ao campo de partículas */
 }
-.is-quebrando .perg-cera, .is-quebrando.perg-selo::after{ display:none; }
-.is-quebrando .perg-caco{ animation:pergCaco .62s cubic-bezier(.2, .7, .3, 1) forwards; }
-.is-quebrando .perg-caco.k1{ --vx:-56px; --vy:-64px; --rot:-38deg; }
-.is-quebrando .perg-caco.k2{ --vx:58px;  --vy:-52px; --rot:34deg;  animation-delay:.03s; }
-.is-quebrando .perg-caco.k3{ --vx:66px;  --vy:34px;  --rot:46deg;  animation-delay:.05s; }
-.is-quebrando .perg-caco.k4{ --vx:6px;   --vy:72px;  --rot:-22deg; animation-delay:.02s; }
-.is-quebrando .perg-caco.k5{ --vx:-64px; --vy:40px;  --rot:-46deg; animation-delay:.04s; }
-@keyframes pergCaco{
+.is-rompendo .env-cera, .is-rompendo.env-lacre::after{ display:none; }
+.is-rompendo .env-caco{ animation:envCaco .66s cubic-bezier(.2, .7, .3, 1) forwards; }
+.is-rompendo .env-caco.k1{ --vx:-58px; --vy:-62px; --rot:-42deg; clip-path:polygon(50% 50%, 0 0, 64% 0); }
+.is-rompendo .env-caco.k2{ --vx:62px;  --vy:-50px; --rot:36deg;  clip-path:polygon(50% 50%, 64% 0, 100% 40%); animation-delay:.03s; }
+.is-rompendo .env-caco.k3{ --vx:70px;  --vy:38px;  --rot:48deg;  clip-path:polygon(50% 50%, 100% 40%, 76% 100%); animation-delay:.05s; }
+.is-rompendo .env-caco.k4{ --vx:4px;   --vy:76px;  --rot:-20deg; clip-path:polygon(50% 50%, 76% 100%, 20% 100%); animation-delay:.02s; }
+.is-rompendo .env-caco.k5{ --vx:-66px; --vy:44px;  --rot:-50deg; clip-path:polygon(50% 50%, 20% 100%, 0 0); animation-delay:.04s; }
+@keyframes envCaco{
   0%{ opacity:1; transform:none; }
-  100%{ opacity:0; transform:translate(var(--vx), var(--vy)) rotate(var(--rot)) scale(.72); }
+  100%{ opacity:0; transform:translate(var(--vx), var(--vy)) rotate(var(--rot)) scale(.7); }
 }
-.is-quebrando .perg-faisca{ animation:pergFaisca .55s ease-out forwards; }
-.is-quebrando .perg-faisca.f1{ --vx:-74px; --vy:-30px; }
-.is-quebrando .perg-faisca.f2{ --vx:74px;  --vy:-36px; animation-delay:.02s; }
-.is-quebrando .perg-faisca.f3{ --vx:84px;  --vy:22px;  animation-delay:.05s; }
-.is-quebrando .perg-faisca.f4{ --vx:-82px; --vy:26px;  animation-delay:.03s; }
-.is-quebrando .perg-faisca.f5{ --vx:-30px; --vy:-84px; animation-delay:.06s; }
-.is-quebrando .perg-faisca.f6{ --vx:34px;  --vy:80px;  animation-delay:.04s; }
-@keyframes pergFaisca{
+.is-rompendo .env-po{ animation:envPo .6s ease-out forwards; }
+.is-rompendo .env-po.p1{ --vx:-78px; --vy:-34px; }
+.is-rompendo .env-po.p2{ --vx:80px;  --vy:-40px; animation-delay:.03s; }
+.is-rompendo .env-po.p3{ --vx:88px;  --vy:26px;  animation-delay:.06s; }
+.is-rompendo .env-po.p4{ --vx:-86px; --vy:30px;  animation-delay:.04s; }
+.is-rompendo .env-po.p5{ --vx:-26px; --vy:-88px; animation-delay:.07s; }
+.is-rompendo .env-po.p6{ --vx:30px;  --vy:84px;  animation-delay:.05s; }
+@keyframes envPo{
   0%{ opacity:1; transform:translate(-50%, -50%) scale(1); }
-  100%{ opacity:0; transform:translate(calc(-50% + var(--vx)), calc(-50% + var(--vy))) scale(.3); }
+  100%{ opacity:0; transform:translate(calc(-50% + var(--vx)), calc(-50% + var(--vy))) scale(.25); }
 }
 
-/* --- laço se desatando (dispara junto com o estilhaço) --- */
-.pg-laco > *{ transform-box:fill-box; transform-origin:center; }
-.is-desatando .pg-alca-esq, .is-desatando .pg-alca-esq-luz{
-  animation:pgAlcaE .5s ease-in forwards; }
-.is-desatando .pg-alca-dir{ animation:pgAlcaD .5s ease-in .05s forwards; }
-.is-desatando .pg-cauda-esq{ animation:pgCaudaE .68s ease-in .08s forwards; }
-.is-desatando .pg-cauda-dir{ animation:pgCaudaD .68s ease-in .12s forwards; }
-.is-desatando .pg-banda, .is-desatando .pg-banda2, .is-desatando .pg-no{
-  animation:pgBanda .45s ease-in .1s forwards; }
-@keyframes pgAlcaE{ to{ transform:translate(-46px, 26px) rotate(-38deg) scale(.45); opacity:0; } }
-@keyframes pgAlcaD{ to{ transform:translate(48px, 24px) rotate(36deg) scale(.45); opacity:0; } }
-@keyframes pgCaudaE{ to{ transform:translate(-54px, 84px) rotate(-24deg); opacity:0; } }
-@keyframes pgCaudaD{ to{ transform:translate(56px, 80px) rotate(22deg); opacity:0; } }
-@keyframes pgBanda{ to{ transform:translateY(34px) scaleY(.5); opacity:0; } }
+.env-dica{ font-size:.7rem; color:var(--muted); letter-spacing:.06em; }
 
 @media (max-width:720px){
-  .perg-cera i{ font-size:1.05rem; }
+  .env-corpo{ aspect-ratio:1.6 / 1; }
+  .env-para{ font-size:.56rem; line-height:1.9; bottom:7%; }
+  .env-lacre{ width:64px; }
+  .env-cera i{ font-size:.95rem; }
+  .env-postal{ width:52px; }
 }
 @media (prefers-reduced-motion: reduce){
-  .perg-selo::after{ animation:none; opacity:0; }
-  .dip-envelope .dip, .dip-rolo, .perg{ transition:none; }
-  .is-quebrando .perg-caco, .is-quebrando .perg-faisca{ animation:none; }
-  .is-desatando .pg-laco > *{ animation:none; }
-  .dip-envelope.is-aberto .dip-rolo{ animation:none; }
-  .dip-envelope{ transition:none; }
+  .env-lacre::after{ animation:none; opacity:0; }
+  .env-aba, .env, .dip-envelope{ transition:none; }
+  .dip-envelope.is-aberto .dip{ animation:none; }
+  .is-rompendo .env-caco, .is-rompendo .env-po{ animation:none; }
 }
 
 /* ---------- ALUNOS: título e leque na mesma tela ---------- */

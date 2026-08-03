@@ -699,51 +699,33 @@
     moverAlem();
   }
 
-  /* ---------- 9e. PERGAMINHO: quebrar o selo desenrola o diploma ----------
-     Sequência por setTimeout (não por transitionend: transição congelada
-     em aba oculta nunca dispararia o evento e o diploma ficaria preso). */
-  var pergEl = $('#perg');
+  /* ---------- 9e. CARTA LACRADA: romper o lacre abre o diploma ----------
+     Sequência por setTimeout (nunca transitionend: transição congelada em
+     aba oculta não dispara o evento e o diploma ficaria trancado). */
+  var envEl = $('#env');
   var dipEnvelope = $('#dipEnvelope');
-  if (pergEl && dipEnvelope) {
-    var pergSelo = $('#pergSelo');
-
-    /* o selo gruda no nó do laço: mede o marcador #pgNo dentro do SVG.
-       Assim a âncora sobrevive a qualquer largura de tela. */
-    function ancorarSelo() {
-      var marca = $('#pgNo', pergEl);
-      var arte = $('.perg-arte', pergEl);
-      if (!marca || !arte) return;
-      var m = marca.getBoundingClientRect();
-      var a = arte.getBoundingClientRect();
-      if (!a.width) return;
-      pergSelo.style.left = ((m.left + m.width / 2 - a.left) / a.width * 100).toFixed(2) + '%';
-      pergSelo.style.top = ((m.top + m.height / 2 - a.top) / a.height * 100).toFixed(2) + '%';
-    }
-    ancorarSelo();
-    window.addEventListener('resize', ancorarSelo);
-    window.addEventListener('load', ancorarSelo);
-
-    /* linha do tempo sincronizada (fases sobrepostas, não em fila):
-       0ms cera estilhaça · 120ms laço se desata · 400ms papel desenrola */
-    var abrindo = false;
+  if (envEl && dipEnvelope) {
+    var envLacre = $('#envLacre');
+    var rompendo = false;
     function abrirDiploma() {
-      if (abrindo) return;
-      abrindo = true;
+      if (rompendo) return;
+      rompendo = true;
       var rapido = REDUCED;
-      pergSelo.classList.add('is-quebrando');
-      setTimeout(function () { pergEl.classList.add('is-desatando'); }, rapido ? 0 : 120);
-      setTimeout(function () {
+      envLacre.classList.add('is-rompendo');          // 0ms  · a cera racha
+      setTimeout(function () {                        // 240ms · a aba abre e o diploma sobe
         dipEnvelope.classList.add('is-aberto');
-        pergEl.classList.add('is-sumindo');
-      }, rapido ? 0 : 400);
-      setTimeout(function () {
-        pergEl.hidden = true;
+      }, rapido ? 0 : 240);
+      setTimeout(function () {                        // 620ms · a carta se recolhe
+        envEl.classList.add('is-sumindo');
+      }, rapido ? 0 : 620);
+      setTimeout(function () {                        // fim   · limpeza e foco
+        envEl.hidden = true;
         var dip = $('.dip', dipEnvelope);
         dip.setAttribute('tabindex', '-1');
         dip.focus({ preventScroll: true });
-      }, rapido ? 50 : 1500);
+      }, rapido ? 50 : 1600);
     }
-    pergSelo.addEventListener('click', abrirDiploma);
+    envLacre.addEventListener('click', abrirDiploma);
   }
 
   /* ---------- 10. DECK DE PROJETOS: arrasta, auto-avança, navega ---------- */
