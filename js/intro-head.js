@@ -18,6 +18,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 import { gradientColor, dotTexture, removeMouthInterior } from 'head-shared';
+import { peleDePedra, luzesNeon } from 'head-skin';
 import { createDevLaptopIconModel } from './laptop-icon.js';
 import { createGlobeIcon, createBulbIcon, createGearIcon, createQuestionIcon, createEnvelopeIcon } from './idea-icons.js';
 
@@ -265,18 +266,18 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
     solidColors[i * 3] = tint.r; solidColors[i * 3 + 1] = tint.g; solidColors[i * 3 + 2] = tint.b;
   }
   headGeometry.setAttribute('color', new THREE.BufferAttribute(solidColors, 3));
-  const solidMat = new THREE.MeshStandardMaterial({
-    vertexColors: true, roughness: 0.5, metalness: 0.0,
-    transparent: true, opacity: 0,
-  });
+  /* a cor sai dos vértices e passa a vir das luzes: a pedra é quase branca
+     e só devolve o que os holofotes jogam nela, como na referência */
+  const solidMat = peleDePedra();
   const solid = new THREE.Mesh(headGeometry, solidMat);
   head.add(solid);
 
-  /* luzes de estúdio pro degradê ler como na referência */
-  const keyLight = new THREE.DirectionalLight('#ffffff', 1.6);
-  keyLight.position.set(-1.5, 2.2, 2.6);
-  const fillLight = new THREE.HemisphereLight('#9fb4ff', '#2a1140', 0.7);
-  scene.add(keyLight, fillLight);
+  /* holofotes neon: ficam parados na cena, então a cor da pele muda
+     conforme a cabeça gira — é o que dá vida à superfície */
+  const neon = luzesNeon();
+  scene.add(neon);
+  /* um respiro frio pra sombra não fechar em preto puro */
+  scene.add(new THREE.HemisphereLight('#6a5cff', '#150a24', 0.13));
 
   /* --- OLHO DIREITO: esfera com o reflexo da PRÓPRIA PÁGINA rolando --- */
   const screen = makePageScreen();
@@ -341,7 +342,7 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
   iconLight.position.set(2, 3, 2.5);
   scene.add(iconLight, new THREE.AmbientLight('#334', 0.6));
 
-  return { scene, camera, renderer, head, points, geo, start, target, jitter, eye, eyeMat, leftEyeMat, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solid, solidMat };
+  return { scene, camera, renderer, head, points, geo, start, target, jitter, eye, eyeMat, leftEyeMat, halo, haloMat, halo2Mat, screen, codeScreen, icons, mat, solid, solidMat, neon };
 }
 
 
@@ -387,6 +388,25 @@ try {
       }
       const headGeo = new THREE.BufferGeometry();
       headGeo.setAttribute('position', new THREE.BufferAttribute(flat, 3));
+      /* As UVs vêm junto — mas este modelo as guarda em PIXELS (chegam a
+         3477 x 4082), não no 0..1 que as texturas esperam. Sem normalizar,
+         o craquelê repetiria milhares de vezes e sumiria como ruído. */
+      if (src.attributes.uv) {
+        const uvSrc = src.attributes.uv;
+        const uv = new Float32Array(uvSrc.count * 2);
+        let uMax = 0, vMax = 0;
+        for (let i = 0; i < uvSrc.count; i++) {
+          uMax = Math.max(uMax, uvSrc.getX(i));
+          vMax = Math.max(vMax, uvSrc.getY(i));
+        }
+        const du = uMax > 1.001 ? uMax : 1;
+        const dv = vMax > 1.001 ? vMax : 1;
+        for (let i = 0; i < uvSrc.count; i++) {
+          uv[i * 2] = uvSrc.getX(i) / du;
+          uv[i * 2 + 1] = uvSrc.getY(i) / dv;
+        }
+        headGeo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      }
       if (src.index) headGeo.setIndex(src.index.clone());
       headGeo.applyMatrix4(headMesh.matrixWorld);
       const sampleGeo = headGeo.clone();
