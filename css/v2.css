@@ -135,13 +135,14 @@ img{ max-width:100%; display:block; }
 }
 .hero-texto{ min-width:0; }
 /* palco da cabeça: encostado na direita, ocupando o espaço que sobrava */
+/* A camada de partículas ocupa o HERO INTEIRO, não a coluna da direita.
+   São as partículas que saem da intro: elas precisam da largura toda pra
+   explosão atravessar a tela, e é o que deixa a teia de sinapses correr
+   de ponta a ponta. O cérebro em si é deslocado pra direita pelo JS, que
+   sabe a largura visível em unidades de mundo. */
 .hero-cerebro{
-  position:relative; min-width:0;
-  /* mais largo que alto: o cérebro é comprido no eixo da frente pro fundo,
-     e a caixa quadrada da cabeça deixava sobra em cima e embaixo */
-  aspect-ratio:1 / 0.84;
-  max-height:min(80svh, 720px);
-  justify-self:end; width:100%;
+  position:absolute; inset:0;
+  z-index:1;
   cursor:grab;
 }
 .hero-cerebro:active{ cursor:grabbing; }
@@ -149,6 +150,11 @@ img{ max-width:100%; display:block; }
   position:absolute; inset:0; width:100% !important; height:100% !important;
   display:block;
 }
+/* O texto fica por cima, mas só ELE captura o mouse: assim o arrasto e o
+   clique do cérebro funcionam em todo o resto do hero, em vez de esbarrar
+   numa caixa invisível de largura total. */
+.hero-inner{ pointer-events:none; }
+.hero-texto{ pointer-events:auto; }
 .eyebrow{ color:var(--lime); font-size:.85rem; letter-spacing:.02em; }
 .hero .eyebrow{ margin-bottom:24px; }
 .hero-title{

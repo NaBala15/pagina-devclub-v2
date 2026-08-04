@@ -27,9 +27,9 @@ const palco = document.getElementById('heroCerebro');
 const REDUZIDO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const FRACOS = (navigator.hardwareConcurrency || 8) <= 4;
-const COUNT = FRACOS ? 16000 : 26000;
-const NOS = 130;              // nós da teia em volta
-const PULSOS = 70;            // sinapses correndo pelas linhas
+const COUNT = FRACOS ? 24000 : 40000;
+const NOS = 190;              // nós da teia, espalhados pelo hero todo
+const PULSOS = 90;            // sinapses correndo pelas linhas
 const MACIEZ = 0.07;
 const TAM_PONTO = 0.020;
 
@@ -59,8 +59,26 @@ function iniciar() {
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   palco.appendChild(renderer.domElement);
 
+  /* dois grupos separados de propósito:
+       grupo = o cérebro, que gira no arrasto e fica deslocado pra direita
+       rede  = a teia de sinapses, que cobre o hero inteiro e NÃO gira junto
+     (uma teia de ponta a ponta girando com o cérebro leria como gaiola) */
   const grupo = new THREE.Group();
+  const rede = new THREE.Group();
+  cena.add(rede);
   cena.add(grupo);
+
+  /* meio-mundo visível no plano do cérebro, em unidades de cena. É o que
+     permite espalhar partículas e nós até a borda da tela sem chutar. */
+  let meiaLargura = 1, meiaAltura = 1, deslocX = 0;
+  let larguraCerebro = 2.25;                   // medida da geometria em montar()
+
+  /* Onde o cérebro fica dentro do hero, em fração da largura. Agora que a
+     camada cobre a tela inteira, ele precisa ser dimensionado pelo HERO e
+     não pelo próprio canvas: mantendo o tamanho antigo ele avançava 123px
+     por cima da coluna de texto e ainda vazava pela borda direita. */
+  const FRACAO_LARGURA = 0.42;                 // quanto da largura ele ocupa
+  const CENTRO_X = 0.70;                       // onde fica o centro dele
 
   let pontos = null, geo = null, mat = null;
   let teia = null, faisca = null, faiscaGeo = null, faiscaMat = null;
@@ -81,6 +99,22 @@ function iniciar() {
     renderer.setSize(l, a, false);
     camera.aspect = l / a;
     camera.updateProjectionMatrix();
+
+    /* quanto de mundo cabe na tela à distância do cérebro */
+    meiaAltura = Math.tan((camera.fov * Math.PI / 180) / 2) * camera.position.z;
+    meiaLargura = meiaAltura * camera.aspect;
+
+    /* o cérebro ocupa uma fração fixa da LARGURA do hero e fica centrado à
+       direita, fora da coluna de texto */
+    const alvo = meiaLargura * 2 * FRACAO_LARGURA;
+    grupo.scale.setScalar(Math.min(1.15, alvo / larguraCerebro));
+    deslocX = (CENTRO_X - 0.5) * 2 * meiaLargura;
+    grupo.position.x = deslocX;
+
+    /* a teia é gerada em caixa normalizada [-1,1] e esticada aqui: assim
+       ela acompanha qualquer proporção de tela sem ser regerada */
+    rede.scale.set(meiaLargura, meiaAltura, 0.75);
+
     if (mat) mat.uniforms.escala.value = renderer.domElement.height * 0.5;
     if (faiscaMat) faiscaMat.uniforms.escala.value = renderer.domElement.height * 0.5;
   }
@@ -234,8 +268,9 @@ function iniciar() {
     const pos = geo.attributes.position;
     const d = pontos.userData;
     const base = d.base, nrm = d.normais, fase = d.fase, atraso = d.atraso,
-          origem = d.origem, deriva = d.deriva, n = d.n;
+          origem = d.origem, dispersao = d.dispersao, deriva = d.deriva, n = d.n;
     const arr = pos.array;
+    const invEsc = 1 / (grupo.scale.x || 1);
     /* queda acelerada: distância cresce com o quadrado, como gravidade */
     const cair = desmonte * desmonte;
 
@@ -246,14 +281,30 @@ function iniciar() {
       let y = base[j + 1] + nrm[j + 1] * w;
       let z = base[j + 2] + nrm[j + 2] * w;
 
-      /* montagem escalonada: cada partícula tem seu atraso, então o
-         cérebro se fecha em onda em vez de tudo chegar no mesmo quadro */
+      /* MONTAGEM em curva de Bézier: sai do centro da tela (onde a câmera
+         da intro terminou), passa longe pelo ponto de dispersão e só então
+         é recolhida no cérebro. Uma reta origem→destino daria um "sugado
+         pro meio"; o ponto de controle no caminho é o que faz virar
+         explosão que se junta.
+         Cada partícula tem seu atraso, então o cérebro fecha em onda de
+         baixo pra cima em vez de tudo chegar no mesmo quadro. */
       if (montagem < 1) {
         const e = Math.min(1, Math.max(0, (montagem - atraso[i]) / (1 - atraso[i] + 1e-4)));
-        const s = 1 - Math.pow(1 - e, 3);       // chega freando
-        x = origem[j] + (x - origem[j]) * s;
-        y = origem[j + 1] + (y - origem[j + 1]) * s;
-        z = origem[j + 2] + (z - origem[j + 2]) * s;
+        const s = 1 - Math.pow(1 - e, 2.5);     // arranca rápido, chega freando
+        const u = 1 - s;
+        /* origem e dispersão foram guardadas em coordenadas de TELA, mas
+           estas posições são locais ao grupo do cérebro — que está
+           deslocado em X e reduzido de escala. Sem desfazer as duas coisas,
+           a explosão sairia do lugar errado e menor que a tela. */
+        const ox = (origem[j] - deslocX) * invEsc;
+        const oy = origem[j + 1] * invEsc;
+        const oz = origem[j + 2] * invEsc;
+        const cx = (dispersao[j] * meiaLargura - deslocX) * invEsc;
+        const cy = dispersao[j + 1] * meiaAltura * invEsc;
+        const cz = dispersao[j + 2] * invEsc;
+        x = u * u * ox + 2 * u * s * cx + s * s * x;
+        y = u * u * oy + 2 * u * s * cy + s * s * y;
+        z = u * u * oz + 2 * u * s * cz + s * s * z;
       }
 
       if (cair > 0) {
@@ -297,6 +348,7 @@ function iniciar() {
     const base = new Float32Array(COUNT * 3);
     const normais = new Float32Array(COUNT * 3);
     const origem = new Float32Array(COUNT * 3);
+    const dispersao = new Float32Array(COUNT * 3);
     const fase = new Float32Array(COUNT);
     const atraso = new Float32Array(COUNT);
     const deriva = new Float32Array(COUNT);
@@ -340,6 +392,16 @@ function iniciar() {
       k++;
     }
 
+    /* largura real da geometria: é ela que o medir() usa pra caber o cérebro
+       na fração de tela reservada, em vez de um número chutado */
+    let xMin = Infinity, xMax = -Infinity;
+    for (let i = 0; i < COUNT; i++) {
+      const v = base[i * 3];
+      if (v < xMin) xMin = v;
+      if (v > xMax) xMax = v;
+    }
+    larguraCerebro = xMax - xMin;
+
     for (let i = 0; i < COUNT; i++) {
       fase[i] = Math.random() * Math.PI * 2;
       /* atraso pela ALTURA: o cérebro se fecha de baixo pra cima, o que dá
@@ -347,14 +409,22 @@ function iniciar() {
       const h = (base[i * 3 + 1] + 0.9) / 1.8;
       atraso[i] = Math.min(0.85, Math.max(0, h * 0.55 + Math.random() * 0.28));
       deriva[i] = Math.random() * 2 - 1;
+      /* ORIGEM: um ponto apertado no centro da tela — é de onde a câmera da
+         intro sai, depois de mergulhar no olho. Guardado em coordenadas de
+         TELA; o laço desconta o deslocamento do cérebro, que só é conhecido
+         quando a tela é medida. */
       const [dx, dy, dz] = direcao();
-      /* o enxame começa FORA do cérebro mas dentro do quadro: com a câmera
-         em 2.82 e 40° de abertura, o campo visível na origem tem raio ~1.0,
-         então raio inicial 2.6+ deixava o primeiro segundo em branco */
-      const raioIni = 1.5 + Math.random() * 1.3;
+      const raioIni = 0.04 + Math.random() * 0.20;
       origem[i * 3] = dx * raioIni;
       origem[i * 3 + 1] = dy * raioIni;
       origem[i * 3 + 2] = dz * raioIni;
+
+      /* DISPERSÃO: onde a explosão joga a partícula antes de ela ser
+         recolhida. Normalizado em [-1,1] pra virar largura de tela cheia no
+         laço — é o que faz as partículas tomarem o hero inteiro. */
+      dispersao[i * 3] = (Math.random() * 2 - 1) * (0.55 + Math.random() * 0.65);
+      dispersao[i * 3 + 1] = (Math.random() * 2 - 1) * (0.55 + Math.random() * 0.55);
+      dispersao[i * 3 + 2] = (Math.random() * 2 - 1) * 0.9;
     }
 
     geo = new THREE.BufferGeometry();
@@ -419,7 +489,7 @@ function iniciar() {
     });
 
     pontos = new THREE.Points(geo, mat);
-    pontos.userData = { base, normais, origem, fase, atraso, deriva, n: COUNT };
+    pontos.userData = { base, normais, origem, dispersao, fase, atraso, deriva, n: COUNT };
     grupo.add(pontos);
 
     montarTeia();
@@ -433,19 +503,22 @@ function iniciar() {
      próximos. É a "constelação" da referência: dá profundidade ao redor do
      objeto e é por onde as faíscas correm. */
   function montarTeia() {
+    /* Nós espalhados na caixa NORMALIZADA [-1,1]: o medir() estica essa
+       caixa até as bordas da tela, então a teia cobre o hero de ponta a
+       ponta em qualquer proporção, sem precisar ser regerada no resize.
+       Antes eles ficavam numa casca ao redor do cérebro e a teia lia como
+       uma gaiola em volta dele. */
     const nos = [];
     for (let i = 0; i < NOS; i++) {
-      let x, y, z, l;
-      do {
-        x = Math.random() * 2 - 1; y = Math.random() * 2 - 1; z = Math.random() * 2 - 1;
-        l = Math.hypot(x, y, z);
-      } while (l > 1 || l < 1e-4);
-      const r = 1.30 + Math.random() * 0.30;
-      nos.push([x / l * r * 1.05, y / l * r * 0.80, z / l * r * 0.95]);
+      nos.push([
+        Math.random() * 2 - 1,
+        (Math.random() * 2 - 1) * 0.92,
+        Math.random() * 2 - 1,
+      ]);
     }
 
     const linhas = [];
-    const LIM = 0.78;
+    const LIM = 0.42;
     for (let i = 0; i < nos.length; i++) {
       let ligados = 0;
       for (let j = i + 1; j < nos.length && ligados < 3; j++) {
@@ -463,7 +536,7 @@ function iniciar() {
       color: new THREE.Color().fromArray(PALETAS[paleta].c),
       transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending,
     }));
-    grupo.add(teia);
+    rede.add(teia);
 
     /* as faíscas */
     const fp = new Float32Array(PULSOS * 3);
@@ -506,7 +579,7 @@ function iniciar() {
       faisca.userData.vel[i] = 0.35 + Math.random() * 0.75;
       faisca.userData.aresta[i] = (Math.random() * total) | 0;
     }
-    grupo.add(faisca);
+    rede.add(faisca);
   }
 
   montar();
@@ -536,5 +609,22 @@ function iniciar() {
   addEventListener('heroreveal', function () {
     liberado = true; avaliar(); ligar();
   }, { once: true });
-  setTimeout(function () { if (!liberado) { liberado = true; avaliar(); ligar(); } }, 7000);
+  /* Rede de segurança, caso a intro falhe e o heroreveal nunca venha.
+     Antes era um setTimeout seco de 7s — e a intro termina em 8,25s, então
+     ele disparava ANTES e o cérebro começava a se montar por trás da intro
+     ainda rodando. Agora ela pergunta se a intro saiu de cena: enquanto o
+     canvas dela existir, a rede espera. */
+  (function redeDeSeguranca() {
+    let tentativas = 0;
+    const conferir = () => {
+      if (liberado) return;
+      const introNaTela = !!document.querySelector('.head-intro-canvas');
+      if (!introNaTela || ++tentativas > 12) {   // ~24s de teto absoluto
+        liberado = true; avaliar(); ligar();
+        return;
+      }
+      setTimeout(conferir, 2000);
+    };
+    setTimeout(conferir, 2000);
+  })();
 }

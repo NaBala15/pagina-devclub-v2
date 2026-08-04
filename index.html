@@ -40,11 +40,11 @@
     content="Formações práticas de programação com mentoria humana ao vivo.">
   <meta name="twitter:image" content="https://devclub-v2.vercel.app/assets/og-devclub.jpg">
 
-  <script src="js/theme.js?v=81"></script>
-  <link rel="stylesheet" href="css/v2.css?v=81">
-  <link rel="stylesheet" href="css/intro-head.css?v=81">
-  <link rel="stylesheet" href="css/polish.css?v=81">
-  <link rel="stylesheet" href="css/theme.css?v=81">
+  <script src="js/theme.js?v=83"></script>
+  <link rel="stylesheet" href="css/v2.css?v=83">
+  <link rel="stylesheet" href="css/intro-head.css?v=83">
+  <link rel="stylesheet" href="css/polish.css?v=83">
+  <link rel="stylesheet" href="css/theme.css?v=83">
 
   <!-- Three.js (intro 3D "dentro da mente") -->
   <script type="importmap">
@@ -52,14 +52,14 @@
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.185.0/build/three.module.js",
     "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.0/examples/jsm/",
-    "head-shared": "./js/head-shared.js?v=81",
-    "head-skin": "./js/head-skin.js?v=81",
-    "cerebro-geo": "./js/cerebro-geo.js?v=81"
+    "head-shared": "./js/head-shared.js?v=83",
+    "head-skin": "./js/head-skin.js?v=83",
+    "cerebro-geo": "./js/cerebro-geo.js?v=83"
   }
 }
 </script>
-  <script type="module" src="js/intro-head.js?v=81"></script>
-  <script type="module" src="js/hero-cerebro.js?v=81"></script>
+  <script type="module" src="js/intro-head.js?v=83"></script>
+  <script type="module" src="js/hero-cerebro.js?v=83"></script>
 </head>
 
 <body>
@@ -109,6 +109,10 @@
 
     <!-- ================= HERO ================= -->
     <section class="hero">
+      <!-- camada de partículas do hero inteiro: a explosão que sai da intro
+           atravessa a largura toda e se junta no cérebro, à direita -->
+      <div class="hero-cerebro" id="heroCerebro" aria-hidden="true"></div>
+
       <div class="hero-inner">
         <div class="hero-texto">
         <p class="eyebrow mono hero-el">// você está dentro da mente de um dev</p>
@@ -127,9 +131,6 @@
         </div>
         </div>
 
-        <!-- o cérebro que a intro deixa: monta, segue o mouse, troca de cor
-             no clique e se desfaz quando a página rola -->
-        <div class="hero-cerebro hero-el" id="heroCerebro" aria-hidden="true"></div>
       </div>
       <div class="scroll-hint mono" aria-hidden="true">role pra explorar ↓</div>
     </section>
@@ -1333,10 +1334,10 @@ top = vagas.groupby(<span class="s">"stack"</span>).size()
 
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="js/v2.js?v=81"></script>
-  <script src="js/scanner.js?v=81"></script>
-  <script src="js/fan.js?v=81"></script>
-  <script src="js/polish.js?v=81"></script>
+  <script src="js/v2.js?v=83"></script>
+  <script src="js/scanner.js?v=83"></script>
+  <script src="js/fan.js?v=83"></script>
+  <script src="js/polish.js?v=83"></script>
 </body>
 
 </html>
