@@ -27,8 +27,10 @@ const LIME = new THREE.Color('#c6ff3d');
 const CYAN = new THREE.Color('#4fe0ff');
 
 
-/* Quantidade de partículas da cabeça (equilíbrio visual x performance) */
-const COUNT = 16000;
+/* Quantidade de partículas da cabeça. O laço de formação mexe em 3 floats
+   por partícula a cada quadro, então máquinas com poucos núcleos recebem
+   uma nuvem menor — melhor granulado de menos que intro travando. */
+const COUNT = (navigator.hardwareConcurrency || 8) <= 4 ? 22000 : 34000;
 
 /* A posição do olho agora é AUTOMÁTICA: o modelo facecap tem os globos
    oculares como meshes separados — usamos o centro do olho direito. */
