@@ -1,10 +1,11 @@
 /* =====================================================================
    PEÇAS COMPARTILHADAS DA CABEÇA
 
-   Usadas pela intro (js/intro-head.js) e pela cabeça do hero
-   (js/hero-head.js). Ficam aqui, e não dentro da intro, porque um módulo
-   com efeito colateral no topo (a intro carrega o .glb assim que é
-   avaliada) não pode ser importado por outro sem rodar de novo.
+   Usadas pela intro (js/intro-head.js) e pelo cérebro do hero
+   (js/hero-cerebro.js, que consome o dotTexture). Ficam aqui, e não dentro
+   da intro, porque um módulo com efeito colateral no topo (a intro carrega
+   o .glb assim que é avaliada) não pode ser importado por outro sem rodar
+   de novo.
 
    O apelido "head-shared" vem do importmap do index.html — é lá que mora
    o ?v= de cache, num lugar só.
