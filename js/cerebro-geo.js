@@ -6,17 +6,26 @@
    o olho lê é a silhueta, a fissura que separa os hemisférios e o
    desenho dos giros. Isso dá pra escrever — e custa 0 KB de asset.
 
-   A superfície é um elipsoide (comprido no eixo X, achatado no Y) com o
-   raio modulado por três coisas:
-     . os GIROS, as circunvoluções, feitos de ruído em bandas estreitas;
+   As proporções seguem a referência clássica de "raio-X" que o usuário
+   mandou (perfil azul de vidro, H/W ~0.70): lobo frontal arredondado,
+   fissura de Sylvius subindo em diagonal pra trás, lobo temporal como um
+   polegar embaixo dela, occipital redondo, cerebelo de estrias finas
+   ENCAIXADO embaixo e atrás, e o tronco descendo inclinado pra trás.
+
+   A superfície é um elipsoide com o raio modulado por:
+     . os GIROS, cristas ALONGADAS de ruído com o domínio esticado no
+       eixo frente-fundo (ruído isotrópico vira coral, não circunvolução);
      . a FISSURA LONGITUDINAL, o sulco fundo que separa os hemisférios;
      . a FISSURA LATERAL (de Sylvius), que destaca o lobo temporal.
    O cerebelo e o tronco entram como peças separadas, porque não são
    deformação do mesmo corpo — são outros corpos encostados nele.
    ===================================================================== */
 
-/* eixos: X = frente/trás, Y = cima/baixo, Z = lado a lado */
-const RX = 1.00, RY = 0.70, RZ = 0.76;
+/* eixos: X = frente/trás (+x é a FRENTE), Y = cima/baixo, Z = lado a lado.
+   RY é maior que a proporção final (~0.70 de H/W medido na referência)
+   porque as fissuras e o achatamento da base comem altura — 0.78 aqui é
+   o que devolve ~0.70 na silhueta renderizada, conferido por medição. */
+const RX = 1.00, RY = 0.78, RZ = 0.72;
 
 /* ---------- ruído de valor 3D ----------
    Não dá pra fazer giros convincentes com senoides puras: elas se repetem
@@ -44,35 +53,37 @@ function ruido(x, y, z) {
   return y0 + (y1 - y0) * w;
 }
 
-/* Giros: duas oitavas de ruído somadas viram o argumento de um seno, e
-   1-|sen| transforma as cristas em VALES ESTREITOS. É o perfil certo: no
-   cérebro real a massa é contínua e os sulcos é que são finos.
+/* Giros: oitavas de ruído viram o argumento de um seno, e 1-|sen|
+   transforma as cristas em VALES ESTREITOS — no cérebro real a massa é
+   contínua e os sulcos é que são finos.
 
-   A frequência é baixa de propósito. Na primeira tentativa usei 3.05/7.10
-   e o resultado virou chuvisco: em densidade de partículas, dobra fina não
-   lê como dobra, lê como ruído. Dobras largas e fundas é que desenham.
-
-   O domínio é ESTICADO no eixo da frente pro fundo (x amostrado numa
-   frequência bem menor que y e z). Ruído isotrópico dava manchas
-   arredondadas, tipo coral — e giro de verdade é uma crista ALONGADA,
-   quase uma minhoca, correndo no sentido do comprimento da cabeça. É esse
-   desenho que faz o olho reconhecer um cérebro em vez de um caroço. */
+   Frequência baixa e domínio ESTICADO no eixo x: na referência os giros
+   são bandas LARGAS e sinuosas correndo no sentido do comprimento. Dobra
+   fina em nuvem de pontos não lê como dobra, lê como chuvisco. */
 function trama(x, y, z) {
-  const n1 = ruido(x * 0.70, y * 2.90, z * 2.90);
-  const n2 = ruido(x * 1.60 + 31.7, y * 6.20, z * 6.20);
-  const n3 = ruido(x * 3.40 + 7.1, y * 3.40, z * 3.40);
-  return Math.sin((n1 * 2.70 + n2 * 0.75 + n3 * 0.50) * Math.PI * 2.8);
+  const n1 = ruido(x * 0.62, y * 2.30, z * 2.30);
+  const n2 = ruido(x * 1.35 + 31.7, y * 4.70, z * 4.70);
+  const n3 = ruido(x * 2.90 + 7.1, y * 2.90, z * 2.90);
+  return Math.sin((n1 * 2.75 + n2 * 0.62 + n3 * 0.42) * Math.PI * 2.5);
 }
 function giros(x, y, z) {
-  return (1 - Math.abs(trama(x, y, z))) * 0.115;
+  return (1 - Math.abs(trama(x, y, z))) * 0.125;
 }
 
 /* Peso de amostragem: perto de 0 no fundo do sulco, 1 na crista do giro.
    Deslocar o raio sozinho não bastava — o sulco só aparece de verdade
-   quando também FALTA partícula nele. Quem amostra usa isto por rejeição. */
+   quando também FALTA partícula nele. Quem amostra usa isto por rejeição.
+   Piso baixo e expoente alto = sulco realmente vazio, giro realmente
+   cheio: é daí que vem a definição. */
 export function pesoGiro(x, y, z) {
   const t = Math.abs(trama(x, y, z));
-  return 0.10 + 0.90 * Math.pow(1 - t, 0.85);
+  return 0.06 + 0.94 * Math.pow(1 - t, 1.25);
+}
+
+/* Quão perto da CRISTA do giro o ponto está (0..1). Vira brilho por
+   partícula: na referência as cristas brilham como linhas de vidro. */
+export function nivelCrista(x, y, z) {
+  return Math.pow(1 - Math.abs(trama(x, y, z)), 1.5);
 }
 
 /* raio relativo da superfície na direção (ux,uy,uz), já normalizada */
@@ -87,39 +98,33 @@ export function raio(ux, uy, uz) {
   const emCima = Math.max(0, uy + 0.15);
   r -= 0.150 * meio * emCima;
 
-  /* FISSURA LATERAL (de Sylvius) — a mais importante pra silhueta. É ela
-     que destaca o lobo temporal, aquele "polegar" que desce na frente e
-     dá ao cérebro de perfil o formato de luva de boxe em vez de ovo.
-     Corre da frente-baixo pro fundo-meio, na face de fora.
+  /* FISSURA LATERAL (de Sylvius) — a mais importante pra silhueta. Na
+     referência ela sobe em diagonal da frente-baixo pro meio-fundo, e é
+     ela que separa o lobo temporal (o "polegar") do resto.
 
-     Vale um cuidado que me custou uma tentativa: num objeto convexo visto
-     de lado, o CONTORNO nasce onde a normal é perpendicular à vista — ou
-     seja, na linha média (uz≈0), não na face lateral. Condicionar a
-     fissura a |uz| alto deixava a silhueta de perfil um ovo liso, porque a
-     linha média não recebia nada. Por isso o piso de 0.5 abaixo.
-
-     E um erro de anatomia que só apareceu desenhando a silhueta sozinha:
-     a MÁSCARA embaixo. Sem ela a fissura dava a volta e abria um segundo
-     entalhe na NUCA — o cérebro ficava com duas mordidas e não lia como
-     nada. Cérebro tem um entalhe só, na frente-baixo, entre o lobo frontal
-     e o temporal. (Convenção destes eixos: +x é a FRENTE; o cerebelo mora
-     em x = -0.60, na nuca.) */
+     Dois cuidados aprendidos a ferro:
+     . num objeto convexo visto de lado o CONTORNO nasce na linha média
+       (uz≈0), não na face lateral — daí o piso de 0.5 no forcaLado;
+     . sem a JANELA em x a fissura dava a volta e abria um segundo
+       entalhe na nuca. Cérebro tem um entalhe só, na frente. */
   const forcaLado = 0.5 + 0.5 * Math.min(1, Math.abs(uz) * 1.7);
-  const naFrente = Math.max(0, Math.min(1, (ux + 0.55) / 0.75));
-  const curva = uy - 0.02 - ux * 0.26;
-  r -= 0.350 * Math.exp(-(curva * 6.6) * (curva * 6.6)) * forcaLado * naFrente;
+  const janela = Math.max(0, Math.min(1, (ux + 0.50) / 0.80))
+               * Math.max(0, Math.min(1, (0.88 - ux) / 0.38));
+  const curva = uy + 0.215 - 0.30 * ux;      // a diagonal da referência
+  r -= 0.340 * Math.exp(-(curva * 6.0) * (curva * 6.0)) * forcaLado * janela;
 
-  /* polo temporal: o "polegar" que desce à frente, abaixo da fissura */
-  const dt = (uy + 0.56) * 3.2;
-  const temporal = Math.exp(-dt * dt) * Math.max(0, 0.25 + ux * 0.95);
-  r += 0.320 * temporal;
+  /* polo temporal: o "polegar" cheio abaixo da fissura, à frente */
+  const dt = (uy + 0.46) * 2.9;
+  const temporal = Math.exp(-dt * dt) * Math.max(0, 0.28 + ux * 0.85);
+  r += 0.300 * temporal;
 
-  /* de perfil o cérebro é uma gota: frontal mais estreito, occipital cheio */
-  r *= 1 - 0.070 * ux - 0.050 * ux * ux;
+  /* na referência frontal e occipital são ambos cheios; só um leve
+     estreitamento pra frente pra não virar um oval simétrico */
+  r *= 1 - 0.040 * ux - 0.035 * ux * ux;
 
   /* achata a base só no miolo — nas laterais o temporal continua descendo */
   const noMeio = 1 - Math.min(1, Math.abs(uz) * 1.7);
-  if (uy < -0.42) r -= (Math.abs(uy) - 0.42) * 0.34 * (0.35 + 0.65 * noMeio);
+  if (uy < -0.40) r -= (Math.abs(uy) - 0.40) * 0.30 * (0.35 + 0.65 * noMeio);
 
   return r;
 }
@@ -165,23 +170,23 @@ export function normal(ux, uy, uz, out, a, b, c) {
 }
 
 /* ---------- cerebelo ----------
-   Bola achatada atrás e embaixo, com estrias FINAS e paralelas — o
-   cerebelo tem textura de folha dobrada, bem diferente dos giros largos
-   do cérebro. É esse contraste que faz a peça ser reconhecida. */
-export const CEREBELO = { cx: -0.60, cy: -0.44, cz: 0, rx: 0.27, ry: 0.19, rz: 0.36 };
+   Na referência ele fica ENCAIXADO embaixo e atrás do occipital, em
+   forma de cunha (o topo achatado onde encosta no cérebro), coberto de
+   estrias finas e paralelas — textura de folha dobrada, o oposto dos
+   giros largos. É esse contraste que faz a peça ser reconhecida. */
+export const CEREBELO = { cx: -0.52, cy: -0.40, cz: 0, rx: 0.34, ry: 0.21, rz: 0.30 };
 
-/* estrias horizontais e finas — o cerebelo tem textura de folha dobrada, o
-   oposto dos giros largos do cérebro. É esse contraste que faz a peça ser
-   reconhecida como cerebelo e não como um caroço solto. */
 function estria(uy) {
-  return 1 - Math.abs(Math.sin(uy * Math.PI * 7.0));
+  return 1 - Math.abs(Math.sin(uy * Math.PI * 10.0));
 }
 
 export function pontoCerebelo(ux, uy, uz, out) {
-  const e = 1 + 0.130 * estria(uy);
+  const e = 1 + 0.060 * estria(uy);
+  /* cunha: o topo é achatado, é onde ele encosta no occipital */
+  const ry = CEREBELO.ry * (uy > 0 ? 0.72 : 1);
   out.set(
     CEREBELO.cx + ux * CEREBELO.rx * e,
-    CEREBELO.cy + uy * CEREBELO.ry * e,
+    CEREBELO.cy + uy * ry * e,
     CEREBELO.cz + uz * CEREBELO.rz * e
   );
   return out;
@@ -189,11 +194,16 @@ export function pontoCerebelo(ux, uy, uz, out) {
 
 /* peso de amostragem das estrias, mesmo princípio do pesoGiro */
 export function pesoCerebelo(uy) {
-  return 0.12 + 0.88 * Math.pow(estria(uy), 0.5);
+  return 0.10 + 0.90 * Math.pow(estria(uy), 0.8);
 }
 
-/* Normal REAL do cerebelo, por diferenças finitas. Antes eu passava a
-   direção da esfera como normal: a luz corria lisa por cima e o cerebelo
+/* crista das estrias, pro brilho por partícula */
+export function nivelEstria(uy) {
+  return Math.pow(estria(uy), 1.2);
+}
+
+/* Normal REAL do cerebelo, por diferenças finitas. Passar a direção da
+   esfera como normal fazia a luz correr lisa por cima e o cerebelo
    virava uma bola branca colada no cérebro, sem textura nenhuma. */
 export function normalCerebelo(ux, uy, uz, out, a, b, c) {
   const E = 0.018;
@@ -223,14 +233,13 @@ export function normalCerebelo(ux, uy, uz, out, a, b, c) {
 }
 
 /* ---------- tronco encefálico ----------
-   Tubo curto que desce do centro-baixo, afinando. Fecha a silhueta por
-   baixo: sem ele o cérebro parece flutuar cortado.
-   Na primeira versão ficou fino e comprido demais e lia como um palito —
-   agora é mais curto e mais grosso, que é a proporção real. */
+   Tubo que desce do centro-baixo AFINANDO e INCLINADO pra trás, como na
+   referência. Fecha a silhueta por baixo: sem ele o cérebro flutua
+   cortado. Fica à frente do cerebelo (cx do cerebelo é -0.52). */
 export function pontoTronco(t, ang, out) {
-  const r = 0.135 * (1 - t * 0.30);
-  const cx = -0.26 + t * 0.10;
-  const cy = -0.44 - t * 0.30;
+  const r = 0.130 * (1 - t * 0.45);
+  const cx = -0.10 - t * 0.22;
+  const cy = -0.30 - t * 0.55;
   out.set(cx + Math.cos(ang) * r, cy, Math.sin(ang) * r * 1.05);
   return out;
 }

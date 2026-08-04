@@ -21,18 +21,20 @@
 
 import * as THREE from 'three';
 import { dotTexture } from 'head-shared';
-import { ponto, normal, pesoGiro, pontoCerebelo, normalCerebelo, pesoCerebelo,
-         pontoTronco } from 'cerebro-geo';
+import { ponto, normal, pesoGiro, nivelCrista, pontoCerebelo, normalCerebelo,
+         pesoCerebelo, nivelEstria, pontoTronco } from 'cerebro-geo';
 
 const palco = document.getElementById('heroCerebro');
 const REDUZIDO = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const FRACOS = (navigator.hardwareConcurrency || 8) <= 4;
-const COUNT = FRACOS ? 24000 : 40000;
+/* alta definição = mais pontos MENORES: o grão fica fino o bastante pra
+   os sulcos vazios e as cristas acesas lerem como linhas, não como névoa */
+const COUNT = FRACOS ? 28000 : 52000;
 const NOS = 190;              // nós da teia, espalhados pelo hero todo
 const PULSOS = 90;            // sinapses correndo pelas linhas
 const MACIEZ = 0.07;
-const TAM_PONTO = 0.020;
+const TAM_PONTO = 0.018;
 
 /* As paletas do clique. A primeira é a da referência (magenta/ciano); a
    segunda é o RGB puro; a terceira é a da própria página. Cada uma são
@@ -78,8 +80,8 @@ function iniciar() {
      camada cobre a tela inteira, ele precisa ser dimensionado pelo HERO e
      não pelo próprio canvas: mantendo o tamanho antigo ele avançava 123px
      por cima da coluna de texto e ainda vazava pela borda direita. */
-  const FRACAO_LARGURA = 0.46;                 // quanto da largura ele ocupa
-  const CENTRO_X = 0.72;                       // onde fica o centro dele
+  const FRACAO_LARGURA = 0.44;                 // quanto da largura ele ocupa
+  const CENTRO_X = 0.73;                       // onde fica o centro dele
 
   let pontos = null, geo = null, mat = null;
   let teia = null, faisca = null, faiscaGeo = null, faiscaMat = null;
@@ -366,6 +368,10 @@ function iniciar() {
     const atraso = new Float32Array(COUNT);
     const deriva = new Float32Array(COUNT);
     const peso = new Float32Array(COUNT);   // velocidade de queda, independente do lado
+    /* brilho por partícula: 1 na crista do giro, 0 no fundo do sulco.
+       É o que faz as cristas brilharem como linhas de vidro na referência,
+       em vez de a superfície inteira ter o mesmo tom. */
+    const crista = new Float32Array(COUNT);
 
     const direcao = () => {
       let x, y, z, l;
@@ -379,8 +385,8 @@ function iniciar() {
     /* A repartição segue a ÁREA de cada peça, não o gosto. O cerebelo é uma
        casca bem menor que o córtex; com 17% das partículas ele saturava no
        aditivo e virava uma bola branca lisa, engolindo as próprias estrias. */
-    const N_CEREBRO = Math.round(COUNT * 0.88);
-    const N_CEREBELO = Math.round(COUNT * 0.09);
+    const N_CEREBRO = Math.round(COUNT * 0.86);
+    const N_CEREBELO = Math.round(COUNT * 0.10);
     let k = 0, tentativas = 0;
 
     /* córtex por rejeição: a chance de aceitar cai no fundo do sulco, então
@@ -392,6 +398,7 @@ function iniciar() {
       ponto(x, y, z, p); normal(x, y, z, nv, a, b, c);
       base[k * 3] = p.x; base[k * 3 + 1] = p.y; base[k * 3 + 2] = p.z;
       normais[k * 3] = nv.x; normais[k * 3 + 1] = nv.y; normais[k * 3 + 2] = nv.z;
+      crista[k] = nivelCrista(x, y, z);
       k++;
     }
     /* o cerebelo usa a mesma dupla do córtex: rejeição pelas estrias e a
@@ -406,6 +413,7 @@ function iniciar() {
       pontoCerebelo(x, y, z, p); normalCerebelo(x, y, z, nv, a, b, c);
       base[k * 3] = p.x; base[k * 3 + 1] = p.y; base[k * 3 + 2] = p.z;
       normais[k * 3] = nv.x; normais[k * 3 + 1] = nv.y; normais[k * 3 + 2] = nv.z;
+      crista[k] = nivelEstria(y);
       k++;
     }
     while (k < COUNT) {
@@ -413,7 +421,18 @@ function iniciar() {
       pontoTronco(tt, ang, p);
       base[k * 3] = p.x; base[k * 3 + 1] = p.y; base[k * 3 + 2] = p.z;
       normais[k * 3] = Math.cos(ang); normais[k * 3 + 1] = 0; normais[k * 3 + 2] = Math.sin(ang);
+      crista[k] = 0.45;
       k++;
+    }
+
+    /* ESPELHO: a geometria tem +x como frente, que na tela cai à direita —
+       mas na referência o cérebro olha pra ESQUERDA (e aqui ele mora no
+       lado direito do hero, então olhar pra esquerda é olhar pro texto).
+       Negar x de posição E de normal espelha sem mexer em mais nada:
+       pontos não têm winding pra quebrar. */
+    for (let i = 0; i < COUNT; i++) {
+      base[i * 3] = -base[i * 3];
+      normais[i * 3] = -normais[i * 3];
     }
 
     /* largura real da geometria: é ela que o medir() usa pra caber o cérebro
@@ -462,6 +481,7 @@ function iniciar() {
     geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(base.slice(), 3));
     geo.setAttribute('normal', new THREE.BufferAttribute(normais, 3));
+    geo.setAttribute('crista', new THREE.BufferAttribute(crista, 1));
 
     const pal = PALETAS[paleta];
     mat = new THREE.ShaderMaterial({
@@ -479,6 +499,7 @@ function iniciar() {
         dirC: { value: new THREE.Vector3(0.05, -0.78, 0.30).normalize() },
       },
       vertexShader: [
+        'attribute float crista;',
         'uniform float tamanho, escala, pulso;',
         'uniform vec3 corA, corB, corC, dirA, dirB, dirC;',
         'varying vec3 vCor;',
@@ -500,7 +521,11 @@ function iniciar() {
         '  float borda = pow(1.0 - abs(dot(nv, olho)), 3.0);',
         '  vec3 dominante = a > b ? corA : corB;',
         '  vec3 luz = corA * a * 1.45 + corB * b * 1.35 + corC * c * 0.45;',
-        '  vCor = (luz + borda * 0.60 * dominante + 0.045) * pulso;',
+        /* crista acesa, sulco apagado: é a modulação que transforma a
+           nuvem em DESENHO — as cristas dos giros viram linhas de vidro
+           brilhando, como na referência de raio-X */
+        '  float relevo = 0.68 + 0.62 * crista;',
+        '  vCor = (luz + borda * 0.60 * dominante + 0.045) * pulso * relevo;',
         '  gl_PointSize = tamanho * (escala / -mv.z);',
         '  gl_Position = projectionMatrix * mv;',
         '}',
