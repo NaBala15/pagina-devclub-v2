@@ -462,16 +462,14 @@ function run(onDone) {
   flash.className = 'head-intro-flash';
   document.body.appendChild(flash);
 
-  /* tarjas 2.39:1 e vinheta: o enquadramento faz metade do trabalho */
-  const cine = ['topo', 'base'].map(lado => {
-    const d = document.createElement('div');
-    d.className = 'head-intro-cine ' + lado;
-    document.body.appendChild(d);
-    return d;
-  });
+  /* vinheta e grão: o acabamento de película por cima do render */
   const vinheta = document.createElement('div');
   vinheta.className = 'head-intro-vinheta';
   document.body.appendChild(vinheta);
+
+  const grao = document.createElement('div');
+  grao.className = 'head-intro-grao';
+  document.body.appendChild(grao);
 
   const skip = document.createElement('button');
   skip.className = 'head-intro-skip';
@@ -501,15 +499,14 @@ function run(onDone) {
     removeEventListener('resize', onResize);
     removeEventListener('keydown', onKey);
     flash.style.opacity = '1';
-    cine.forEach(d => d.classList.add('is-out'));
     /* deixa o flash cobrir, revela a página por baixo, e limpa tudo */
     setTimeout(() => {
       onDone();
       flash.style.opacity = '0';
       renderer.domElement.remove();
       skip.remove();
-      cine.forEach(d => d.remove());
       vinheta.remove();
+      grao.remove();
       setTimeout(() => flash.remove(), 700);
       renderer.dispose();
       geo.dispose(); mat.dispose();

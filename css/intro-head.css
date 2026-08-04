@@ -28,19 +28,41 @@
              transparent 40%, rgba(2,3,7,.55) 82%, rgba(2,3,7,.82) 100%);
 }
 
-/* tarjas 2.39:1 — o formato de cinema. Recolhem no flash, abrindo o
-   quadro inteiro pra página que entra por baixo. */
-.head-intro-cine{
-  position:fixed; left:0; right:0;
+/* GRÃO DE FILME
+   Ruído gerado por feTurbulence, embutido como data URI — sem arquivo de
+   imagem. Em "overlay" ele texturiza os meios-tons e deixa os pretos
+   pretos, que é como o grão se comporta na película de verdade.
+   A animação anda em steps(): grão real FERVE (troca a cada fotograma),
+   não desliza suavemente. */
+.head-intro-grao{
+  position:fixed; inset:0;
   z-index:99999;
   pointer-events:none;
-  height:clamp(26px, 7vh, 82px);
-  background:#04050b;
-  transition:height .7s cubic-bezier(.66, 0, .22, 1);
+  /* 38% em "overlay": medido contra o quadro real, é onde o grão aparece
+     no rosto sem acinzentar o fundo. Em "screen" ele apareceria também no
+     preto, mas levantaria os pretos — e o fundo da página é preto de verdade. */
+  opacity:.38;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.62'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+  animation:graoFerve .6s steps(1) infinite;
+  will-change:background-position;
 }
-.head-intro-cine.topo{ top:0; }
-.head-intro-cine.base{ bottom:0; }
-.head-intro-cine.is-out{ height:0; }
+@keyframes graoFerve{
+  0%   { background-position:0 0; }
+  12%  { background-position:-37px 21px; }
+  25%  { background-position:44px -33px; }
+  37%  { background-position:-19px -48px; }
+  50%  { background-position:52px 29px; }
+  62%  { background-position:-58px 12px; }
+  75%  { background-position:23px 55px; }
+  87%  { background-position:-41px -17px; }
+  100% { background-position:0 0; }
+}
+/* movimento reduzido: o grão fica, mas parado */
+@media (prefers-reduced-motion: reduce){
+  .head-intro-grao{ animation:none; }
+}
 
 .head-intro-flash{
   position:fixed; inset:0;
@@ -52,7 +74,7 @@
 }
 
 .head-intro-skip{
-  position:fixed; right:28px; bottom:calc(clamp(26px, 7vh, 82px) + 18px);
+  position:fixed; right:28px; bottom:24px;
   z-index:100001;
   font-family:'JetBrains Mono', monospace;
   font-size:12px;
