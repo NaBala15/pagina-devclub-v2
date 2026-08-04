@@ -62,6 +62,9 @@ const clamp01 = v => Math.min(Math.max(v, 0), 1);
 const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 const easeOut = t => 1 - Math.pow(1 - t, 3);
 const easeIn = t => t * t * t;
+/* aceleração quadrática: ganha velocidade mais cedo que a cúbica e com pico
+   menor. É a diferença entre "pairar e dar o arranco" e "ir acelerando". */
+const easeInQuad = t => t * t;
 /* progresso local de uma janela [a,b] do roteiro */
 const phase = (now, a, b) => clamp01((now - a) / (b - a));
 
@@ -451,6 +454,50 @@ function ensureRendererSize(renderer, camera) {
   }
 }
 
+/* CÂMERA — uma fórmula só, do primeiro ao último frame.
+   Havia aqui um "if (dive > 0)" que trocava de comportamento no meio: no frame
+   da virada a deriva de câmera-na-mão era desligada de uma vez e a lateral
+   saltava ~0.011 num frame — quase 90x o passo normal dela — enquanto a mira
+   pulava de (0, HEAD_Y*0.3, 0) direto pra origem. Era o tranco.
+   Agora a mão não é desligada, só vai se aquietando conforme o mergulho assume.
+   Como as suavizações são cúbicas (derivada zero nas pontas), a câmera fica
+   contínua em VELOCIDADE, não só em posição — que é o que o olho percebe.
+   O frame loop e o debugCapture chamam esta mesma função: duas cópias do
+   movimento pra manter em sincronia foi exatamente o que gerou o tranco. */
+const _olhoMundo = new THREE.Vector3();
+const _mira = new THREE.Vector3();
+
+function posicionarCamera(now, camera, head, eye) {
+  /* O mergulho usa a fase LINEAR com UMA suavização de entrada. Antes era
+     easeIn(easeInOut(p)) — duas suavizações compostas, ou seja p elevado a 9.
+     Isso fazia a câmera pairar parada e depois dar o arranco: 70% do trajeto
+     saía em 0,45s no miolo do mergulho, e o resto se arrastava.
+     A quadrática ganhou da cúbica nos dois critérios ao mesmo tempo: pico de
+     deslocamento por frame 0,049 contra 0,061 (mais suave) E 69% do trajeto
+     cumprido quando o flash entra, contra 58% (o clímax chega mais perto do
+     olho antes de ser coberto). Não freia no fim, que seria errado num
+     mergulho terminado em corte — a parte mais rápida cai atrás do flash. */
+  const lat = easeInQuad(phase(now, T.DIVE_START, T.DIVE_END));
+  const calma = 1 - lat;                     // quanto a mão ainda respira
+  const empurra = easeInOut(phase(now, 0, T.TURN_END));
+  const baseZ = CAM_Z_LONGE + (CAM_Z_PERTO - CAM_Z_LONGE) * empurra;
+
+  head.localToWorld(_olhoMundo.copy(eye.position));
+
+  /* duas senóides de períodos diferentes não fecham ciclo junto, então a
+     deriva nunca se repete igual — é o que lê como câmera na mão */
+  camera.position.set(
+    (Math.sin(now * 0.37) * 0.020 + Math.sin(now * 0.91) * 0.007) * calma
+      + _olhoMundo.x * lat,
+    CAM_Y + (Math.cos(now * 0.29) * 0.015 + Math.sin(now * 1.13) * 0.005) * calma
+      + (_olhoMundo.y - CAM_Y) * lat,
+    baseZ + (_olhoMundo.z + 0.04 - baseZ) * lat
+  );
+  /* a mira escorrega do ponto neutro até o olho em vez de saltar */
+  _mira.set(0, HEAD_Y * 0.3, 0).lerp(_olhoMundo, lat);
+  camera.lookAt(_mira);
+}
+
 function run(onDone) {
   const { scene, camera, renderer, head, geo, start, target, jitter, eye, eyeMat, leftEyeMat, haloMat, halo2Mat, screen, codeScreen, icons, mat, solidMat } = state;
 
@@ -515,9 +562,6 @@ function run(onDone) {
   const onKey = (e) => { if (e.key === 'Escape') finish(); };
   addEventListener('keydown', onKey);
   skip.addEventListener('click', finish);
-
-  const eyeWorld = new THREE.Vector3();
-  const lookTarget = new THREE.Vector3();
 
   function frame(nowMs) {
     if (finished) return;
@@ -584,28 +628,8 @@ function run(onDone) {
     const turn = easeInOut(phase(now, T.TURN_START, T.TURN_END));
     head.rotation.y = -1.15 * (1 - turn);
 
-    /* 5. câmera mergulha PRA DENTRO do globo ocular — pan lateral e mira
-       progressivos, sincronizados com o zoom (sem "puxada" no início) */
-    if (dive > 0) {
-      head.localToWorld(eyeWorld.copy(eye.position));
-      const lat = easeIn(dive);                     // lateral acompanha o zoom
-      camera.position.x = eyeWorld.x * lat;
-      camera.position.y = CAM_Y + (eyeWorld.y - CAM_Y) * lat;
-      camera.position.z = CAM_Z_PERTO + (eyeWorld.z + 0.04 - CAM_Z_PERTO) * easeIn(dive);
-      lookTarget.copy(eyeWorld).multiplyScalar(dive);  // mira desliza do centro ao olho
-      camera.lookAt(lookTarget);
-    } else {
-      /* antes do mergulho: aproximação lenta e uma deriva quase imperceptível.
-         Duas senóides de períodos diferentes não fecham ciclo junto, então o
-         movimento nunca se repete igual — é o que lê como câmera na mão. */
-      const empurra = easeInOut(phase(now, 0, T.TURN_END));
-      camera.position.set(
-        Math.sin(now * 0.37) * 0.020 + Math.sin(now * 0.91) * 0.007,
-        CAM_Y + Math.cos(now * 0.29) * 0.015 + Math.sin(now * 1.13) * 0.005,
-        CAM_Z_LONGE + (CAM_Z_PERTO - CAM_Z_LONGE) * empurra
-      );
-      camera.lookAt(0, HEAD_Y * 0.3, 0);
-    }
+    /* 5. câmera mergulha PRA DENTRO do globo ocular */
+    posicionarCamera(now, camera, head, eye);
     if (now >= T.FLASH) flash.style.opacity = String(phase(now, T.FLASH, T.DIVE_END));
     if (now >= T.DIVE_END + 0.05) { finish(); return; }
 
@@ -662,20 +686,8 @@ function debugCapture(simNow = 3.8, eyePos = null) {
   const turn = easeInOut(phase(simNow, T.TURN_START, T.TURN_END));
   head.rotation.y = -1.15 * (1 - turn);
 
-  const dive = easeInOut(phase(simNow, T.DIVE_START, T.DIVE_END));
-  const eyeWorld = new THREE.Vector3();
-  head.localToWorld(eyeWorld.copy(eye.position));
-  if (dive > 0) {
-    const lat = easeIn(dive);
-    camera.position.set(eyeWorld.x * lat, CAM_Y + (eyeWorld.y - CAM_Y) * lat,
-      CAM_Z_PERTO + (eyeWorld.z + 0.04 - CAM_Z_PERTO) * easeIn(dive));
-    camera.lookAt(eyeWorld.clone().multiplyScalar(dive));
-  } else {
-    const empurraD = easeInOut(phase(simNow, 0, T.TURN_END));
-    camera.position.set(0, CAM_Y, CAM_Z_LONGE + (CAM_Z_PERTO - CAM_Z_LONGE) * empurraD);
-    camera.lookAt(0, HEAD_Y * 0.3, 0);
-    camera.updateProjectionMatrix();
-  }
+  posicionarCamera(simNow, camera, head, eye);
+  camera.updateProjectionMatrix();
   renderer.render(scene, camera);
   return renderer.domElement.toDataURL('image/jpeg', 0.85);
 }
