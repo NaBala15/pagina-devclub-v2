@@ -107,9 +107,19 @@
     setTimeout(desenharLinhas, 2000);
   }
 
-  /* ---------- 5. CAMPO DE PARTÍCULAS ---------- */
+  /* ---------- 5. CAMPO DE PARTÍCULAS + TRILHAS DE CIRCUITO ----------
+     Os dois efeitos dividem O MESMO canvas e O MESMO requestAnimationFrame.
+     Dois canvas de tela cheia seriam duas camadas de composição e dois
+     laços para o navegador manter — de graça, já que um desenha atrás do
+     outro e nenhum precisa de ordem de empilhamento própria.
+
+     As trilhas andam em ângulo reto sobre uma grade, como uma placa de
+     circuito. Em repouso ficam quase invisíveis; quando o ponteiro chega
+     perto de QUALQUER ponto de uma trilha, ela acende INTEIRA — é o gesto
+     que dá a sensação de circuito energizado, e não de linha sob o mouse.
+     Por cima, pulsos de luz percorrem trilhas sorteadas. */
   var field = $('#mindField');
-  if (field && !REDUCED) {
+  if (field) {
     var ctx = field.getContext('2d');
     /* no tema claro as partículas neon sumiriam no branco:
        tons mais escuros e menos opacos */
@@ -120,38 +130,198 @@
     function temaAtual() {
       return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     }
+    /* trilha apagada, trilha acesa e o pulso — por tema */
+    var TRACO = {
+      dark:  { frio: 'rgba(139,108,255,.13)', quente: 'rgba(198,255,61,.62)',
+               no: 'rgba(139,108,255,.22)', noAceso: 'rgba(198,255,61,.95)',
+               pulso: 'rgba(214,255,140,.96)', brilho: 'rgba(198,255,61,.9)' },
+      light: { frio: 'rgba(109,60,224,.16)', quente: 'rgba(66,105,14,.75)',
+               no: 'rgba(109,60,224,.26)', noAceso: 'rgba(66,105,14,.95)',
+               pulso: 'rgba(56,92,10,.95)', brilho: 'rgba(66,105,14,.55)' },
+    };
     var COLORS = PALETAS[temaAtual()];
+    var CT = TRACO[temaAtual()];
     var alphaBase = temaAtual() === 'light' ? 0.16 : 0.25;
     window.addEventListener('temachange', function (e) {
       var t = e.detail === 'light' ? 'light' : 'dark';
       COLORS = PALETAS[t];
+      CT = TRACO[t];
       alphaBase = t === 'light' ? 0.16 : 0.25;
       pts.forEach(function (p) { p.c = COLORS[(Math.random() * 4) | 0]; });
     });
+
     var pts = [], W, H;
-    var resize = function () { W = field.width = innerWidth; H = field.height = innerHeight; };
+    var trilhas = [], pulsos = [];
+    var GRADE = 52;                 // lado da célula, em px
+    var PERTO2 = 150 * 150;         // raio de acendimento, ao quadrado
+    var mx = -9999, my = -9999;
+
+    /* Cada trilha começa num nó e caminha em ângulo reto, alternando
+       horizontal e vertical. São os cantos que dão a leitura de circuito —
+       uma linha reta ou curva leria como teia, não como placa. */
+    function construirTrilhas() {
+      trilhas = [];
+      var cols = Math.max(2, Math.round(W / GRADE));
+      var rows = Math.max(2, Math.round(H / GRADE));
+      /* densidade por ÁREA: em tela larga nascem mais trilhas, e o teto
+         evita que um monitor grande vire sopa de linhas */
+      var quantas = Math.min(110, Math.round(W * H / 21000));
+      for (var t = 0; t < quantas; t++) {
+        var gx = Math.round(Math.random() * cols);
+        var gy = Math.round(Math.random() * rows);
+        var pontos = [[gx * GRADE, gy * GRADE]];
+        var horiz = Math.random() < 0.5;
+        var segmentos = 2 + ((Math.random() * 4) | 0);
+        for (var s = 0; s < segmentos; s++) {
+          var passo = (1 + ((Math.random() * 3) | 0)) * (Math.random() < 0.5 ? 1 : -1);
+          if (horiz) gx = Math.max(0, Math.min(cols, gx + passo));
+          else gy = Math.max(0, Math.min(rows, gy + passo));
+          pontos.push([gx * GRADE, gy * GRADE]);
+          horiz = !horiz;
+        }
+        /* comprimento em quarteirões (só há trechos retos): serve pra
+           posicionar o pulso por fração do caminho */
+        var L = 0;
+        for (var i = 1; i < pontos.length; i++) {
+          L += Math.abs(pontos[i][0] - pontos[i - 1][0]) +
+               Math.abs(pontos[i][1] - pontos[i - 1][1]);
+        }
+        if (L > 0) trilhas.push({ pontos: pontos, L: L, aceso: 0 });
+      }
+      pulsos = [];
+      var np = Math.min(8, Math.max(3, (trilhas.length / 14) | 0));
+      for (var p = 0; p < np; p++) {
+        pulsos.push({ i: (Math.random() * trilhas.length) | 0, d: Math.random(),
+          v: 0.0022 + Math.random() * 0.0040 });
+      }
+    }
+
+    /* ponto a uma fração d do caminho da trilha */
+    function posicaoNaTrilha(tr, d) {
+      var alvo = d * tr.L, acumulado = 0;
+      for (var i = 1; i < tr.pontos.length; i++) {
+        var a = tr.pontos[i - 1], b = tr.pontos[i];
+        var seg = Math.abs(b[0] - a[0]) + Math.abs(b[1] - a[1]);
+        if (seg <= 0) continue;
+        if (acumulado + seg >= alvo) {
+          var f = (alvo - acumulado) / seg;
+          return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f];
+        }
+        acumulado += seg;
+      }
+      var fim = tr.pontos[tr.pontos.length - 1];
+      return [fim[0], fim[1]];
+    }
+
+    function pertoDoPonteiro(tr) {
+      for (var i = 0; i < tr.pontos.length; i++) {
+        var dx = tr.pontos[i][0] - mx, dy = tr.pontos[i][1] - my;
+        if (dx * dx + dy * dy < PERTO2) return true;
+      }
+      return false;
+    }
+
+    var resize = function () {
+      W = field.width = innerWidth;
+      H = field.height = innerHeight;
+      construirTrilhas();
+    };
     resize();
     window.addEventListener('resize', resize);
+
+    if (!REDUCED) {
+      addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'touch') return;
+        mx = e.clientX; my = e.clientY;
+      }, { passive: true });
+      /* ponteiro fora da janela: tudo apaga em vez de congelar aceso */
+      addEventListener('pointerleave', function () { mx = my = -9999; }, { passive: true });
+      document.addEventListener('mouseleave', function () { mx = my = -9999; });
+    }
+
     for (var i = 0; i < 110; i++) {
       pts.push({ x: Math.random(), y: Math.random(), r: 0.6 + Math.random() * 1.6,
         s: 0.00008 + Math.random() * 0.00022, c: COLORS[(Math.random() * 4) | 0],
         tw: Math.random() * Math.PI * 2 });
     }
-    (function draw(t) {
-      ctx.clearRect(0, 0, W, H);
-      for (var i = 0; i < pts.length; i++) {
-        var p = pts[i];
-        p.y -= p.s;
-        if (p.y < -0.02) { p.y = 1.02; p.x = Math.random(); }
-        ctx.globalAlpha = alphaBase + Math.sin(t * 0.0012 + p.tw) * 0.18;
-        ctx.fillStyle = p.c;
+
+    function desenharTrilhas(vivo) {
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      for (var t = 0; t < trilhas.length; t++) {
+        var tr = trilhas[t];
+        /* o aceso SOBE E DESCE suave: ligar num quadro e desligar no
+           seguinte dá um piscar duro, que estraga o efeito */
+        var alvo = vivo && pertoDoPonteiro(tr) ? 1 : 0;
+        tr.aceso += (alvo - tr.aceso) * 0.12;
+        var a = tr.aceso;
+
         ctx.beginPath();
-        ctx.arc(p.x * W, p.y * H, p.r, 0, 7);
-        ctx.fill();
+        ctx.moveTo(tr.pontos[0][0], tr.pontos[0][1]);
+        for (var i = 1; i < tr.pontos.length; i++) ctx.lineTo(tr.pontos[i][0], tr.pontos[i][1]);
+        ctx.lineWidth = 1 + a * 0.6;
+        ctx.strokeStyle = CT.frio;
+        ctx.stroke();
+        if (a > 0.01) {
+          ctx.globalAlpha = a;
+          ctx.strokeStyle = CT.quente;
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+
+        /* os nós das pontas: é neles que a trilha "termina em solda" */
+        var p0 = tr.pontos[0], pf = tr.pontos[tr.pontos.length - 1];
+        ctx.fillStyle = a > 0.01 ? CT.noAceso : CT.no;
+        ctx.globalAlpha = a > 0.01 ? a : 1;
+        var r = 1.6 + a * 1.3;
+        ctx.beginPath(); ctx.arc(p0[0], p0[1], r, 0, 7); ctx.fill();
+        ctx.beginPath(); ctx.arc(pf[0], pf[1], r, 0, 7); ctx.fill();
+        if (a <= 0.01) continue;
+        ctx.globalAlpha = 1;
       }
       ctx.globalAlpha = 1;
-      requestAnimationFrame(draw);
-    })(0);
+    }
+
+    function desenharPulsos() {
+      ctx.shadowColor = CT.brilho;
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = CT.pulso;
+      for (var p = 0; p < pulsos.length; p++) {
+        var pu = pulsos[p];
+        pu.d += pu.v;
+        if (pu.d >= 1) { pu.d = 0; pu.i = (Math.random() * trilhas.length) | 0; }
+        var tr = trilhas[pu.i];
+        if (!tr) continue;
+        var pos = posicaoNaTrilha(tr, pu.d);
+        ctx.beginPath(); ctx.arc(pos[0], pos[1], 2, 0, 7); ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    /* Com movimento reduzido o circuito continua desenhado, uma vez só e
+       parado: ele é cenário, não animação — tirá-lo deixaria o fundo vazio
+       para quem pediu menos movimento. */
+    if (REDUCED) {
+      desenharTrilhas(false);
+    } else {
+      (function draw(t) {
+        ctx.clearRect(0, 0, W, H);
+        desenharTrilhas(true);
+        desenharPulsos();
+        for (var i = 0; i < pts.length; i++) {
+          var p = pts[i];
+          p.y -= p.s;
+          if (p.y < -0.02) { p.y = 1.02; p.x = Math.random(); }
+          ctx.globalAlpha = alphaBase + Math.sin(t * 0.0012 + p.tw) * 0.18;
+          ctx.fillStyle = p.c;
+          ctx.beginPath();
+          ctx.arc(p.x * W, p.y * H, p.r, 0, 7);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
+      })(0);
+    }
   }
 
   /* ---------- 6. TILT 3D ---------- */
