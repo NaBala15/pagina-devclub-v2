@@ -144,6 +144,16 @@ img{ max-width:100%; display:block; }
   position:absolute; inset:0;
   z-index:1;
   cursor:grab;
+  /* O canvas termina onde a seção termina, e no desmonte as partículas
+     caem MUITO além disso — medido, elas chegam a 208% da altura do hero.
+     O corte do canvas virava uma linha reta atravessando a página.
+     A máscara dissolve a borda: começa em 76%, abaixo dos 77% que o
+     cérebro inteiro ocupa, então ela some as partículas que caem sem
+     encostar no cérebro em repouso. */
+  -webkit-mask-image:linear-gradient(to bottom,
+    rgba(0,0,0,1) 76%, rgba(0,0,0,.55) 89%, rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(to bottom,
+    rgba(0,0,0,1) 76%, rgba(0,0,0,.55) 89%, rgba(0,0,0,0) 100%);
 }
 .hero-cerebro:active{ cursor:grabbing; }
 .hero-cerebro canvas{
