@@ -41,6 +41,10 @@ const HEAD_Y = -0.15;      // deslocamento vertical do grupo da cabeça
 const ORBIT_Y = 0.84;      // altura da órbita das ideias (mundo)
 const ORBIT_R = 1.04;      // raio da órbita
 const CAM_Y = 0;           // altura base da câmera
+/* a câmera começa afastada e se aproxima devagar até a virada: é o
+   "push-in", o movimento que faz uma cena parecer filmada e não renderizada */
+const CAM_Z_LONGE = 3.95;
+const CAM_Z_PERTO = 3.55;
 
 /* Roteiro da cena — tempos em segundos */
 const T = {
@@ -188,10 +192,16 @@ let failed = false;
 function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.01, 50);
-  camera.position.set(0, CAM_Y, 3.6);
+  camera.position.set(0, CAM_Y, CAM_Z_LONGE);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  /* piso de 1.5x: em monitor comum (dpr 1) a cena era desenhada 1:1 e as
+     bordas serrilhavam. Renderizar maior e deixar a tela reduzir é
+     supersampling — o antisserrilhamento que não tem atalho. */
+  renderer.setPixelRatio(Math.min(Math.max(devicePixelRatio, 1.5), 2.5));
+  /* curva de cinema: as altas luzes rolam suave em vez de estourar no corte */
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;
   renderer.setSize(innerWidth, innerHeight);
   renderer.domElement.className = 'head-intro-canvas';
 
@@ -452,6 +462,17 @@ function run(onDone) {
   flash.className = 'head-intro-flash';
   document.body.appendChild(flash);
 
+  /* tarjas 2.39:1 e vinheta: o enquadramento faz metade do trabalho */
+  const cine = ['topo', 'base'].map(lado => {
+    const d = document.createElement('div');
+    d.className = 'head-intro-cine ' + lado;
+    document.body.appendChild(d);
+    return d;
+  });
+  const vinheta = document.createElement('div');
+  vinheta.className = 'head-intro-vinheta';
+  document.body.appendChild(vinheta);
+
   const skip = document.createElement('button');
   skip.className = 'head-intro-skip';
   skip.type = 'button';
@@ -480,12 +501,15 @@ function run(onDone) {
     removeEventListener('resize', onResize);
     removeEventListener('keydown', onKey);
     flash.style.opacity = '1';
+    cine.forEach(d => d.classList.add('is-out'));
     /* deixa o flash cobrir, revela a página por baixo, e limpa tudo */
     setTimeout(() => {
       onDone();
       flash.style.opacity = '0';
       renderer.domElement.remove();
       skip.remove();
+      cine.forEach(d => d.remove());
+      vinheta.remove();
       setTimeout(() => flash.remove(), 700);
       renderer.dispose();
       geo.dispose(); mat.dispose();
@@ -570,9 +594,20 @@ function run(onDone) {
       const lat = easeIn(dive);                     // lateral acompanha o zoom
       camera.position.x = eyeWorld.x * lat;
       camera.position.y = CAM_Y + (eyeWorld.y - CAM_Y) * lat;
-      camera.position.z = 3.6 + (eyeWorld.z + 0.04 - 3.6) * easeIn(dive);
+      camera.position.z = CAM_Z_PERTO + (eyeWorld.z + 0.04 - CAM_Z_PERTO) * easeIn(dive);
       lookTarget.copy(eyeWorld).multiplyScalar(dive);  // mira desliza do centro ao olho
       camera.lookAt(lookTarget);
+    } else {
+      /* antes do mergulho: aproximação lenta e uma deriva quase imperceptível.
+         Duas senóides de períodos diferentes não fecham ciclo junto, então o
+         movimento nunca se repete igual — é o que lê como câmera na mão. */
+      const empurra = easeInOut(phase(now, 0, T.TURN_END));
+      camera.position.set(
+        Math.sin(now * 0.37) * 0.020 + Math.sin(now * 0.91) * 0.007,
+        CAM_Y + Math.cos(now * 0.29) * 0.015 + Math.sin(now * 1.13) * 0.005,
+        CAM_Z_LONGE + (CAM_Z_PERTO - CAM_Z_LONGE) * empurra
+      );
+      camera.lookAt(0, HEAD_Y * 0.3, 0);
     }
     if (now >= T.FLASH) flash.style.opacity = String(phase(now, T.FLASH, T.DIVE_END));
     if (now >= T.DIVE_END + 0.05) { finish(); return; }
@@ -636,11 +671,12 @@ function debugCapture(simNow = 3.8, eyePos = null) {
   if (dive > 0) {
     const lat = easeIn(dive);
     camera.position.set(eyeWorld.x * lat, CAM_Y + (eyeWorld.y - CAM_Y) * lat,
-      3.6 + (eyeWorld.z + 0.04 - 3.6) * easeIn(dive));
+      CAM_Z_PERTO + (eyeWorld.z + 0.04 - CAM_Z_PERTO) * easeIn(dive));
     camera.lookAt(eyeWorld.clone().multiplyScalar(dive));
   } else {
-    camera.position.set(0, CAM_Y, 3.6);
-    camera.lookAt(0, 0, 0);
+    const empurraD = easeInOut(phase(simNow, 0, T.TURN_END));
+    camera.position.set(0, CAM_Y, CAM_Z_LONGE + (CAM_Z_PERTO - CAM_Z_LONGE) * empurraD);
+    camera.lookAt(0, HEAD_Y * 0.3, 0);
     camera.updateProjectionMatrix();
   }
   renderer.render(scene, camera);

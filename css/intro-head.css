@@ -19,9 +19,32 @@
 #introVeil.is-leaving{ opacity:0; pointer-events:none; }
 
 /* flash da "entrada no olho" — cobre tudo no clímax e some revelando o hero */
-.head-intro-flash{
+/* vinheta: escurece as bordas e joga o olho pro centro do quadro */
+.head-intro-vinheta{
   position:fixed; inset:0;
   z-index:99998;
+  pointer-events:none;
+  background:radial-gradient(ellipse 76% 66% at 50% 47%,
+             transparent 40%, rgba(2,3,7,.55) 82%, rgba(2,3,7,.82) 100%);
+}
+
+/* tarjas 2.39:1 — o formato de cinema. Recolhem no flash, abrindo o
+   quadro inteiro pra página que entra por baixo. */
+.head-intro-cine{
+  position:fixed; left:0; right:0;
+  z-index:99999;
+  pointer-events:none;
+  height:clamp(26px, 7vh, 82px);
+  background:#04050b;
+  transition:height .7s cubic-bezier(.66, 0, .22, 1);
+}
+.head-intro-cine.topo{ top:0; }
+.head-intro-cine.base{ bottom:0; }
+.head-intro-cine.is-out{ height:0; }
+
+.head-intro-flash{
+  position:fixed; inset:0;
+  z-index:100000;
   pointer-events:none;
   opacity:0;
   background:radial-gradient(ellipse at center, #eaffd0 0%, #c6ff3d 45%, #05060a 100%);
@@ -29,8 +52,8 @@
 }
 
 .head-intro-skip{
-  position:fixed; right:28px; bottom:24px;
-  z-index:99998;
+  position:fixed; right:28px; bottom:calc(clamp(26px, 7vh, 82px) + 18px);
+  z-index:100001;
   font-family:'JetBrains Mono', monospace;
   font-size:12px;
   color:rgba(230,237,239,0.55);
