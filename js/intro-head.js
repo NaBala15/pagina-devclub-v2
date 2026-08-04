@@ -19,8 +19,9 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 import { gradientColor, dotTexture, removeMouthInterior } from 'head-shared';
 import { peleDePedra, luzesNeon } from 'head-skin';
-import { createDevLaptopIconModel } from './laptop-icon.js';
-import { createGlobeIcon, createBulbIcon, createGearIcon, createQuestionIcon, createEnvelopeIcon } from './idea-icons.js';
+import { createBulbIcon } from './idea-icons.js';
+import { createHtml5Icon, createCssIcon, createJsIcon, createTerminalIcon, createThreeIcon }
+  from './tool-icons.js';
 
 const LIME = new THREE.Color('#c6ff3d');
 const CYAN = new THREE.Color('#4fe0ff');
@@ -320,16 +321,17 @@ function buildScene(headGeometry, sampleGeometry, eyeCenterWorld, eyeRadiusWorld
   head.add(halo, halo2);
   const halo2Mat = halo2.material;
 
-  /* --- ideias orbitando: TODOS os ícones em 3D de verdade ---
-     laptop (pipeline img2threejs) + globo, lâmpada, engrenagem e "?" procedurais */
-  const laptop = createDevLaptopIconModel();
-  laptop.userData.baseScale = 0.34;
-  const builders = [createGlobeIcon, createBulbIcon, createGearIcon, createQuestionIcon, createEnvelopeIcon];
-  const icons = [laptop, ...builders.map(b => {
+  /* --- o que orbita a mente de um dev: as ferramentas desta página ---
+     HTML5, CSS3, JavaScript, o terminal e o próprio Three.js (que aqui é
+     desenhado pela biblioteca que ele representa). A lâmpada fica: é o
+     único símbolo de "ideia" da cena, e a intro se chama "dentro da mente". */
+  const builders = [createHtml5Icon, createCssIcon, createJsIcon,
+                    createTerminalIcon, createThreeIcon, createBulbIcon];
+  const icons = builders.map(b => {
     const g = b();
     g.userData.baseScale = 1.0;
     return g;
-  })];
+  });
   icons.forEach((g, i) => {
     g.userData.angle = (i / icons.length) * Math.PI * 2;
     g.userData.spin = 0.6 + (i % 3) * 0.25;      // cada um gira num ritmo
@@ -528,7 +530,12 @@ function run(onDone) {
       const py = ORBIT_Y + (i % 2) * 0.11 + Math.sin(now * 1.4 + i) * 0.08;
       const pz = Math.sin(a) * ORBIT_R * 0.42;
       g.position.set(px * (1 - absorb), py + (HEAD_Y + 0.32 - py) * absorb, pz * (1 - absorb));
-      g.rotation.y = now * g.userData.spin + absorb * 6;    // acelera o giro ao entrar
+      /* volume gira; logo chapado balança em torno da frente, senão
+         passaria metade do tempo mostrando o verso espelhado */
+      g.rotation.y = g.userData.plano
+        ? Math.sin(now * 0.85 + i * 1.3) * 0.42 + absorb * 6
+        : now * g.userData.spin + absorb * 6;
+      if (g.userData.plano) g.rotation.z = Math.sin(now * 0.6 + i) * 0.09;
       g.scale.setScalar(Math.max(g.userData.baseScale * iconsIn * (1 - absorb), 0.001));
     });
 
@@ -598,7 +605,10 @@ function debugCapture(simNow = 3.8, eyePos = null) {
     const py = ORBIT_Y + (i % 2) * 0.11 + Math.sin(simNow * 1.4 + i) * 0.08;
     const pz = Math.sin(a) * ORBIT_R * 0.42;
     g.position.set(px * (1 - absorbD), py + (HEAD_Y + 0.32 - py) * absorbD, pz * (1 - absorbD));
-    g.rotation.y = simNow * g.userData.spin + absorbD * 6;
+    g.rotation.y = g.userData.plano
+      ? Math.sin(simNow * 0.85 + i * 1.3) * 0.42 + absorbD * 6
+      : simNow * g.userData.spin + absorbD * 6;
+    if (g.userData.plano) g.rotation.z = Math.sin(simNow * 0.6 + i) * 0.09;
     g.scale.setScalar(Math.max(g.userData.baseScale * iconsIn * (1 - absorbD), 0.001));
   });
 
