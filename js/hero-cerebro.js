@@ -176,9 +176,15 @@ function iniciar() {
   /* ---------- desmonte pela rolagem ---------- */
   function medirRolagem() {
     const r = palco.getBoundingClientRect();
-    /* quanto o hero já subiu além do topo, em fração da própria altura */
-    const passou = Math.max(0, -r.top + innerHeight * 0.12);
-    desmonte = Math.min(1, passou / (r.height * 0.75 || 1));
+    /* Só começa DEPOIS de rolar de verdade (zona morta de 40px).
+       Esta fórmula tinha "+innerHeight*0.12" de quando o palco era a
+       coluna direita, que em repouso começava ~188px abaixo do topo.
+       Quando o palco virou a camada do hero inteiro (top 0 em repouso),
+       aquela folga virou desmonte PERMANENTE de 0.16 com a página parada
+       — e 0.16 de leque borra o cérebro inteiro na horizontal. Foi o
+       "não dá nem pra identificar o que é isso" do usuário. */
+    const passou = Math.max(0, -r.top - 40);
+    desmonte = Math.min(1, passou / (r.height * 0.65 || 1));
   }
 
   /* ---------- só desenha quando está na tela ---------- */
