@@ -21,7 +21,8 @@
 
 import * as THREE from 'three';
 import { dotTexture } from 'head-shared';
-import { ponto, normal, pesoGiro, pontoCerebelo, pontoTronco } from 'cerebro-geo';
+import { ponto, normal, pesoGiro, pontoCerebelo, normalCerebelo, pesoCerebelo,
+         pontoTronco } from 'cerebro-geo';
 
 const palco = document.getElementById('heroCerebro');
 const REDUZIDO = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -77,8 +78,8 @@ function iniciar() {
      camada cobre a tela inteira, ele precisa ser dimensionado pelo HERO e
      não pelo próprio canvas: mantendo o tamanho antigo ele avançava 123px
      por cima da coluna de texto e ainda vazava pela borda direita. */
-  const FRACAO_LARGURA = 0.42;                 // quanto da largura ele ocupa
-  const CENTRO_X = 0.70;                       // onde fica o centro dele
+  const FRACAO_LARGURA = 0.46;                 // quanto da largura ele ocupa
+  const CENTRO_X = 0.72;                       // onde fica o centro dele
 
   let pontos = null, geo = null, mat = null;
   let teia = null, faisca = null, faiscaGeo = null, faiscaMat = null;
@@ -296,8 +297,8 @@ function iniciar() {
            estas posições são locais ao grupo do cérebro — que está
            deslocado em X e reduzido de escala. Sem desfazer as duas coisas,
            a explosão sairia do lugar errado e menor que a tela. */
-        const ox = (origem[j] - deslocX) * invEsc;
-        const oy = origem[j + 1] * invEsc;
+        const ox = (origem[j] * meiaLargura - deslocX) * invEsc;
+        const oy = origem[j + 1] * meiaAltura * invEsc;
         const oz = origem[j + 2] * invEsc;
         const cx = (dispersao[j] * meiaLargura - deslocX) * invEsc;
         const cy = dispersao[j + 1] * meiaAltura * invEsc;
@@ -362,8 +363,11 @@ function iniciar() {
       return [x / l, y / l, z / l, l];
     };
 
-    const N_CEREBRO = Math.round(COUNT * 0.76);
-    const N_CEREBELO = Math.round(COUNT * 0.17);
+    /* A repartição segue a ÁREA de cada peça, não o gosto. O cerebelo é uma
+       casca bem menor que o córtex; com 17% das partículas ele saturava no
+       aditivo e virava uma bola branca lisa, engolindo as próprias estrias. */
+    const N_CEREBRO = Math.round(COUNT * 0.88);
+    const N_CEREBELO = Math.round(COUNT * 0.09);
     let k = 0, tentativas = 0;
 
     /* córtex por rejeição: a chance de aceitar cai no fundo do sulco, então
@@ -377,11 +381,18 @@ function iniciar() {
       normais[k * 3] = nv.x; normais[k * 3 + 1] = nv.y; normais[k * 3 + 2] = nv.z;
       k++;
     }
-    for (let i = 0; i < N_CEREBELO && k < COUNT; i++) {
+    /* o cerebelo usa a mesma dupla do córtex: rejeição pelas estrias e a
+       normal real da superfície estriada. Com a normal da esfera ele
+       ficava uma bola branca lisa encostada no cérebro. */
+    const fimCortex = k;
+    let tentCb = 0;
+    while (k < fimCortex + N_CEREBELO && k < COUNT && tentCb < N_CEREBELO * 40) {
+      tentCb++;
       const [x, y, z] = direcao();
-      pontoCerebelo(x, y, z, p);
+      if (Math.random() > pesoCerebelo(y)) continue;
+      pontoCerebelo(x, y, z, p); normalCerebelo(x, y, z, nv, a, b, c);
       base[k * 3] = p.x; base[k * 3 + 1] = p.y; base[k * 3 + 2] = p.z;
-      normais[k * 3] = x; normais[k * 3 + 1] = y; normais[k * 3 + 2] = z;
+      normais[k * 3] = nv.x; normais[k * 3 + 1] = nv.y; normais[k * 3 + 2] = nv.z;
       k++;
     }
     while (k < COUNT) {
@@ -409,22 +420,29 @@ function iniciar() {
       const h = (base[i * 3 + 1] + 0.9) / 1.8;
       atraso[i] = Math.min(0.85, Math.max(0, h * 0.55 + Math.random() * 0.28));
       deriva[i] = Math.random() * 2 - 1;
-      /* ORIGEM: um ponto apertado no centro da tela — é de onde a câmera da
-         intro sai, depois de mergulhar no olho. Guardado em coordenadas de
-         TELA; o laço desconta o deslocamento do cérebro, que só é conhecido
-         quando a tela é medida. */
-      const [dx, dy, dz] = direcao();
-      const raioIni = 0.04 + Math.random() * 0.20;
-      origem[i * 3] = dx * raioIni;
-      origem[i * 3 + 1] = dy * raioIni;
-      origem[i * 3 + 2] = dz * raioIni;
+      /* ORIGEM: a BORDA da página, não o meio. As partículas entram por
+         fora dos quatro lados e convergem — quem monta o cérebro é a página
+         inteira se recolhendo, não um estouro saindo do centro.
+         Guardado em coordenadas de TELA normalizadas [-1,1]; o laço
+         converte usando a largura medida, que só existe em tempo de
+         execução. Um pouco além de 1 pra elas nascerem fora do quadro. */
+      const lado = (Math.random() * 4) | 0;
+      const aoLongo = Math.random() * 2 - 1;
+      const fora = 1.05 + Math.random() * 0.5;
+      if (lado === 0) { origem[i * 3] = aoLongo * fora; origem[i * 3 + 1] = fora; }
+      else if (lado === 1) { origem[i * 3] = aoLongo * fora; origem[i * 3 + 1] = -fora; }
+      else if (lado === 2) { origem[i * 3] = -fora; origem[i * 3 + 1] = aoLongo * fora; }
+      else { origem[i * 3] = fora; origem[i * 3 + 1] = aoLongo * fora; }
+      origem[i * 3 + 2] = (Math.random() * 2 - 1) * 0.8;
 
-      /* DISPERSÃO: onde a explosão joga a partícula antes de ela ser
-         recolhida. Normalizado em [-1,1] pra virar largura de tela cheia no
-         laço — é o que faz as partículas tomarem o hero inteiro. */
-      dispersao[i * 3] = (Math.random() * 2 - 1) * (0.55 + Math.random() * 0.65);
-      dispersao[i * 3 + 1] = (Math.random() * 2 - 1) * (0.55 + Math.random() * 0.55);
-      dispersao[i * 3 + 2] = (Math.random() * 2 - 1) * 0.9;
+      /* DISPERSÃO: o ponto de controle da curva, entre a borda e o cérebro.
+         Fica a meio caminho, deslocado de lado — é ele que faz a partícula
+         entrar fazendo uma curva em vez de vir em linha reta. */
+      dispersao[i * 3] = origem[i * 3] * (0.35 + Math.random() * 0.30)
+        + (Math.random() * 2 - 1) * 0.22;
+      dispersao[i * 3 + 1] = origem[i * 3 + 1] * (0.35 + Math.random() * 0.30)
+        + (Math.random() * 2 - 1) * 0.22;
+      dispersao[i * 3 + 2] = (Math.random() * 2 - 1) * 0.7;
     }
 
     geo = new THREE.BufferGeometry();

@@ -50,14 +50,21 @@ function ruido(x, y, z) {
 
    A frequência é baixa de propósito. Na primeira tentativa usei 3.05/7.10
    e o resultado virou chuvisco: em densidade de partículas, dobra fina não
-   lê como dobra, lê como ruído. Dobras largas e fundas é que desenham. */
+   lê como dobra, lê como ruído. Dobras largas e fundas é que desenham.
+
+   O domínio é ESTICADO no eixo da frente pro fundo (x amostrado numa
+   frequência bem menor que y e z). Ruído isotrópico dava manchas
+   arredondadas, tipo coral — e giro de verdade é uma crista ALONGADA,
+   quase uma minhoca, correndo no sentido do comprimento da cabeça. É esse
+   desenho que faz o olho reconhecer um cérebro em vez de um caroço. */
 function trama(x, y, z) {
-  const n1 = ruido(x * 1.95, y * 1.95, z * 1.95);
-  const n2 = ruido(x * 4.20 + 31.7, y * 4.20, z * 4.20);
-  return Math.sin((n1 * 2.55 + n2 * 0.85) * Math.PI * 3.1);
+  const n1 = ruido(x * 0.70, y * 2.90, z * 2.90);
+  const n2 = ruido(x * 1.60 + 31.7, y * 6.20, z * 6.20);
+  const n3 = ruido(x * 3.40 + 7.1, y * 3.40, z * 3.40);
+  return Math.sin((n1 * 2.70 + n2 * 0.75 + n3 * 0.50) * Math.PI * 2.8);
 }
 function giros(x, y, z) {
-  return (1 - Math.abs(trama(x, y, z))) * 0.078;
+  return (1 - Math.abs(trama(x, y, z))) * 0.115;
 }
 
 /* Peso de amostragem: perto de 0 no fundo do sulco, 1 na crista do giro.
@@ -65,7 +72,7 @@ function giros(x, y, z) {
    quando também FALTA partícula nele. Quem amostra usa isto por rejeição. */
 export function pesoGiro(x, y, z) {
   const t = Math.abs(trama(x, y, z));
-  return 0.12 + 0.88 * Math.pow(1 - t, 0.55);
+  return 0.10 + 0.90 * Math.pow(1 - t, 0.85);
 }
 
 /* raio relativo da superfície na direção (ux,uy,uz), já normalizada */
@@ -89,18 +96,26 @@ export function raio(ux, uy, uz) {
      de lado, o CONTORNO nasce onde a normal é perpendicular à vista — ou
      seja, na linha média (uz≈0), não na face lateral. Condicionar a
      fissura a |uz| alto deixava a silhueta de perfil um ovo liso, porque a
-     linha média não recebia nada. Por isso o piso de 0.5 abaixo. */
+     linha média não recebia nada. Por isso o piso de 0.5 abaixo.
+
+     E um erro de anatomia que só apareceu desenhando a silhueta sozinha:
+     a MÁSCARA embaixo. Sem ela a fissura dava a volta e abria um segundo
+     entalhe na NUCA — o cérebro ficava com duas mordidas e não lia como
+     nada. Cérebro tem um entalhe só, na frente-baixo, entre o lobo frontal
+     e o temporal. (Convenção destes eixos: +x é a FRENTE; o cerebelo mora
+     em x = -0.60, na nuca.) */
   const forcaLado = 0.5 + 0.5 * Math.min(1, Math.abs(uz) * 1.7);
-  const curva = uy + 0.08 + ux * 0.30;
-  r -= 0.150 * Math.exp(-(curva * 4.6) * (curva * 4.6)) * forcaLado;
+  const naFrente = Math.max(0, Math.min(1, (ux + 0.55) / 0.75));
+  const curva = uy - 0.02 - ux * 0.26;
+  r -= 0.350 * Math.exp(-(curva * 6.6) * (curva * 6.6)) * forcaLado * naFrente;
 
   /* polo temporal: o "polegar" que desce à frente, abaixo da fissura */
-  const dt = (uy + 0.55) * 2.8;
-  const temporal = Math.exp(-dt * dt) * Math.max(0, 0.35 + ux * 0.90);
-  r += 0.145 * temporal;
+  const dt = (uy + 0.56) * 3.2;
+  const temporal = Math.exp(-dt * dt) * Math.max(0, 0.25 + ux * 0.95);
+  r += 0.320 * temporal;
 
   /* de perfil o cérebro é uma gota: frontal mais estreito, occipital cheio */
-  r *= 1 + 0.075 * ux - 0.060 * ux * ux;
+  r *= 1 - 0.070 * ux - 0.050 * ux * ux;
 
   /* achata a base só no miolo — nas laterais o temporal continua descendo */
   const noMeio = 1 - Math.min(1, Math.abs(uz) * 1.7);
@@ -155,17 +170,56 @@ export function normal(ux, uy, uz, out, a, b, c) {
    do cérebro. É esse contraste que faz a peça ser reconhecida. */
 export const CEREBELO = { cx: -0.60, cy: -0.44, cz: 0, rx: 0.27, ry: 0.19, rz: 0.36 };
 
+/* estrias horizontais e finas — o cerebelo tem textura de folha dobrada, o
+   oposto dos giros largos do cérebro. É esse contraste que faz a peça ser
+   reconhecida como cerebelo e não como um caroço solto. */
+function estria(uy) {
+  return 1 - Math.abs(Math.sin(uy * Math.PI * 7.0));
+}
+
 export function pontoCerebelo(ux, uy, uz, out) {
-  /* estrias horizontais e finas — o cerebelo tem textura de folha dobrada,
-     o oposto dos giros largos do cérebro. É esse contraste que faz a peça
-     ser reconhecida como cerebelo e não como um caroço solto. */
-  const estrias = 1 + 0.070 * (1 - Math.abs(Math.sin(uy * Math.PI * 9.0)));
+  const e = 1 + 0.130 * estria(uy);
   out.set(
-    CEREBELO.cx + ux * CEREBELO.rx * estrias,
-    CEREBELO.cy + uy * CEREBELO.ry * estrias,
-    CEREBELO.cz + uz * CEREBELO.rz * estrias
+    CEREBELO.cx + ux * CEREBELO.rx * e,
+    CEREBELO.cy + uy * CEREBELO.ry * e,
+    CEREBELO.cz + uz * CEREBELO.rz * e
   );
   return out;
+}
+
+/* peso de amostragem das estrias, mesmo princípio do pesoGiro */
+export function pesoCerebelo(uy) {
+  return 0.12 + 0.88 * Math.pow(estria(uy), 0.5);
+}
+
+/* Normal REAL do cerebelo, por diferenças finitas. Antes eu passava a
+   direção da esfera como normal: a luz corria lisa por cima e o cerebelo
+   virava uma bola branca colada no cérebro, sem textura nenhuma. */
+export function normalCerebelo(ux, uy, uz, out, a, b, c) {
+  const E = 0.018;
+  let tx = -uy, ty = ux, tz = 0;
+  if (tx * tx + ty * ty < 1e-6) { tx = 0; ty = -uz; tz = uy; }
+  const lt = Math.hypot(tx, ty, tz); tx /= lt; ty /= lt; tz /= lt;
+  const sx = uy * tz - uz * ty, sy = uz * tx - ux * tz, sz = ux * ty - uy * tx;
+  const nor = (x, y, z, alvo) => {
+    const l = Math.hypot(x, y, z);
+    return pontoCerebelo(x / l, y / l, z / l, alvo);
+  };
+  pontoCerebelo(ux, uy, uz, a);
+  nor(ux + tx * E, uy + ty * E, uz + tz * E, b);
+  nor(ux + sx * E, uy + sy * E, uz + sz * E, c);
+  const p1x = b.x - a.x, p1y = b.y - a.y, p1z = b.z - a.z;
+  const p2x = c.x - a.x, p2y = c.y - a.y, p2z = c.z - a.z;
+  let nx = p1y * p2z - p1z * p2y;
+  let ny = p1z * p2x - p1x * p2z;
+  let nz = p1x * p2y - p1y * p2x;
+  const ln = Math.hypot(nx, ny, nz) || 1;
+  nx /= ln; ny /= ln; nz /= ln;
+  /* pra fora = pra longe do centro do cerebelo, não da origem da cena */
+  if (nx * (a.x - CEREBELO.cx) + ny * (a.y - CEREBELO.cy) + nz * (a.z - CEREBELO.cz) < 0) {
+    nx = -nx; ny = -ny; nz = -nz;
+  }
+  return out.set(nx, ny, nz);
 }
 
 /* ---------- tronco encefálico ----------
