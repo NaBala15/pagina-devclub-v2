@@ -156,6 +156,20 @@
     var PERTO2 = 150 * 150;         // raio de acendimento, ao quadrado
     var mx = -9999, my = -9999;
 
+    /* O hero tem o cérebro de partículas, e circuito por cima dele vira
+       disputa: são dois desenhos de linha fina no mesmo lugar. Então o
+       circuito APAGA na medida em que o hero ocupa a tela — some no topo
+       da página e entra conforme se rola.
+       Some por opacidade, não por recorte: recortar deixaria uma borda
+       reta atravessando a página na altura em que o hero termina. */
+    var heroEl = $('.hero');
+    function forcaCircuito() {
+      if (!heroEl) return 1;
+      var r = heroEl.getBoundingClientRect();
+      var cobre = Math.max(0, Math.min(1, r.bottom / (innerHeight || 1)));
+      return 1 - cobre;
+    }
+
     /* Cada trilha começa num nó e caminha em ângulo reto, alternando
        horizontal e vertical. São os cantos que dão a leitura de circuito —
        uma linha reta ou curva leria como teia, não como placa. */
@@ -192,7 +206,10 @@
       var np = Math.min(8, Math.max(3, (trilhas.length / 14) | 0));
       for (var p = 0; p < np; p++) {
         pulsos.push({ i: (Math.random() * trilhas.length) | 0, d: Math.random(),
-          v: 0.0022 + Math.random() * 0.0040 });
+          /* devagar de propósito: o pulso é um sinal percorrendo a placa,
+             não uma partícula em fuga — rápido demais vira ruído no canto
+             do olho enquanto se lê a página */
+          v: 0.0009 + Math.random() * 0.0017 });
       }
     }
 
@@ -245,7 +262,8 @@
         tw: Math.random() * Math.PI * 2 });
     }
 
-    function desenharTrilhas(vivo) {
+    function desenharTrilhas(vivo, forca) {
+      if (forca <= 0.01) return;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       for (var t = 0; t < trilhas.length; t++) {
@@ -261,40 +279,45 @@
         for (var i = 1; i < tr.pontos.length; i++) ctx.lineTo(tr.pontos[i][0], tr.pontos[i][1]);
         ctx.lineWidth = 1 + a * 0.6;
         ctx.strokeStyle = CT.frio;
+        ctx.globalAlpha = forca;
         ctx.stroke();
         if (a > 0.01) {
-          ctx.globalAlpha = a;
+          ctx.globalAlpha = a * forca;
           ctx.strokeStyle = CT.quente;
           ctx.stroke();
-          ctx.globalAlpha = 1;
         }
 
         /* os nós das pontas: é neles que a trilha "termina em solda" */
         var p0 = tr.pontos[0], pf = tr.pontos[tr.pontos.length - 1];
         ctx.fillStyle = a > 0.01 ? CT.noAceso : CT.no;
-        ctx.globalAlpha = a > 0.01 ? a : 1;
+        ctx.globalAlpha = (a > 0.01 ? a : 1) * forca;
         var r = 1.6 + a * 1.3;
         ctx.beginPath(); ctx.arc(p0[0], p0[1], r, 0, 7); ctx.fill();
         ctx.beginPath(); ctx.arc(pf[0], pf[1], r, 0, 7); ctx.fill();
-        if (a <= 0.01) continue;
-        ctx.globalAlpha = 1;
       }
       ctx.globalAlpha = 1;
     }
 
-    function desenharPulsos() {
-      ctx.shadowColor = CT.brilho;
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = CT.pulso;
+    function desenharPulsos(forca) {
+      /* o pulso ANDA mesmo com o circuito apagado no hero: se ele parasse,
+         apareceria congelado no meio da trilha ao voltar */
       for (var p = 0; p < pulsos.length; p++) {
         var pu = pulsos[p];
         pu.d += pu.v;
         if (pu.d >= 1) { pu.d = 0; pu.i = (Math.random() * trilhas.length) | 0; }
-        var tr = trilhas[pu.i];
+      }
+      if (forca <= 0.01) return;
+      ctx.shadowColor = CT.brilho;
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = CT.pulso;
+      ctx.globalAlpha = forca;
+      for (var q = 0; q < pulsos.length; q++) {
+        var tr = trilhas[pulsos[q].i];
         if (!tr) continue;
-        var pos = posicaoNaTrilha(tr, pu.d);
+        var pos = posicaoNaTrilha(tr, pulsos[q].d);
         ctx.beginPath(); ctx.arc(pos[0], pos[1], 2, 0, 7); ctx.fill();
       }
+      ctx.globalAlpha = 1;
       ctx.shadowBlur = 0;
     }
 
@@ -302,12 +325,13 @@
        parado: ele é cenário, não animação — tirá-lo deixaria o fundo vazio
        para quem pediu menos movimento. */
     if (REDUCED) {
-      desenharTrilhas(false);
+      desenharTrilhas(false, forcaCircuito());
     } else {
       (function draw(t) {
         ctx.clearRect(0, 0, W, H);
-        desenharTrilhas(true);
-        desenharPulsos();
+        var forca = forcaCircuito();
+        desenharTrilhas(true, forca);
+        desenharPulsos(forca);
         for (var i = 0; i < pts.length; i++) {
           var p = pts[i];
           p.y -= p.s;
