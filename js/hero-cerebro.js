@@ -8,7 +8,7 @@
 
    O que ele faz:
      . MONTA quando a intro entrega a página (evento heroreveal)
-     . SEGUE o mouse, e pode ser girado arrastando
+     . GIRA no arrasto, com inércia ao soltar
      . TROCA de paleta no clique
      . SE DESFAZ na rolagem, e as partículas caem
      . PULSA, com sinapses correndo pela teia de linhas em volta
@@ -30,8 +30,6 @@ const FRACOS = (navigator.hardwareConcurrency || 8) <= 4;
 const COUNT = FRACOS ? 16000 : 26000;
 const NOS = 130;              // nós da teia em volta
 const PULSOS = 70;            // sinapses correndo pelas linhas
-const GIRO_MAX_Y = 0.55;
-const GIRO_MAX_X = 0.28;
 const MACIEZ = 0.07;
 const TAM_PONTO = 0.020;
 
@@ -67,7 +65,6 @@ function iniciar() {
   let pontos = null, geo = null, mat = null;
   let teia = null, faisca = null, faiscaGeo = null, faiscaMat = null;
   let arestas = null;                          // [ax,ay,az, bx,by,bz] por aresta
-  let alvoRotY = 0, alvoRotX = 0;
   let giroLivreY = 0, giroLivreX = 0;          // o que o arrasto acumulou
   let inerciaY = 0, inerciaX = 0;
   let paleta = 0;
@@ -91,30 +88,23 @@ function iniciar() {
   if (window.ResizeObserver) new ResizeObserver(medir).observe(palco);
   else addEventListener('resize', medir);
 
-  /* ---------- mouse: olhar, arrastar, clicar ---------- */
+  /* ---------- mouse: arrastar e clicar ----------
+     Ele NÃO persegue o cursor: quem manda no giro é o arrasto. O cérebro
+     parado tem só o respiro; girar é uma ação de quem visita, não um
+     reflexo que acontece sozinho ao mexer o mouse na página. */
   let arrastando = false, arrastouQuanto = 0, ultimoX = 0, ultimoY = 0;
 
   if (!REDUZIDO) {
     addEventListener('pointermove', function (e) {
-      if (e.pointerType === 'touch') return;
-      if (arrastando) {
-        const dx = e.clientX - ultimoX, dy = e.clientY - ultimoY;
-        ultimoX = e.clientX; ultimoY = e.clientY;
-        arrastouQuanto += Math.abs(dx) + Math.abs(dy);
-        giroLivreY += dx * 0.006;
-        giroLivreX += dy * 0.004;
-        inerciaY = dx * 0.006;                 // guarda pra soltar girando
-        inerciaX = dy * 0.004;
-        return;
-      }
-      const mx = (e.clientX / innerWidth) * 2 - 1;
-      const my = (e.clientY / innerHeight) * 2 - 1;
-      alvoRotY = mx * GIRO_MAX_Y;
-      alvoRotX = my * GIRO_MAX_X;
+      if (!arrastando || e.pointerType === 'touch') return;
+      const dx = e.clientX - ultimoX, dy = e.clientY - ultimoY;
+      ultimoX = e.clientX; ultimoY = e.clientY;
+      arrastouQuanto += Math.abs(dx) + Math.abs(dy);
+      giroLivreY += dx * 0.006;
+      giroLivreX += dy * 0.004;
+      inerciaY = dx * 0.006;                   // guarda pra soltar girando
+      inerciaX = dy * 0.004;
     }, { passive: true });
-
-    addEventListener('pointerleave', function () { alvoRotY = alvoRotX = 0; }, { passive: true });
-    document.addEventListener('mouseleave', function () { alvoRotY = alvoRotX = 0; });
 
     palco.addEventListener('pointerdown', function (e) {
       arrastando = true; arrastouQuanto = 0;
@@ -188,8 +178,12 @@ function iniciar() {
   function quadro() {
     if (!rodando) return;
     rafId = requestAnimationFrame(quadro);
-    const t = relogio.getElapsedTime();
+    /* ORDEM IMPORTA: getElapsedTime() chama getDelta() por dentro e acumula.
+       Chamando elapsed primeiro, o getDelta() seguinte devolvia ~0 e a
+       montagem nunca saía do lugar. Pega-se o delta primeiro e lê-se o
+       elapsed do próprio relógio, que o getDelta acabou de atualizar. */
     const dt = Math.min(relogio.getDelta(), 0.05);
+    const t = relogio.elapsedTime;
 
     /* o desmonte é medido AQUI, a cada quadro, e não no evento de rolagem:
        lá o limite de 60ms o faria cair em degraus de 16 por segundo */
@@ -205,9 +199,10 @@ function iniciar() {
         giroLivreX += inerciaX;
         inerciaY *= 0.94; inerciaX *= 0.94;
       }
-      const respiroY = Math.sin(t * 0.5) * 0.045;
-      const alvoY = alvoRotY + respiroY + giroLivreY;
-      const alvoX = alvoRotX + Math.sin(t * 0.39 + 1.3) * 0.028 + giroLivreX;
+      /* respiro: o cérebro parado ainda balança de leve, senão parece uma
+         imagem congelada esperando alguém arrastar */
+      const alvoY = Math.sin(t * 0.5) * 0.045 + giroLivreY;
+      const alvoX = Math.sin(t * 0.39 + 1.3) * 0.028 + giroLivreX;
       grupo.rotation.y += (alvoY - grupo.rotation.y) * MACIEZ;
       grupo.rotation.x += (alvoX - grupo.rotation.x) * MACIEZ;
       grupo.position.y = Math.sin(t * 0.66) * 0.022;
