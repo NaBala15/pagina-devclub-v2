@@ -269,11 +269,19 @@ function iniciar() {
     const pos = geo.attributes.position;
     const d = pontos.userData;
     const base = d.base, nrm = d.normais, fase = d.fase, atraso = d.atraso,
-          origem = d.origem, dispersao = d.dispersao, deriva = d.deriva, n = d.n;
+          origem = d.origem, dispersao = d.dispersao, deriva = d.deriva,
+          peso = d.peso, n = d.n;
     const arr = pos.array;
     const invEsc = 1 / (grupo.scale.x || 1);
     /* queda acelerada: distância cresce com o quadrado, como gravidade */
     const cair = desmonte * desmonte;
+    /* O LEQUE abre em ritmo LINEAR, mais rápido que a queda quadrática:
+       assim as partículas se espalham enquanto ainda estão no quadro e só
+       então despencam. Com os dois no mesmo ritmo elas desciam num bloco
+       da largura do cérebro, e a queda lia como uma cortina reta.
+       A abertura é medida na largura visível, não num número fixo: em tela
+       larga o leque abre mais, que é o que faz sentido. */
+    const abertura = meiaLargura * 0.85 * invEsc;
 
     for (let i = 0; i < n; i++) {
       const j = i * 3;
@@ -308,11 +316,15 @@ function iniciar() {
         z = u * u * oz + 2 * u * s * cz + s * s * z;
       }
 
-      if (cair > 0) {
+      if (desmonte > 0) {
+        /* dois sorteios INDEPENDENTES. Antes um único valor mandava no
+           lado e na velocidade: quem ia pra direita caía mais rápido e
+           quem ia pra esquerda quase não caía, então a nuvem escorregava
+           na diagonal em vez de abrir. */
         const v = deriva[i];
-        x += v * 0.55 * cair;
-        y -= (1.6 + v * 2.4) * cair;
-        z += v * 0.30 * cair;
+        x += v * abertura * desmonte;          // leque: linear, abre cedo
+        y -= (1.4 + peso[i] * 2.2) * cair;     // queda: quadrática, acelera
+        z += v * 0.45 * cair;
       }
 
       arr[j] = x; arr[j + 1] = y; arr[j + 2] = z;
@@ -353,6 +365,7 @@ function iniciar() {
     const fase = new Float32Array(COUNT);
     const atraso = new Float32Array(COUNT);
     const deriva = new Float32Array(COUNT);
+    const peso = new Float32Array(COUNT);   // velocidade de queda, independente do lado
 
     const direcao = () => {
       let x, y, z, l;
@@ -420,6 +433,7 @@ function iniciar() {
       const h = (base[i * 3 + 1] + 0.9) / 1.8;
       atraso[i] = Math.min(0.85, Math.max(0, h * 0.55 + Math.random() * 0.28));
       deriva[i] = Math.random() * 2 - 1;
+      peso[i] = Math.random();
       /* ORIGEM: a BORDA da página, não o meio. As partículas entram por
          fora dos quatro lados e convergem — quem monta o cérebro é a página
          inteira se recolhendo, não um estouro saindo do centro.
@@ -507,7 +521,7 @@ function iniciar() {
     });
 
     pontos = new THREE.Points(geo, mat);
-    pontos.userData = { base, normais, origem, dispersao, fase, atraso, deriva, n: COUNT };
+    pontos.userData = { base, normais, origem, dispersao, fase, atraso, deriva, peso, n: COUNT };
     grupo.add(pontos);
 
     montarTeia();
