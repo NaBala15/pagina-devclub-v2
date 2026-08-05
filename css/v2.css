@@ -54,6 +54,48 @@ a{ color:inherit; text-decoration:none; }
 ::selection{ background:var(--violet); color:#fff; }
 img{ max-width:100%; display:block; }
 
+/* ---------- CURSOR: o caret de código (herdado da V1) ----------
+   Um SVG embutido, sem arquivo e sem JS. É a escolha certa aqui: cursor
+   feito com <div> perseguindo o mouse atrasa em telas cheias, some em
+   iframe e some quando o ponteiro sai da janela. Este é o cursor do
+   sistema — nunca atrasa.
+   O ponto quente fica no MEIO da barra (8 11), não na ponta, porque a
+   barra é um caret: o que aponta é o centro dela.
+   Reserva `text` de propósito: se o SVG não carregar, o que aparece é um
+   caret nativo, a coisa mais próxima do desenho. */
+body{
+  cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'><rect x='6' y='1' width='4' height='20' fill='%23c6ff3d'/></svg>") 8 11, text;
+}
+/* no claro o lime some no branco: caret na versão escurecida do acento */
+:root[data-theme="light"] body{
+  cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='22' viewBox='0 0 16 22'><rect x='6' y='1' width='4' height='20' fill='%2342690e'/></svg>") 8 11, text;
+}
+/* onde clicar é a ação, o cursor volta a ser o do sistema.
+   As regras de grab/grabbing (cérebro, decks, trilhos) já vivem nos
+   próprios blocos e ganham desta por especificidade. */
+a, button, summary, label, [role="button"], .btn, .card-go,
+input[type="checkbox"], input[type="radio"], select{ cursor:pointer; }
+input[type="text"], input[type="email"], textarea{ cursor:text; }
+
+/* ---------- BARRA DE ROLAGEM ----------
+   A V1 não tinha uma; esta segue a identidade da página: trilho quase
+   invisível e polegar no degradê da marca.
+   Firefox só aceita as duas propriedades padrão (largura e cor sólida),
+   então ele fica com o violeta do meio do degradê — mesma família. */
+:root{ scrollbar-width:thin; scrollbar-color:var(--violet) transparent; }
+::-webkit-scrollbar{ width:11px; height:11px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{
+  background:var(--grad);
+  border-radius:99px;
+  /* a borda transparente afina o polegar sem estreitar a área de clique:
+     ela some no fundo e o desenho encolhe pra dentro */
+  border:3px solid transparent;
+  background-clip:content-box;
+}
+::-webkit-scrollbar-thumb:hover{ border-width:2px; }
+::-webkit-scrollbar-corner{ background:transparent; }
+
 .grad{
   background:var(--grad);
   -webkit-background-clip:text; background-clip:text;
