@@ -92,7 +92,9 @@ function makeCodeScreen() {
     g.fillStyle = 'rgba(3,8,4,0.92)';
     g.fillRect(0, 0, 256, 160);
     g.font = '13px monospace';
-    scroll += 0.35;
+    /* sobe DEVAGAR (1/3 da velocidade original): rápido demais o olho lê
+       como estática de TV, não como código passando */
+    scroll += 0.12;
     for (let i = 0; i < lines.length; i++) {
       const y = ((i * 18 - scroll) % 180 + 180) % 180 - 10;
       g.fillStyle = i % 3 === 0 ? 'rgba(79,224,255,0.85)' : 'rgba(198,255,61,0.85)';
@@ -109,23 +111,25 @@ function makeCodeScreen() {
   return { tex, draw };
 }
 
-/* "reflexo da PÁGINA": miniatura da própria página DevClub rolando devagar —
-   navbar fixa, título hero com o CÉREBRO ao lado, CTA, stats e cards.
-   O cérebro da miniatura sai da MESMA geometria do hero (cerebro-geo),
-   amostrada uma vez: o olho reflete a página que existe de verdade. */
+/* "reflexo da PÁGINA": o HERO da página, nítido e parado — navbar, título,
+   CTA e o cérebro de partículas ao lado, como a página publicada.
+   Era uma página inteira rolando em 256px; virou só o hero em 512px,
+   desenhado UMA vez: rolagem borra e o pedido é que o olho leia.
+   O cérebro sai da MESMA geometria do hero (cerebro-geo), amostrado uma
+   vez — se a geometria mudar, o olho muda junto. */
 function makePageScreen() {
   const c = document.createElement('canvas');
-  c.width = 256; c.height = 256;
+  c.width = 512; c.height = 512;
   const g = c.getContext('2d');
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
-  let scroll = 0;
+  let pintado = false;
 
   const miniCerebro = (() => {
     const v = new THREE.Vector3();
     const pts = [];
     let tent = 0;
-    while (pts.length < 560 && tent < 22000) {
+    while (pts.length < 950 && tent < 40000) {
       tent++;
       let x, y, z, l;
       do {
@@ -140,85 +144,76 @@ function makePageScreen() {
       const t = Math.max(0, Math.min(1, (px + 1.15) / 2.3));
       /* magenta na frente → ciano no fundo, como as luzes do hero */
       const cor = 'rgba(' + Math.round(255 - t * 208) + ',' +
-        Math.round(42 + t * 174) + ',' + Math.round(157 + t * 98) + ',0.85)';
+        Math.round(42 + t * 174) + ',' + Math.round(157 + t * 98) + ',0.9)';
       pts.push([px, v.y, cor]);
     }
     return pts;
   })();
 
   function draw() {
-    g.setTransform(1, 0, 0, 1, 0, 0);
+    if (pintado) return;                     // estático: pinta uma vez só
+    pintado = true;
+
     g.fillStyle = '#06070b';
-    g.fillRect(0, 0, 256, 256);
-    /* conteúdo em 0.78x: mais página cabe na janela visível do olho */
-    g.setTransform(0.78, 0, 0, 0.78, 28, 4);
-    scroll += 0.25;
-    const CONTENT_H = 380;                       // altura virtual da "página"
-    const off = -(scroll % CONTENT_H);
-
-    const line = (x, y, w, h, color) => {
-      const yy = y + off < -20 ? y + off + CONTENT_H : y + off;
-      g.fillStyle = color;
-      g.fillRect(x, yy + 34, w, h);
-    };
-
-    /* hero */
+    g.fillRect(0, 0, 512, 512);
     g.textAlign = 'left';
-    const text = (t, x, y, font, color) => {
-      const yy = y + off < -20 ? y + off + CONTENT_H : y + off;
-      g.font = font; g.fillStyle = color;
-      g.fillText(t, x, yy + 34);
-    };
-    text('Ideias viram', 18, 40, 'bold 21px sans-serif', '#e8edef');
-    text('código.', 18, 66, 'bold 21px sans-serif', '#c6ff3d');
-    text('Pessoas viram devs.', 18, 92, 'bold 19px sans-serif', '#e8edef');
 
-    /* o cérebro de partículas do hero, à direita do título — os mesmos
-       pontos da geometria real, em miniatura */
+    /* navbar */
+    g.fillStyle = 'rgba(5,6,10,0.92)';
+    g.fillRect(0, 0, 512, 44);
+    g.font = 'bold 20px monospace'; g.fillStyle = '#c6ff3d';
+    g.fillText('>DevClub_', 20, 29);
+    g.fillStyle = '#8a969c'; g.font = '13px monospace';
+    g.fillText('plataforma  mentorias  formações', 170, 28);
+
+    /* eyebrow */
+    g.font = '14px monospace'; g.fillStyle = '#c6ff3d';
+    g.fillText('// dentro da mente de um dev_', 28, 152);
+
+    /* título nas cores da página: branco + degradê violeta→magenta */
+    const grad = g.createLinearGradient(28, 0, 260, 0);
+    grad.addColorStop(0, '#8b6cff');
+    grad.addColorStop(1, '#b44fd9');
+    g.font = 'bold 36px sans-serif';
+    g.fillStyle = '#e8edef';
+    g.fillText('Ideias viram', 28, 200);
+    g.fillStyle = grad;
+    g.fillText('código.', 28, 242);
+    g.fillStyle = '#e8edef';
+    g.fillText('Pessoas viram', 28, 284);
+    g.fillStyle = grad;
+    g.fillText('devs.', 28, 326);
+
+    /* o cérebro de partículas, à direita do título — os mesmos pontos da
+       geometria real */
     for (let i = 0; i < miniCerebro.length; i++) {
       const p = miniCerebro[i];
-      const bx = 244 + p[0] * 36;
-      const by = 60 - p[1] * 33;
-      const wy = by + off < -20 ? by + off + CONTENT_H : by + off;
       g.fillStyle = p[2];
-      g.fillRect(bx, wy + 34, 1.3, 1.3);
+      g.fillRect(392 + p[0] * 88, 238 - p[1] * 82, 1.7, 1.7);
     }
-    /* CTA pill */
-    const yy = 110 + off < -20 ? 110 + off + CONTENT_H : 110 + off;
-    g.fillStyle = '#c6ff3d';
-    g.beginPath(); g.roundRect(18, yy + 34, 110, 24, 12); g.fill();
-    g.font = 'bold 12px monospace'; g.fillStyle = '#05060a';
-    g.fillText('Ver formações →', 24, yy + 50);
-    /* console de stats */
-    line(18, 152, 220, 58, '#101315');
-    text('$ devclub --stats', 26, 168, '11px monospace', '#8a969c');
-    text('42.300+  89%  340+', 26, 190, 'bold 15px monospace', '#c6ff3d');
-    /* cards de formações */
-    line(18, 228, 104, 64, '#14171c');
-    line(134, 228, 104, 64, '#14171c');
-    text('@devclub/', 26, 248, '10px monospace', '#4fe0ff');
-    text('fullstack', 26, 262, 'bold 11px monospace', '#c6ff3d');
-    text('@devclub/', 142, 248, '10px monospace', '#4fe0ff');
-    text('frontend', 142, 262, 'bold 11px monospace', '#c6ff3d');
-    /* faixa de marquee */
-    line(0, 316, 256, 22, '#0b0d0f');
-    text('iFood · Nubank · Stone · Magalu', 14, 331, '10px monospace', '#8a969c');
 
-    /* navbar FIXA por cima */
-    g.setTransform(1, 0, 0, 1, 0, 0);
-    g.fillStyle = 'rgba(5,6,10,0.92)';
-    g.fillRect(0, 0, 256, 26);
-    g.font = 'bold 13px monospace'; g.fillStyle = '#c6ff3d';
-    g.fillText('>DevClub', 10, 18);
-    g.fillStyle = '#8a969c'; g.font = '9px monospace';
-    g.fillText('mente  formacoes  jornada', 100, 17);
+    /* CTA: pílula lime + fantasma, como na página */
+    g.fillStyle = '#c6ff3d';
+    g.beginPath(); g.roundRect(28, 366, 168, 38, 19); g.fill();
+    g.font = 'bold 15px monospace'; g.fillStyle = '#05060a';
+    g.fillText('Ver formações →', 44, 391);
+    g.strokeStyle = 'rgba(230,237,239,0.35)'; g.lineWidth = 1.5;
+    g.beginPath(); g.roundRect(212, 366, 205, 38, 19); g.stroke();
+    g.font = '14px monospace'; g.fillStyle = '#cfd8dc';
+    g.fillText('Conhecer a plataforma', 230, 390);
+
+    /* rodapé do hero */
+    g.textAlign = 'center';
+    g.font = '13px monospace'; g.fillStyle = '#8a969c';
+    g.fillText('role pra explorar ↓', 256, 478);
+    g.textAlign = 'left';
 
     /* brilho de vidro do olho */
-    const gl = g.createRadialGradient(128, 128, 20, 128, 128, 200);
+    const gl = g.createRadialGradient(256, 256, 40, 256, 256, 400);
     gl.addColorStop(0, 'rgba(255,255,255,0.10)');
     gl.addColorStop(1, 'rgba(255,255,255,0)');
     g.fillStyle = gl;
-    g.fillRect(0, 0, 256, 256);
+    g.fillRect(0, 0, 512, 512);
     tex.needsUpdate = true;
   }
   draw();
