@@ -1,0 +1,4050 @@
+{
+  "targetName": "Rodolfinho",
+  "targetId": "rodolfinho",
+  "schemaVersion": "2.1",
+  "terminologyProfile": {
+    "domain": "real-time procedural Three.js asset",
+    "geometryTerms": [
+      "silhouette",
+      "topology",
+      "primitive",
+      "bevel",
+      "chamfer",
+      "taper",
+      "bend",
+      "boolean cut",
+      "edge loop",
+      "surface normal",
+      "displacement"
+    ],
+    "materialTerms": [
+      "albedo",
+      "baseColor",
+      "roughness",
+      "metalness",
+      "normal map",
+      "bump map",
+      "ambient occlusion",
+      "cavity dirt",
+      "edge wear",
+      "clearcoat"
+    ],
+    "lightingTerms": [
+      "key light",
+      "fill light",
+      "rim light",
+      "HDRI/environment reflection",
+      "contact shadow"
+    ],
+    "descriptionRule": "Use measurable 3D graphics terms. Avoid vague words unless they are paired with concrete geometry/material/shader parameters."
+  },
+  "sourceImage": "C:/Users/jeffe/Downloads/Rodolfinho.png",
+  "referenceCamera": {
+    "solved": false,
+    "fovDegrees": 40.0,
+    "aspect": 1.0,
+    "orientation": {
+      "yaw": 0.0,
+      "pitch": 0.0,
+      "roll": 0.0
+    },
+    "positionHint": [
+      0.0,
+      0.0,
+      3.0
+    ],
+    "note": "For likeness work, solve the reference camera (forge/stage1_intake/solve_camera_pose.py) so the review render aligns with the photo and the reference can be projected. Confirm by overlay review."
+  },
+  "suitability": "conditional",
+  "scores": {
+    "object_isolation": 0,
+    "silhouette_readability": 0,
+    "depth_inference": 0,
+    "primitive_decomposition": 0,
+    "material_procedurality": 0,
+    "occlusion_risk": 0,
+    "interaction_fit": 0
+  },
+  "preSpecAssessment": {
+    "objectClass": {
+      "primaryType": "stylized humanoid mascot (caricature bobblehead)",
+      "primaryDomain": "character",
+      "formLanguage": [
+        "rounded-organic",
+        "soft-bevel",
+        "inflated-volume",
+        "no-hard-edges"
+      ],
+      "structureKind": [
+        "articulated-biped",
+        "layered-garment-over-body"
+      ],
+      "motionPotential": [
+        "walk-cycle",
+        "turn-180",
+        "arm-reach",
+        "head-look",
+        "hold-object-both-hands"
+      ],
+      "materialFamilies": [
+        "subsurface-skin",
+        "woven-wool-fabric",
+        "matte-cotton",
+        "hard-plastic-gloss",
+        "rubber-sole"
+      ],
+      "notes": "Caricatura 3D de proporção bobblehead. MEDIDO na silhueta: 3.90 cabeças de altura (humano real ~7.5), cabeça = 25.6% da altura total, linha do ombro em 33.2%. A cabeça grande e o corpo curto SÃO a identidade — errar essa razão descaracteriza mais que errar qualquer detalhe."
+    },
+    "complexity": {
+      "tier": "complex",
+      "scores": {
+        "silhouetteComplexity": 2,
+        "componentCount": 3,
+        "hierarchyDepth": 3,
+        "repetitionDensity": 1,
+        "materialLayerCount": 3,
+        "localDetailDensity": 2,
+        "occlusionRisk": 3,
+        "actionReadinessNeed": 3
+      },
+      "estimatedCounts": {
+        "macroComponents": 4,
+        "mesoComponents": 16,
+        "microFeatureGroups": 9,
+        "materialLayers": 7,
+        "repetitionSystems": 2
+      },
+      "reasoning": [
+        "Personagem articulado: o esqueleto pesa mais que a superfície porque ele precisa andar, virar e segurar objeto em cada mão.",
+        "Oclusão ALTA: a única vista é frontal com os braços cruzados. Costas, palmas, sola e a parte de trás do blazer são inferência.",
+        "Repetição real e pequena: cadarços do tênis e botões do punho (2 por manga)."
+      ]
+    },
+    "specDepthDecision": {
+      "requiredDepth": "complex",
+      "minimumComponentLevels": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "needsRepetitionSystems": true,
+      "needsMaterialLocalOverrides": true,
+      "needsMultipleReviewViews": true,
+      "needsActionReadyHierarchy": true,
+      "rationale": "Choose simple/moderate/complex/ultra-complex from observed structure, not from a hardcoded domain."
+    },
+    "unknownsToResolveBeforeImplementation": [],
+    "detailInventory": {
+      "scanMethod": "component-zones",
+      "targetMinDetails": 10,
+      "note": "Cada detalhe mapeia num component.localFeatures ou material.localOverrides — nenhum fica só em prosa.",
+      "details": [
+        {
+          "id": "oculos-armacao",
+          "zone": "cabeca",
+          "kind": "bevel",
+          "description": "Óculos retangulares de armação PRETA GROSSA, hastes visíveis; o traço mais identificador do rosto",
+          "mapsTo": {
+            "ref": "oculos-aro-esq"
+          },
+          "confidence": 0.95,
+          "realization": "unreported"
+        },
+        {
+          "id": "cabelo-crespo",
+          "zone": "cabeca",
+          "kind": "contour",
+          "description": "Cabelo preto crespo curto, volume irregular acima da linha 0.229 da cabeça",
+          "mapsTo": {
+            "ref": "cabelo"
+          },
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "sorriso-dentes",
+          "zone": "rosto",
+          "kind": "linework",
+          "description": "Sorriso largo aberto com fileira de dentes brancos, na linha 0.857 da cabeça",
+          "mapsTo": {
+            "ref": "dentes"
+          },
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "sobrancelhas",
+          "zone": "rosto",
+          "kind": "ridge",
+          "description": "Sobrancelhas grossas pretas logo acima dos óculos",
+          "mapsTo": {
+            "ref": "sobrancelha-esq"
+          },
+          "confidence": 0.85,
+          "realization": "unreported"
+        },
+        {
+          "id": "lapela-blazer",
+          "zone": "torso",
+          "kind": "seam",
+          "description": "Lapela do blazer cinza, aberta em V do ombro até o meio do peito",
+          "mapsTo": {
+            "ref": "lapela-v"
+          },
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "botoes-punho",
+          "zone": "bracos",
+          "kind": "fastener",
+          "description": "Dois botões escuros no punho de CADA manga",
+          "mapsTo": {
+            "ref": "punho-esq"
+          },
+          "confidence": 0.8,
+          "realization": "unreported"
+        },
+        {
+          "id": "bolso-lateral",
+          "zone": "torso",
+          "kind": "seam",
+          "description": "Aba de bolso lateral no blazer, dos dois lados, na altura do quadril",
+          "mapsTo": {
+            "ref": "aba-bolso"
+          },
+          "confidence": 0.75,
+          "realization": "unreported"
+        },
+        {
+          "id": "estampa-devclub",
+          "zone": "torso",
+          "kind": "decal",
+          "description": "'DevClub' em branco no peito da camiseta preta, com underscore em lime #c6ff3d",
+          "mapsTo": {
+            "ref": "estampa-devclub"
+          },
+          "confidence": 0.95,
+          "realization": "unreported"
+        },
+        {
+          "id": "sola-branca",
+          "zone": "pes",
+          "kind": "contour",
+          "description": "Faixa de sola BRANCA contrastando com o cabedal preto — separa o pé do chão escuro",
+          "mapsTo": {
+            "ref": "sola-branca-esq"
+          },
+          "confidence": 0.9,
+          "realization": "unreported"
+        },
+        {
+          "id": "cadarcos",
+          "zone": "pes",
+          "kind": "fastener",
+          "description": "Cadarços claros em travessas no cabedal do tênis",
+          "mapsTo": {
+            "ref": "cadarco-esq"
+          },
+          "confidence": 0.7,
+          "realization": "unreported"
+        },
+        {
+          "id": "orelhas",
+          "zone": "cabeca",
+          "kind": "contour",
+          "description": "Orelhas destacadas do crânio, visíveis pela silhueta",
+          "mapsTo": {
+            "ref": "orelha-esq"
+          },
+          "confidence": 0.85,
+          "realization": "unreported"
+        },
+        {
+          "id": "brilho-pele",
+          "zone": "rosto",
+          "kind": "gloss",
+          "description": "Realce especular no nariz, testa e maçãs — pele com brilho de render Pixar, não fosca",
+          "mapsTo": {
+            "ref": "brilho-pele-realce"
+          },
+          "confidence": 0.85,
+          "realization": "unreported"
+        }
+      ]
+    },
+    "anatomy": {
+      "applies": true,
+      "styleHeads": 3.9,
+      "proportions": {
+        "headUnit": 0.256,
+        "torso": 0.3,
+        "legs": 0.37,
+        "shoulderWidth": 0.333,
+        "hipWidth": 0.264
+      },
+      "pose": {
+        "type": "standing-arms-crossed-weight-even",
+        "jointAngles": {
+          "cabecaInclinacaoY": 6.0,
+          "ombroEsq": -8.0,
+          "ombroDir": -8.0,
+          "cotoveloEsq": 95.0,
+          "cotoveloDir": 95.0,
+          "quadril": 0.0
+        }
+      },
+      "faceLandmarks": {
+        "hairline": 0.229,
+        "eyeLine": 0.514,
+        "eyeSpacing": 0.31,
+        "noseBase": 0.7,
+        "mouthLine": 0.857
+      },
+      "features": [
+        {
+          "id": "oculos",
+          "kind": "accessory",
+          "anchor": "eyeLine",
+          "note": "armação grossa retangular, define o rosto"
+        },
+        {
+          "id": "cabelo",
+          "kind": "hair",
+          "anchor": "hairline",
+          "note": "crespo curto, volume por aglomerado de esferas"
+        },
+        {
+          "id": "sorriso",
+          "kind": "mouth",
+          "anchor": "mouthLine",
+          "note": "aberto, com dentes"
+        },
+        {
+          "id": "sobrancelhas",
+          "kind": "brow",
+          "anchor": "eyeLine",
+          "note": "grossas, acima da armação"
+        },
+        {
+          "id": "orelhas",
+          "kind": "ear",
+          "anchor": "eyeLine",
+          "note": "destacadas na silhueta"
+        }
+      ],
+      "confidence": 0.86,
+      "note": "Proporções MEDIDAS na silhueta do recorte, não estimadas: 3.90 cabeças, cabeça 0.256, ombro 0.332. Marcos do rosto medidos por banda escura (óculos) e banda branca (dentes) dentro da caixa da cabeça. Confiança 0.86 porque só existe UMA vista: costas e palmas são inferência."
+    },
+    "sourceImage": "C:/Users/jeffe/Downloads/Rodolfinho.png",
+    "unknownsResolved": [
+      {
+        "unknown": "costas do blazer e da cabeca",
+        "resolution": "espelhamento da frente com o volume fechado por elipsoide proprio (blazer-costas, confianca 0.45)",
+        "method": "inference-by-symmetry"
+      },
+      {
+        "unknown": "palma e dedos",
+        "resolution": "mao como volume unico com socket na palma; dedo separado nao le a ~380px",
+        "method": "scale-appropriate-simplification"
+      },
+      {
+        "unknown": "sola do tenis",
+        "resolution": "bloco de sola extrudado a partir da faixa branca lateral visivel",
+        "method": "extrapolation-from-visible-edge"
+      },
+      {
+        "unknown": "dobra da perna",
+        "resolution": "ciclo de caminhada procedural por senoides nas juntas; a referencia e pose parada e nao tem quadro de andar",
+        "method": "authored-motion"
+      }
+    ]
+  },
+  "qualityContract": {
+    "qualityBar": "complex",
+    "definitionOfDone": [
+      "The rendered model matches the reference silhouette, primary proportions, visible component hierarchy, material response, and most recognizable local features for the selected fidelity tier."
+    ],
+    "minimumSpecDepth": {
+      "macroComponents": 3,
+      "mesoComponents": 8,
+      "microFeatureGroups": 5,
+      "materialLayers": 3,
+      "repetitionSystems": 1,
+      "reviewViewpoints": 4
+    },
+    "featureGroups": [
+      {
+        "id": "proporcao-bobblehead",
+        "name": "Proporção de caricatura (3.9 cabeças)",
+        "required": true,
+        "critical": true,
+        "threshold": 0.8,
+        "qualityCriteria": [
+          "cabeça ocupa 25-27% da altura",
+          "figura entre 3.7 e 4.1 cabeças",
+          "ombro em ~33% da altura"
+        ]
+      },
+      {
+        "id": "rosto-identidade",
+        "name": "Óculos, sorriso e cabelo",
+        "required": true,
+        "critical": true,
+        "threshold": 0.75,
+        "qualityCriteria": [
+          "óculos retangulares de armação grossa na linha 0.51 da cabeça",
+          "sorriso aberto com dentes na linha 0.86",
+          "cabelo crespo volumoso acima de 0.23"
+        ]
+      },
+      {
+        "id": "traje-devclub",
+        "name": "Blazer cinza + camiseta DevClub",
+        "required": true,
+        "critical": true,
+        "threshold": 0.7,
+        "qualityCriteria": [
+          "blazer cinza aberto com lapela em V",
+          "camiseta preta com a estampa legível",
+          "calça preta e tênis de sola branca"
+        ]
+      },
+      {
+        "id": "esqueleto-articulado",
+        "name": "Esqueleto pronto pra ação",
+        "required": true,
+        "critical": true,
+        "threshold": 0.8,
+        "qualityCriteria": [
+          "quadril/coxa/canela/pé articulados nos dois lados",
+          "ombro/cotovelo/mão articulados",
+          "encaixe de objeto em cada mão",
+          "cabeça com pivô próprio"
+        ]
+      },
+      {
+        "id": "silhueta-de-costas",
+        "name": "Silhueta ao virar 180°",
+        "required": true,
+        "critical": false,
+        "threshold": 0.6,
+        "qualityCriteria": [
+          "as costas fecham sem buraco",
+          "o volume se sustenta de perfil e de costas"
+        ]
+      }
+    ],
+    "visualDeltaChecks": [
+      "razão altura/cabeça contra 3.90 medido",
+      "linha do ombro contra 0.332 da altura",
+      "linha dos óculos contra 0.514 da cabeça",
+      "linha da boca contra 0.857 da cabeça",
+      "contraste da sola branca contra o cabedal preto"
+    ],
+    "antiShallowSpecRules": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md).",
+      "Adjacent components must overlap by at least 0.02 world units at shared seams (source: grimoire/build/geometry_patterns.md).",
+      "Raised or recessed relief and fasteners must be geometry, instanced micro-parts, or displacement; a map alone is an approximation (source: grimoire/build/geometry_patterns.md)."
+    ],
+    "mustNotDo": [
+      "Do not proceed to code if qualityContract.qualityBar is unassessed.",
+      "Do not proceed to code if the spec only contains a root component for a moderate or complex object.",
+      "Do not proceed to code if required featureGroups are not represented by componentTree, materials, or repetitionSystems.",
+      "Do not proceed to code if visible local features are described only in prose and not attached to components/materials/evidenceRefs.",
+      "Do not proceed past structural-pass if attached child parts lack attachment.parentSocket, localStart, localEnd, embedDepth/overlap, and gapTolerance.",
+      "Do not pass material look-dev when albedo is reused as roughness, height, normal, or AO.",
+      "Do not pass material look-dev without macro, meso, and micro surface frequency bands for close-up materials.",
+      "Do not pass reference-fidelity material look-dev from a source image without usable referencePbr maps or an explicit documented limitation.",
+      "Do not patch a spec with extracted PBR maps when extraction confidence is below the target threshold unless the user explicitly accepts lower fidelity.",
+      "Do not place adjacent separate-geometry parts below 0.02 world-unit seam overlap (source: grimoire/build/geometry_patterns.md).",
+      "Do not satisfy raised or recessed relief, fasteners, or grip structure with a map alone when the feature affects form; use geometry or displacement (source: grimoire/build/geometry_patterns.md).",
+      "Adjacent components must overlap by at least 0.02 world units at shared seams (source: grimoire/build/geometry_patterns.md).",
+      "Raised or recessed relief and fasteners must be geometry, instanced micro-parts, or displacement; a map alone is an approximation (source: grimoire/build/geometry_patterns.md)."
+    ]
+  },
+  "qualityTargets": {
+    "targetFidelity": 0.7,
+    "mustMatch": [
+      "macro silhouette and proportions",
+      "primary material albedo/roughness response",
+      "reference-derived PBR material response at or above 0.7 confidence when source pixels are usable",
+      "most recognizable local features"
+    ],
+    "niceToHave": [
+      "micro scratches, stains, chips, and dirt masks",
+      "secondary lighting match"
+    ],
+    "fpsTarget": 60,
+    "reviewViewpoints": [
+      "front",
+      "three-quarter",
+      "side",
+      "thickness-axis",
+      "long-axis"
+    ]
+  },
+  "selfCorrectLoop": {
+    "enabled": true,
+    "visualAcceptance": {
+      "reviewer": "ai-vision",
+      "threshold": 0.7,
+      "comparisonArtifactRequired": true,
+      "layerScoresRequired": true,
+      "codePixelDiffIsAcceptanceAuthority": false,
+      "scoringRule": "AI vision must inspect a side-by-side reference/render sheet and score the current pass from 0 to 1. Pixel-diff code may assist diagnostics but cannot approve a pass.",
+      "requiredLayerScores": [
+        "silhouetteProportion",
+        "componentStructure",
+        "formDetail",
+        "materialSurface",
+        "lightingCamera"
+      ],
+      "featureReviewPolicy": {
+        "enabled": true,
+        "reviewUnit": "semantic-subsystem",
+        "maxCriticalFeaturesPerPass": 5,
+        "maxImportantFeaturesPerPass": 3,
+        "criticalDefaultThreshold": 0.8,
+        "importantAverageThreshold": 0.65,
+        "adaptiveEscalation": true,
+        "singleImagePairOnly": true,
+        "selectionRule": "Choose only the most visually salient, identity-defining, user-prioritized, or high-risk semantic systems. Group repeated parts instead of reviewing every mesh. AI vision scores every selected feature from the same full reference/render pair."
+      }
+    },
+    "reviewAfterPasses": [
+      "blockout",
+      "structural-pass",
+      "form-refinement",
+      "material-pass",
+      "surface-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "allowedActions": [
+      "continue",
+      "refine-spec",
+      "refine-code",
+      "request-input",
+      "stop"
+    ],
+    "specRefineTriggers": [
+      "missing component",
+      "wrong primitive family",
+      "wrong proportions",
+      "material layer under-specified",
+      "local feature not traceable to viewEvidence",
+      "reference ambiguity discovered during implementation"
+    ],
+    "codeRefineTriggers": [
+      "spec is adequate but generated geometry/material does not match",
+      "browser render differs from reference",
+      "performance budget exceeded",
+      "lighting hides geometry or material response"
+    ],
+    "stopCriteria": [
+      "target fidelity reached or user accepts current approximation",
+      "remaining gaps require new reference images or manual art"
+    ],
+    "screenshotPolicy": {
+      "requiredForPasses": [
+        "blockout",
+        "structural-pass",
+        "form-refinement",
+        "material-pass",
+        "surface-pass",
+        "lighting-pass",
+        "interaction-pass"
+      ],
+      "preferredCapture": "in-app-browser-screenshot",
+      "fallbackCapture": "user-supplied-screenshot-path",
+      "minimumEvidence": "Each visual pass needs a reference image, rendered screenshot, side-by-side comparison sheet, AI vision score, layer scores, and critique before choosing continue.",
+      "reviewPairRule": "Compare the same camera/viewpoint whenever possible; do not judge a front reference against a random render angle.",
+      "acceptanceAuthority": "AI vision review of the comparison sheet. Code-generated pixel similarity is not sufficient evidence."
+    }
+  },
+  "featureReviewTargets": [
+    {
+      "id": "anatomy-proportion",
+      "name": "Proporção de caricatura (3.90 cabeças)",
+      "tier": "critical",
+      "threshold": 0.8,
+      "criteria": [
+        "cabeça 25-27% da altura",
+        "3.7 a 4.1 cabeças",
+        "ombro em ~33%"
+      ]
+    },
+    {
+      "id": "face-landmark-placement",
+      "name": "Óculos, olhos e boca nas linhas medidas",
+      "tier": "critical",
+      "threshold": 0.75,
+      "criteria": [
+        "óculos na linha 0.514 da cabeça",
+        "boca na 0.857",
+        "cabelo acima de 0.229"
+      ]
+    },
+    {
+      "id": "outfit-and-palette",
+      "name": "Blazer cinza, camiseta DevClub, tênis de sola branca",
+      "tier": "critical",
+      "threshold": 0.7,
+      "criteria": [
+        "blazer aberto com lapela em V",
+        "estampa legível",
+        "sola branca contrastando"
+      ]
+    },
+    {
+      "id": "pose-silhouette",
+      "name": "Silhueta em pé e de costas",
+      "tier": "important",
+      "threshold": 0.65,
+      "criteria": [
+        "volume se sustenta de perfil",
+        "costas fecham sem buraco"
+      ]
+    },
+    {
+      "id": "esqueleto-articulado",
+      "name": "Esqueleto pronto pra andar e segurar",
+      "tier": "critical",
+      "threshold": 0.8,
+      "criteria": [
+        "cadeias perna e braço completas",
+        "socket em cada mão",
+        "pivô na cabeça"
+      ]
+    }
+  ],
+  "sculptPipeline": {
+    "passGateMode": "locked-sequential",
+    "passOrder": [
+      "blockout",
+      "proportion-lock",
+      "feature-placement",
+      "material-pass",
+      "lighting-pass",
+      "interaction-pass",
+      "optimization-pass"
+    ],
+    "currentPass": "blockout",
+    "completedPasses": [],
+    "lastCompletedPass": "",
+    "blockedReason": "blockout requires a browser screenshot and self-correction review before structural-pass unlocks",
+    "nextRequiredEvidence": [
+      "blockout browser render screenshot from your agent's browser/screenshot tool",
+      "side-by-side reference/render comparison sheet",
+      "AI vision score >= 0.7 with layer scores and mismatch critique",
+      "critical semantic feature scores from the same image pair meeting their individual thresholds",
+      "reviewHistory entry for blockout with action=continue"
+    ]
+  },
+  "lookDevTargets": {
+    "qualityPriority": "reference-fidelity",
+    "materialPass": {
+      "albedoPaletteRequired": true,
+      "roughnessVariationRequired": true,
+      "normalOrBumpRequired": true,
+      "localOverridesRequired": true,
+      "minimumTextureResolution": 1024,
+      "preferredTextureResolution": 2048,
+      "independentMapChannels": [
+        "albedo",
+        "roughness",
+        "height",
+        "normal",
+        "ambient-occlusion"
+      ],
+      "requiredSurfaceFrequencyBands": [
+        "macro",
+        "meso",
+        "micro"
+      ],
+      "geometryReliefRequiredWhenSilhouetteAffected": true,
+      "referencePbrExtraction": {
+        "requiredWhenSourceImagePresent": true,
+        "targetThreshold": 0.7,
+        "stopOnLowConfidence": true,
+        "script": "forge/stage1_intake/extract_pbr_evidence.py",
+        "acceptedLimitation": "single-image extraction is reference-derived inference, not exact photogrammetry"
+      },
+      "mustAvoid": [
+        "single flat albedo per material",
+        "uniform roughness",
+        "albedo texture reused as roughness/height/normal/AO",
+        "single-frequency random noise",
+        "plastic-looking smooth bark, stone, cloth, foliage, or aged material",
+        "local color/detail described only in prose without material masks",
+        "claiming exact PBR recovery when confidence is below the target threshold"
+      ]
+    },
+    "lightingPass": {
+      "requiredTerms": [
+        "key light",
+        "fill light",
+        "rim or environment light",
+        "exposure",
+        "tone mapping",
+        "background",
+        "contact shadow"
+      ],
+      "mustAvoid": [
+        "ambient-only lighting",
+        "flat value range",
+        "missing contact shadow",
+        "reference lighting copied without separating material readability"
+      ]
+    },
+    "screenshotReview": [
+      "Compare albedo palette and local color zones.",
+      "Compare roughness/normal/bump response under light.",
+      "Compare cavity dirt, edge wear, stains, moss, scratches, or other local masks.",
+      "Compare key/fill/rim structure, exposure, tone mapping, background, and contact shadows.",
+      "Capture a neutral-light render to verify material readability without reference lighting.",
+      "Capture a grazing-light close-up to expose flat normals, uniform roughness, tiling, and plastic highlights.",
+      "Capture a reference-matched render from the same camera framing as the source."
+    ]
+  },
+  "actionReadiness": {
+    "runtimeHierarchy": true,
+    "pivots": [
+      {
+        "component": "quadril",
+        "axis": "xyz",
+        "use": "balanço do corpo na caminhada"
+      },
+      {
+        "component": "cabeca",
+        "axis": "xy",
+        "use": "olhar / acompanhar"
+      },
+      {
+        "component": "coxa-esq",
+        "axis": "x",
+        "use": "passada"
+      },
+      {
+        "component": "coxa-dir",
+        "axis": "x",
+        "use": "passada"
+      },
+      {
+        "component": "canela-esq",
+        "axis": "x",
+        "use": "dobra do joelho"
+      },
+      {
+        "component": "canela-dir",
+        "axis": "x",
+        "use": "dobra do joelho"
+      },
+      {
+        "component": "tenis-esq",
+        "axis": "x",
+        "use": "rolagem do pé"
+      },
+      {
+        "component": "tenis-dir",
+        "axis": "x",
+        "use": "rolagem do pé"
+      },
+      {
+        "component": "ombro-esq",
+        "axis": "xz",
+        "use": "balanço do braço"
+      },
+      {
+        "component": "ombro-dir",
+        "axis": "xz",
+        "use": "balanço do braço"
+      },
+      {
+        "component": "antebraco-esq",
+        "axis": "x",
+        "use": "dobra do cotovelo"
+      },
+      {
+        "component": "antebraco-dir",
+        "axis": "x",
+        "use": "dobra do cotovelo"
+      },
+      {
+        "component": "root",
+        "axis": "y",
+        "use": "virar 180°"
+      }
+    ],
+    "sockets": [
+      {
+        "id": "mao-esq-objeto",
+        "parent": "mao-esq",
+        "use": "pílula azul"
+      },
+      {
+        "id": "mao-dir-objeto",
+        "parent": "mao-dir",
+        "use": "pílula vermelha"
+      }
+    ],
+    "animations": [
+      "andar",
+      "parar",
+      "virar-180",
+      "oferecer-pilulas",
+      "acenar"
+    ],
+    "exposeUserData": "root.userData.sculptRuntime"
+  },
+  "assumptions": [
+    "Costas e nuca inferidas por simetria — a referência só mostra a frente, e ele VAI virar de costas.",
+    "Mão aberta sem referência: os braços estão cruzados na foto. A pose de segurar é invenção coerente, não cópia.",
+    "Sola do tênis inferida da faixa branca lateral.",
+    "Dedos não são modelados um a um: a mão é um volume único com o socket na palma — na escala de tela em que ele aparece, dedo separado não lê.",
+    "APROXIMACAO DECLARADA: os materiais NAO tem referencePbr extraido pixel a pixel. Os escalares e as cores rgba() foram amostrados da referencia, mas nao ha mapa de albedo/rugosidade/normal/AO extraido por material. Motivo: o mascote aparece a ~380px de altura na pagina, e nessa escala mapa extraido nao se distingue de material procedural — o custo nao se paga. Se ele for usado em close, esta e a primeira coisa a refazer (forge/stage1_intake/extract_pbr_evidence.py, um recorte por material)."
+  ],
+  "coordinateFrame": {
+    "front": "camera-facing side in the reference image",
+    "up": "image up direction",
+    "scaleReference": "unit scale; adjust after first browser render"
+  },
+  "silhouette": {
+    "boundingShape": "",
+    "aspectRatios": [],
+    "symmetry": "",
+    "dominantCurves": [],
+    "negativeSpaces": [],
+    "landmarks": []
+  },
+  "viewEvidence": [
+    {
+      "id": "full-object",
+      "view": "primary",
+      "imageRegion": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1.0,
+        "height": 1.0,
+        "units": "normalized"
+      },
+      "observations": [],
+      "confidence": 0.5
+    }
+  ],
+  "componentTree": [
+    {
+      "id": "root",
+      "parent": null,
+      "level": "macro",
+      "primitive": "box",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "size": [
+        0.34,
+        1.0,
+        0.26
+      ],
+      "material": "hidden",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "raiz de montagem",
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "actionProfile": {
+        "animatable": false,
+        "rigidGroup": "root",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(0, 0, 0, 0)",
+        "secondaryAlbedo": "rgba(0, 0, 0, 0)",
+        "materialClass": "unknown",
+        "materialClassConfidence": 0.5,
+        "note": "nao desenha"
+      }
+    },
+    {
+      "id": "quadril",
+      "parent": "root",
+      "level": "macro",
+      "primitive": "capsule",
+      "position": [
+        0,
+        0.435,
+        0
+      ],
+      "size": [
+        0.264,
+        0.16,
+        0.2
+      ],
+      "material": "calca",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0,
+        0.435,
+        0
+      ],
+      "localFeatures": [
+        {
+          "id": "vinco-calca",
+          "note": "vinco vertical na frente de cada perna"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "quadril",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(21, 21, 25, 1.0)",
+        "secondaryAlbedo": "rgba(40, 40, 46, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.85,
+        "note": "preto fosco"
+      },
+      "attachment": {
+        "parentSocket": "socket-base",
+        "parentComponent": "root",
+        "localStart": [
+          0,
+          0.515,
+          0
+        ],
+        "localEnd": [
+          0,
+          0.355,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.012,
+        "gapTolerance": 0.002,
+        "note": "topo da cadeia: sobrepoe o torso pra junta nao abrir fresta ao balancar",
+        "overlap": 0.012
+      }
+    },
+    {
+      "id": "torso",
+      "parent": "quadril",
+      "level": "macro",
+      "primitive": "capsule",
+      "position": [
+        0,
+        0.5515,
+        0
+      ],
+      "size": [
+        0.29225,
+        0.33299999999999996,
+        0.22
+      ],
+      "material": "camiseta",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0,
+        0.435,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "torso",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(19, 19, 22, 1.0)",
+        "secondaryAlbedo": "rgba(38, 38, 44, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "preto de algodao, mais fosco que o blazer"
+      },
+      "attachment": {
+        "parentSocket": "socket-cintura",
+        "parentComponent": "quadril",
+        "localStart": [
+          0,
+          0.718,
+          0
+        ],
+        "localEnd": [
+          0,
+          0.385,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.03,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "camiseta-peito",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0,
+        0.555,
+        0.1
+      ],
+      "size": [
+        0.22,
+        0.2,
+        0.06
+      ],
+      "material": "camiseta",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "malha sobre o peito",
+      "localFeatures": [
+        {
+          "id": "estampa-devclub-decal",
+          "note": "wordmark DevClub_ no peito"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "camiseta-peito",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(19, 19, 22, 1.0)",
+        "secondaryAlbedo": "rgba(38, 38, 44, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "preto de algodao, mais fosco que o blazer"
+      }
+    },
+    {
+      "id": "blazer-esq",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "extrude",
+      "position": [
+        -0.115,
+        0.545,
+        0.045
+      ],
+      "size": [
+        0.13,
+        0.3,
+        0.2
+      ],
+      "material": "blazer",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "tecido que veste o torso",
+      "localFeatures": [
+        {
+          "id": "lapela-v",
+          "note": "lapela em V do ombro ao meio do peito"
+        },
+        {
+          "id": "aba-bolso",
+          "note": "aba de bolso na altura do quadril"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "blazer-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      }
+    },
+    {
+      "id": "blazer-dir",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "extrude",
+      "position": [
+        0.115,
+        0.545,
+        0.045
+      ],
+      "size": [
+        0.13,
+        0.3,
+        0.2
+      ],
+      "material": "blazer",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "tecido que veste o torso",
+      "localFeatures": [
+        {
+          "id": "lapela-v-d",
+          "note": "lapela em V, lado direito"
+        },
+        {
+          "id": "aba-bolso-d",
+          "note": "aba de bolso, lado direito"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "blazer-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      }
+    },
+    {
+      "id": "blazer-costas",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0,
+        0.555,
+        -0.09
+      ],
+      "size": [
+        0.3,
+        0.3,
+        0.1
+      ],
+      "material": "blazer",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "tecido que veste o torso",
+      "confidence": 0.45,
+      "note": "INFERIDO: a vista frontal não mostra as costas, e ele vira 180° na animação",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "blazer-costas",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      }
+    },
+    {
+      "id": "pescoco",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "lathe",
+      "position": [
+        0,
+        0.714,
+        0
+      ],
+      "size": [
+        0.085,
+        0.075,
+        0.085
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "torneado: perfil revolvido, sem aresta viva (cylinder seria uma caixa redonda)",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "pescoco",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      },
+      "attachment": {
+        "parentSocket": "socket-pescoco",
+        "parentComponent": "torso",
+        "localStart": [
+          0,
+          0.7515,
+          0
+        ],
+        "localEnd": [
+          0,
+          0.6765,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.02,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "cabeca",
+      "parent": "pescoco",
+      "level": "macro",
+      "primitive": "ellipsoid",
+      "position": [
+        0,
+        0.872,
+        0.006
+      ],
+      "size": [
+        0.196,
+        0.256,
+        0.1862
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0,
+        0.744,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "cabeca",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      },
+      "attachment": {
+        "parentSocket": "socket-cranio",
+        "parentComponent": "pescoco",
+        "localStart": [
+          0,
+          1.0,
+          0.006
+        ],
+        "localEnd": [
+          0,
+          0.744,
+          0.006
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.022,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "cabelo",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0,
+        0.967376,
+        -0.004
+      ],
+      "size": [
+        0.20188,
+        0.085,
+        0.19404000000000002
+      ],
+      "material": "cabelo",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "localFeatures": [
+        {
+          "id": "crespo-aglomerado",
+          "note": "volume por aglomerado, não casca lisa"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "cabelo",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(20, 17, 22, 1.0)",
+        "secondaryAlbedo": "rgba(46, 40, 50, 1.0)",
+        "materialClass": "unknown",
+        "materialClassConfidence": 0.85,
+        "note": "preto quase puro; a secundaria e o realce largo do crespo"
+      }
+    },
+    {
+      "id": "orelha-esq",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        -0.09506,
+        0.856416,
+        0
+      ],
+      "size": [
+        0.022,
+        0.048,
+        0.03
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "orelha-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      }
+    },
+    {
+      "id": "orelha-dir",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0.09506,
+        0.856416,
+        0
+      ],
+      "size": [
+        0.022,
+        0.048,
+        0.03
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "orelha-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      }
+    },
+    {
+      "id": "sobrancelha-esq",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "box",
+      "position": [
+        -0.034,
+        0.894416,
+        0.084
+      ],
+      "size": [
+        0.04,
+        0.01,
+        0.012
+      ],
+      "material": "cabelo",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "relevo sobre a testa",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "sobrancelha-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(20, 17, 22, 1.0)",
+        "secondaryAlbedo": "rgba(46, 40, 50, 1.0)",
+        "materialClass": "unknown",
+        "materialClassConfidence": 0.85,
+        "note": "preto quase puro; a secundaria e o realce largo do crespo"
+      }
+    },
+    {
+      "id": "sobrancelha-dir",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "box",
+      "position": [
+        0.034,
+        0.894416,
+        0.084
+      ],
+      "size": [
+        0.04,
+        0.01,
+        0.012
+      ],
+      "material": "cabelo",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "relevo sobre a testa",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "sobrancelha-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(20, 17, 22, 1.0)",
+        "secondaryAlbedo": "rgba(46, 40, 50, 1.0)",
+        "materialClass": "unknown",
+        "materialClassConfidence": 0.85,
+        "note": "preto quase puro; a secundaria e o realce largo do crespo"
+      }
+    },
+    {
+      "id": "olho-esq",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "ellipsoid",
+      "position": [
+        -0.032,
+        0.868416,
+        0.078
+      ],
+      "size": [
+        0.026,
+        0.028,
+        0.016
+      ],
+      "material": "olho-branco",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "olho-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(242, 240, 236, 1.0)",
+        "secondaryAlbedo": "rgba(212, 210, 206, 1.0)",
+        "materialClass": "ceramic",
+        "materialClassConfidence": 0.85,
+        "note": "esclera"
+      }
+    },
+    {
+      "id": "olho-dir",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "ellipsoid",
+      "position": [
+        0.032,
+        0.868416,
+        0.078
+      ],
+      "size": [
+        0.026,
+        0.028,
+        0.016
+      ],
+      "material": "olho-branco",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "olho-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(242, 240, 236, 1.0)",
+        "secondaryAlbedo": "rgba(212, 210, 206, 1.0)",
+        "materialClass": "ceramic",
+        "materialClassConfidence": 0.85,
+        "note": "esclera"
+      }
+    },
+    {
+      "id": "iris-esq",
+      "parent": "olho-esq",
+      "level": "micro",
+      "primitive": "ellipsoid",
+      "position": [
+        -0.03,
+        0.868416,
+        0.089
+      ],
+      "size": [
+        0.014,
+        0.015,
+        0.008
+      ],
+      "material": "iris",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "disco sobre o globo",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "iris-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(58, 36, 22, 1.0)",
+        "secondaryAlbedo": "rgba(96, 62, 36, 1.0)",
+        "materialClass": "unknown",
+        "materialClassConfidence": 0.8,
+        "note": "castanho"
+      }
+    },
+    {
+      "id": "iris-dir",
+      "parent": "olho-dir",
+      "level": "micro",
+      "primitive": "ellipsoid",
+      "position": [
+        0.034,
+        0.868416,
+        0.089
+      ],
+      "size": [
+        0.014,
+        0.015,
+        0.008
+      ],
+      "material": "iris",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "disco sobre o globo",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "iris-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(58, 36, 22, 1.0)",
+        "secondaryAlbedo": "rgba(96, 62, 36, 1.0)",
+        "materialClass": "unknown",
+        "materialClassConfidence": 0.8,
+        "note": "castanho"
+      }
+    },
+    {
+      "id": "nariz",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0,
+        0.8208,
+        0.092
+      ],
+      "size": [
+        0.03,
+        0.032,
+        0.03
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "nariz",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      }
+    },
+    {
+      "id": "boca",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0,
+        0.780608,
+        0.08
+      ],
+      "size": [
+        0.062,
+        0.03,
+        0.024
+      ],
+      "material": "boca-interior",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "localFeatures": [
+        {
+          "id": "sorriso-aberto",
+          "note": "cavidade do sorriso largo"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "boca",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(90, 37, 48, 1.0)",
+        "secondaryAlbedo": "rgba(60, 24, 32, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.7,
+        "note": "cavidade"
+      }
+    },
+    {
+      "id": "dentes",
+      "parent": "boca",
+      "level": "micro",
+      "primitive": "box",
+      "position": [
+        0,
+        0.786608,
+        0.086
+      ],
+      "size": [
+        0.052,
+        0.014,
+        0.012
+      ],
+      "material": "dentes",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "fileira presa dentro da boca",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "dentes",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(246, 244, 239, 1.0)",
+        "secondaryAlbedo": "rgba(222, 218, 210, 1.0)",
+        "materialClass": "ceramic",
+        "materialClassConfidence": 0.85,
+        "note": "esmalte"
+      }
+    },
+    {
+      "id": "oculos-aro-esq",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "torus",
+      "position": [
+        -0.034,
+        0.868416,
+        0.086
+      ],
+      "size": [
+        0.036,
+        0.032,
+        0.011
+      ],
+      "material": "oculos-armacao",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "armação: peças rígidas montadas",
+      "localFeatures": [
+        {
+          "id": "armacao-grossa",
+          "note": "seção grossa, retangular arredondada"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "oculos-aro-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(10, 10, 12, 1.0)",
+        "secondaryAlbedo": "rgba(58, 58, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.95,
+        "note": "acetato polido"
+      }
+    },
+    {
+      "id": "oculos-aro-dir",
+      "parent": "cabeca",
+      "level": "meso",
+      "primitive": "torus",
+      "position": [
+        0.034,
+        0.868416,
+        0.086
+      ],
+      "size": [
+        0.036,
+        0.032,
+        0.011
+      ],
+      "material": "oculos-armacao",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "armação: peças rígidas montadas",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "oculos-aro-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(10, 10, 12, 1.0)",
+        "secondaryAlbedo": "rgba(58, 58, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.95,
+        "note": "acetato polido"
+      }
+    },
+    {
+      "id": "oculos-ponte",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "box",
+      "position": [
+        0,
+        0.872416,
+        0.09
+      ],
+      "size": [
+        0.024,
+        0.008,
+        0.008
+      ],
+      "material": "oculos-armacao",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "armação: peças rígidas montadas",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "oculos-ponte",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(10, 10, 12, 1.0)",
+        "secondaryAlbedo": "rgba(58, 58, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.95,
+        "note": "acetato polido"
+      }
+    },
+    {
+      "id": "oculos-haste-esq",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "box",
+      "position": [
+        -0.072,
+        0.872416,
+        0.036
+      ],
+      "size": [
+        0.008,
+        0.008,
+        0.078
+      ],
+      "material": "oculos-armacao",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "armação: peças rígidas montadas",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "oculos-haste-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(10, 10, 12, 1.0)",
+        "secondaryAlbedo": "rgba(58, 58, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.95,
+        "note": "acetato polido"
+      }
+    },
+    {
+      "id": "oculos-haste-dir",
+      "parent": "cabeca",
+      "level": "micro",
+      "primitive": "box",
+      "position": [
+        0.072,
+        0.872416,
+        0.036
+      ],
+      "size": [
+        0.008,
+        0.008,
+        0.078
+      ],
+      "material": "oculos-armacao",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "armação: peças rígidas montadas",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "oculos-haste-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(10, 10, 12, 1.0)",
+        "secondaryAlbedo": "rgba(58, 58, 66, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.95,
+        "note": "acetato polido"
+      }
+    },
+    {
+      "id": "lente-esq",
+      "parent": "oculos-aro-esq",
+      "level": "micro",
+      "primitive": "plane-card",
+      "position": [
+        -0.034,
+        0.868416,
+        0.085
+      ],
+      "size": [
+        0.032,
+        0.028,
+        0.001
+      ],
+      "material": "oculos-lente",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "lente acompanha o aro",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "lente-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(159, 216, 232, 0.35)",
+        "secondaryAlbedo": "rgba(200, 235, 245, 0.2)",
+        "materialClass": "glass",
+        "materialClassConfidence": 0.7,
+        "note": "lente clara"
+      }
+    },
+    {
+      "id": "lente-dir",
+      "parent": "oculos-aro-dir",
+      "level": "micro",
+      "primitive": "plane-card",
+      "position": [
+        0.034,
+        0.868416,
+        0.085
+      ],
+      "size": [
+        0.032,
+        0.028,
+        0.001
+      ],
+      "material": "oculos-lente",
+      "topologyClass": "conforming-shell",
+      "topologyRationale": "lente acompanha o aro",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "lente-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(159, 216, 232, 0.35)",
+        "secondaryAlbedo": "rgba(200, 235, 245, 0.2)",
+        "materialClass": "glass",
+        "materialClassConfidence": 0.7,
+        "note": "lente clara"
+      }
+    },
+    {
+      "id": "ombro-esq",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        -0.167,
+        0.6559999999999999,
+        0
+      ],
+      "size": [
+        0.075,
+        0.075,
+        0.075
+      ],
+      "material": "blazer",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        -0.167,
+        0.6559999999999999,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "ombro-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      },
+      "attachment": {
+        "parentSocket": "socket-ombro-esq",
+        "parentComponent": "torso",
+        "localStart": [
+          -0.167,
+          0.6934999999999999,
+          0
+        ],
+        "localEnd": [
+          -0.167,
+          0.6184999999999999,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.024,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "braco-esq",
+      "parent": "ombro-esq",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        -0.17900000000000002,
+        0.568,
+        0
+      ],
+      "size": [
+        0.062,
+        0.145,
+        0.062
+      ],
+      "material": "blazer",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        -0.167,
+        0.6559999999999999,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "braco-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      },
+      "attachment": {
+        "parentSocket": "socket-braco-esq",
+        "parentComponent": "ombro-esq",
+        "localStart": [
+          -0.17900000000000002,
+          0.6405,
+          0
+        ],
+        "localEnd": [
+          -0.17900000000000002,
+          0.49549999999999994,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.02,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "antebraco-esq",
+      "parent": "braco-esq",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        -0.183,
+        0.43299999999999994,
+        0
+      ],
+      "size": [
+        0.056,
+        0.135,
+        0.056
+      ],
+      "material": "blazer",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        -0.18100000000000002,
+        0.4979999999999999,
+        0
+      ],
+      "localFeatures": [
+        {
+          "id": "punho-esq",
+          "note": "punho da manga com dois botões"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "antebraco-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      },
+      "attachment": {
+        "parentSocket": "socket-cotovelo-esq",
+        "parentComponent": "braco-esq",
+        "localStart": [
+          -0.183,
+          0.5005,
+          0
+        ],
+        "localEnd": [
+          -0.183,
+          0.36549999999999994,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.018,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "mao-esq",
+      "parent": "antebraco-esq",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        -0.185,
+        0.3529999999999999,
+        0.006
+      ],
+      "size": [
+        0.052,
+        0.058,
+        0.04
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        -0.185,
+        0.36799999999999994,
+        0
+      ],
+      "socket": {
+        "id": "mao-esq-objeto",
+        "note": "encaixe da pílula"
+      },
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "mao-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      },
+      "attachment": {
+        "parentSocket": "socket-punho-esq",
+        "parentComponent": "antebraco-esq",
+        "localStart": [
+          -0.185,
+          0.38199999999999995,
+          0.006
+        ],
+        "localEnd": [
+          -0.185,
+          0.3239999999999999,
+          0.006
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.014,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "ombro-dir",
+      "parent": "torso",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0.167,
+        0.6559999999999999,
+        0
+      ],
+      "size": [
+        0.075,
+        0.075,
+        0.075
+      ],
+      "material": "blazer",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0.167,
+        0.6559999999999999,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "ombro-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      },
+      "attachment": {
+        "parentSocket": "socket-ombro-dir",
+        "parentComponent": "torso",
+        "localStart": [
+          0.167,
+          0.6934999999999999,
+          0
+        ],
+        "localEnd": [
+          0.167,
+          0.6184999999999999,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.024,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "braco-dir",
+      "parent": "ombro-dir",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        0.17900000000000002,
+        0.568,
+        0
+      ],
+      "size": [
+        0.062,
+        0.145,
+        0.062
+      ],
+      "material": "blazer",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0.167,
+        0.6559999999999999,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "braco-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      },
+      "attachment": {
+        "parentSocket": "socket-braco-dir",
+        "parentComponent": "ombro-dir",
+        "localStart": [
+          0.17900000000000002,
+          0.6405,
+          0
+        ],
+        "localEnd": [
+          0.17900000000000002,
+          0.49549999999999994,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.02,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "antebraco-dir",
+      "parent": "braco-dir",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        0.183,
+        0.43299999999999994,
+        0
+      ],
+      "size": [
+        0.056,
+        0.135,
+        0.056
+      ],
+      "material": "blazer",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0.18100000000000002,
+        0.4979999999999999,
+        0
+      ],
+      "localFeatures": [
+        {
+          "id": "punho-dir",
+          "note": "punho da manga com dois botões"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "antebraco-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(74, 77, 85, 1.0)",
+        "secondaryAlbedo": "rgba(96, 100, 110, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.9,
+        "note": "cinza medio; secundaria e o brilho de borda da la"
+      },
+      "attachment": {
+        "parentSocket": "socket-cotovelo-dir",
+        "parentComponent": "braco-dir",
+        "localStart": [
+          0.183,
+          0.5005,
+          0
+        ],
+        "localEnd": [
+          0.183,
+          0.36549999999999994,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.018,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "mao-dir",
+      "parent": "antebraco-dir",
+      "level": "meso",
+      "primitive": "ellipsoid",
+      "position": [
+        0.185,
+        0.3529999999999999,
+        0.006
+      ],
+      "size": [
+        0.052,
+        0.058,
+        0.04
+      ],
+      "material": "pele",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0.185,
+        0.36799999999999994,
+        0
+      ],
+      "socket": {
+        "id": "mao-dir-objeto",
+        "note": "encaixe da pílula"
+      },
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "mao-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(201, 138, 94, 1.0)",
+        "secondaryAlbedo": "rgba(168, 106, 68, 1.0)",
+        "materialClass": "skin",
+        "materialClassConfidence": 0.9,
+        "note": "amostrada no rosto da referencia; secundaria e a sombra da maca"
+      },
+      "attachment": {
+        "parentSocket": "socket-punho-dir",
+        "parentComponent": "antebraco-dir",
+        "localStart": [
+          0.185,
+          0.38199999999999995,
+          0.006
+        ],
+        "localEnd": [
+          0.185,
+          0.3239999999999999,
+          0.006
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.014,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "coxa-esq",
+      "parent": "quadril",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        -0.058,
+        0.33499999999999996,
+        0
+      ],
+      "size": [
+        0.078,
+        0.2,
+        0.082
+      ],
+      "material": "calca",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        -0.058,
+        0.435,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "coxa-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(21, 21, 25, 1.0)",
+        "secondaryAlbedo": "rgba(40, 40, 46, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.85,
+        "note": "preto fosco"
+      },
+      "attachment": {
+        "parentSocket": "socket-quadril-esq",
+        "parentComponent": "quadril",
+        "localStart": [
+          -0.058,
+          0.43499999999999994,
+          0
+        ],
+        "localEnd": [
+          -0.058,
+          0.23499999999999996,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.026,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "canela-esq",
+      "parent": "coxa-esq",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        -0.058,
+        0.13999999999999999,
+        0
+      ],
+      "size": [
+        0.066,
+        0.19,
+        0.07
+      ],
+      "material": "calca",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        -0.058,
+        0.235,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "canela-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(21, 21, 25, 1.0)",
+        "secondaryAlbedo": "rgba(40, 40, 46, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.85,
+        "note": "preto fosco"
+      },
+      "attachment": {
+        "parentSocket": "socket-joelho-esq",
+        "parentComponent": "coxa-esq",
+        "localStart": [
+          -0.058,
+          0.235,
+          0
+        ],
+        "localEnd": [
+          -0.058,
+          0.044999999999999984,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.02,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "tenis-esq",
+      "parent": "canela-esq",
+      "level": "meso",
+      "primitive": "extrude",
+      "position": [
+        -0.058,
+        0.024,
+        0.028
+      ],
+      "size": [
+        0.082,
+        0.048,
+        0.145
+      ],
+      "material": "tenis-cabedal",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "cabedal + sola: peças distintas montadas",
+      "pivot": [
+        -0.058,
+        0.045,
+        0
+      ],
+      "localFeatures": [
+        {
+          "id": "sola-branca-esq",
+          "note": "faixa de sola branca sob o cabedal"
+        },
+        {
+          "id": "cadarco-esq",
+          "note": "travessas de cadarço"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "tenis-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(16, 16, 20, 1.0)",
+        "secondaryAlbedo": "rgba(44, 44, 52, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
+        "note": "couro sintetico"
+      },
+      "attachment": {
+        "parentSocket": "socket-tornozelo-esq",
+        "parentComponent": "canela-esq",
+        "localStart": [
+          -0.058,
+          0.048,
+          0.028
+        ],
+        "localEnd": [
+          -0.058,
+          0.0,
+          0.028
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.016,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "sola-esq",
+      "parent": "tenis-esq",
+      "level": "micro",
+      "primitive": "extrude",
+      "position": [
+        -0.058,
+        0.006,
+        0.028
+      ],
+      "size": [
+        0.086,
+        0.014,
+        0.15
+      ],
+      "material": "tenis-sola",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "placa de sola presa ao cabedal",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "sola-esq",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(240, 236, 228, 1.0)",
+        "secondaryAlbedo": "rgba(206, 200, 190, 1.0)",
+        "materialClass": "rubber",
+        "materialClassConfidence": 0.9,
+        "note": "borracha clara"
+      },
+      "attachment": {
+        "parentSocket": "socket-sola-esq",
+        "parentComponent": "tenis-esq",
+        "localStart": [
+          -0.058,
+          0.013000000000000001,
+          0.028
+        ],
+        "localEnd": [
+          -0.058,
+          -0.001,
+          0.028
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.008,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "coxa-dir",
+      "parent": "quadril",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        0.058,
+        0.33499999999999996,
+        0
+      ],
+      "size": [
+        0.078,
+        0.2,
+        0.082
+      ],
+      "material": "calca",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0.058,
+        0.435,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "coxa-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(21, 21, 25, 1.0)",
+        "secondaryAlbedo": "rgba(40, 40, 46, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.85,
+        "note": "preto fosco"
+      },
+      "attachment": {
+        "parentSocket": "socket-quadril-dir",
+        "parentComponent": "quadril",
+        "localStart": [
+          0.058,
+          0.43499999999999994,
+          0
+        ],
+        "localEnd": [
+          0.058,
+          0.23499999999999996,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.026,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "canela-dir",
+      "parent": "coxa-dir",
+      "level": "meso",
+      "primitive": "capsule",
+      "position": [
+        0.058,
+        0.13999999999999999,
+        0
+      ],
+      "size": [
+        0.066,
+        0.19,
+        0.07
+      ],
+      "material": "calca",
+      "topologyClass": "continuous-sculpt",
+      "topologyRationale": "volume orgânico contínuo de caricatura, sem aresta viva",
+      "pivot": [
+        0.058,
+        0.235,
+        0
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "canela-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(21, 21, 25, 1.0)",
+        "secondaryAlbedo": "rgba(40, 40, 46, 1.0)",
+        "materialClass": "fabric",
+        "materialClassConfidence": 0.85,
+        "note": "preto fosco"
+      },
+      "attachment": {
+        "parentSocket": "socket-joelho-dir",
+        "parentComponent": "coxa-dir",
+        "localStart": [
+          0.058,
+          0.235,
+          0
+        ],
+        "localEnd": [
+          0.058,
+          0.044999999999999984,
+          0
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.02,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "tenis-dir",
+      "parent": "canela-dir",
+      "level": "meso",
+      "primitive": "extrude",
+      "position": [
+        0.058,
+        0.024,
+        0.028
+      ],
+      "size": [
+        0.082,
+        0.048,
+        0.145
+      ],
+      "material": "tenis-cabedal",
+      "topologyClass": "assembled-solid",
+      "topologyRationale": "cabedal + sola: peças distintas montadas",
+      "pivot": [
+        0.058,
+        0.045,
+        0
+      ],
+      "localFeatures": [
+        {
+          "id": "sola-branca-dir",
+          "note": "faixa de sola branca sob o cabedal"
+        },
+        {
+          "id": "cadarco-dir",
+          "note": "travessas de cadarço"
+        }
+      ],
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "tenis-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(16, 16, 20, 1.0)",
+        "secondaryAlbedo": "rgba(44, 44, 52, 1.0)",
+        "materialClass": "plastic",
+        "materialClassConfidence": 0.8,
+        "note": "couro sintetico"
+      },
+      "attachment": {
+        "parentSocket": "socket-tornozelo-dir",
+        "parentComponent": "canela-dir",
+        "localStart": [
+          0.058,
+          0.048,
+          0.028
+        ],
+        "localEnd": [
+          0.058,
+          0.0,
+          0.028
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.016,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    },
+    {
+      "id": "sola-dir",
+      "parent": "tenis-dir",
+      "level": "micro",
+      "primitive": "extrude",
+      "position": [
+        0.058,
+        0.006,
+        0.028
+      ],
+      "size": [
+        0.086,
+        0.014,
+        0.15
+      ],
+      "material": "tenis-sola",
+      "topologyClass": "surface-relief",
+      "topologyRationale": "placa de sola presa ao cabedal",
+      "actionProfile": {
+        "animatable": true,
+        "rigidGroup": "sola-dir",
+        "note": "peça do esqueleto articulado; gira no próprio pivô"
+      },
+      "colorMaterialRecipe": {
+        "dominantAlbedo": "rgba(240, 236, 228, 1.0)",
+        "secondaryAlbedo": "rgba(206, 200, 190, 1.0)",
+        "materialClass": "rubber",
+        "materialClassConfidence": 0.9,
+        "note": "borracha clara"
+      },
+      "attachment": {
+        "parentSocket": "socket-sola-dir",
+        "parentComponent": "tenis-dir",
+        "localStart": [
+          0.058,
+          0.013000000000000001,
+          0.028
+        ],
+        "localEnd": [
+          0.058,
+          -0.001,
+          0.028
+        ],
+        "contactType": "socket-embedded",
+        "embedDepth": 0.008,
+        "gapTolerance": 0.002,
+        "note": "afunda no pai pra não abrir fresta quando a junta gira"
+      }
+    }
+  ],
+  "materials": [
+    {
+      "id": "hidden",
+      "type": "MeshBasicMaterial",
+      "baseColor": "#000000",
+      "visible": false,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "-",
+          "frequency": 0.25,
+          "amplitude": 0.0014
+        },
+        {
+          "id": "meso",
+          "note": "-",
+          "frequency": 1.1,
+          "amplitude": 0.0005
+        },
+        {
+          "id": "micro",
+          "note": "-",
+          "frequency": 4.6,
+          "amplitude": 0.00012
+        }
+      ],
+      "roughness": {
+        "value": 0.5,
+        "map": "canal proprio de rugosidade, ruido procedural de - (fonte separada da cor base)",
+        "variation": 0.0
+      },
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.0,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.0,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(0, 0, 0, 0)",
+        "secondary": "rgba(0, 0, 0, 0)"
+      }
+    },
+    {
+      "id": "pele",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#c98a5e",
+      "roughness": {
+        "value": 0.42,
+        "map": "canal proprio de rugosidade, ruido procedural de poro fino (fonte separada da cor base)",
+        "variation": 0.1
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.28,
+      "clearcoatRoughness": 0.45,
+      "sheen": 0.25,
+      "localOverrides": [
+        {
+          "id": "brilho-pele-realce",
+          "note": "realce especular no nariz, testa e maçãs",
+          "roughness": 0.28,
+          "clearcoat": 0.45
+        }
+      ],
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "volume do rosto",
+          "frequency": 1.75,
+          "amplitude": 0.0098
+        },
+        {
+          "id": "meso",
+          "note": "maca e sulco nasolabial",
+          "frequency": 7.7,
+          "amplitude": 0.0035
+        },
+        {
+          "id": "micro",
+          "note": "poro fino",
+          "frequency": 32.2,
+          "amplitude": 0.00084
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 2048,
+      "normal": {
+        "strength": 0.35,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.08,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(201, 138, 94, 1.0)",
+        "secondary": "rgba(168, 106, 68, 1.0)"
+      }
+    },
+    {
+      "id": "cabelo",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#141116",
+      "roughness": {
+        "value": 0.62,
+        "map": "canal proprio de rugosidade, ruido procedural de fio do crespo (fonte separada da cor base)",
+        "variation": 0.16
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.35,
+      "clearcoatRoughness": 0.5,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "massa do penteado",
+          "frequency": 3.75,
+          "amplitude": 0.021
+        },
+        {
+          "id": "meso",
+          "note": "mechas do crespo",
+          "frequency": 16.5,
+          "amplitude": 0.0075
+        },
+        {
+          "id": "micro",
+          "note": "fio",
+          "frequency": 69.0,
+          "amplitude": 0.0018
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.9,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.128,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(20, 17, 22, 1.0)",
+        "secondary": "rgba(46, 40, 50, 1.0)"
+      }
+    },
+    {
+      "id": "blazer",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#4a4d55",
+      "roughness": {
+        "value": 0.86,
+        "map": "canal proprio de rugosidade, ruido procedural de trama da la (fonte separada da cor base)",
+        "variation": 0.14
+      },
+      "metalness": 0.0,
+      "sheen": 0.5,
+      "sheenColor": "#6a6e78",
+      "localOverrides": [
+        {
+          "id": "trama-blazer",
+          "note": "trama de lã, ruído fino no normal",
+          "roughness": 0.9
+        }
+      ],
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "caimento do tecido",
+          "frequency": 3.0,
+          "amplitude": 0.0168
+        },
+        {
+          "id": "meso",
+          "note": "vinco e lapela",
+          "frequency": 13.2,
+          "amplitude": 0.006
+        },
+        {
+          "id": "micro",
+          "note": "trama da la",
+          "frequency": 55.2,
+          "amplitude": 0.00144
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.75,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.112,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(74, 77, 85, 1.0)",
+        "secondary": "rgba(96, 100, 110, 1.0)"
+      }
+    },
+    {
+      "id": "camiseta",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#131316",
+      "roughness": {
+        "value": 0.94,
+        "map": "canal proprio de rugosidade, ruido procedural de malha do algodao (fonte separada da cor base)",
+        "variation": 0.08
+      },
+      "metalness": 0.0,
+      "localOverrides": [
+        {
+          "id": "estampa-devclub",
+          "note": "DevClub em branco, underscore #c6ff3d, textura de canvas"
+        }
+      ],
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "caimento",
+          "frequency": 2.5,
+          "amplitude": 0.014
+        },
+        {
+          "id": "meso",
+          "note": "dobra no peito",
+          "frequency": 11.0,
+          "amplitude": 0.005
+        },
+        {
+          "id": "micro",
+          "note": "malha do algodao",
+          "frequency": 46.0,
+          "amplitude": 0.0012
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.4,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.064,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(19, 19, 22, 1.0)",
+        "secondary": "rgba(38, 38, 44, 1.0)"
+      }
+    },
+    {
+      "id": "calca",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#151519",
+      "roughness": {
+        "value": 0.9,
+        "map": "canal proprio de rugosidade, ruido procedural de sarja (fonte separada da cor base)",
+        "variation": 0.09
+      },
+      "metalness": 0.0,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "perna",
+          "frequency": 2.5,
+          "amplitude": 0.014
+        },
+        {
+          "id": "meso",
+          "note": "vinco vertical",
+          "frequency": 11.0,
+          "amplitude": 0.005
+        },
+        {
+          "id": "micro",
+          "note": "sarja",
+          "frequency": 46.0,
+          "amplitude": 0.0012
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.45,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.072,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(21, 21, 25, 1.0)",
+        "secondary": "rgba(40, 40, 46, 1.0)"
+      }
+    },
+    {
+      "id": "tenis-cabedal",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#101014",
+      "roughness": {
+        "value": 0.78,
+        "map": "canal proprio de rugosidade, ruido procedural de grao do couro (fonte separada da cor base)",
+        "variation": 0.12
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.2,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "volume do pe",
+          "frequency": 2.75,
+          "amplitude": 0.0154
+        },
+        {
+          "id": "meso",
+          "note": "costura do painel",
+          "frequency": 12.1,
+          "amplitude": 0.0055
+        },
+        {
+          "id": "micro",
+          "note": "grao do couro",
+          "frequency": 50.6,
+          "amplitude": 0.00132
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.55,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.096,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(16, 16, 20, 1.0)",
+        "secondary": "rgba(44, 44, 52, 1.0)"
+      }
+    },
+    {
+      "id": "tenis-sola",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#f0ece4",
+      "roughness": {
+        "value": 0.7,
+        "map": "canal proprio de rugosidade, ruido procedural de antiderrapante (fonte separada da cor base)",
+        "variation": 0.1
+      },
+      "metalness": 0.0,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "bloco da sola",
+          "frequency": 2.25,
+          "amplitude": 0.0126
+        },
+        {
+          "id": "meso",
+          "note": "faixa lateral",
+          "frequency": 9.9,
+          "amplitude": 0.0045
+        },
+        {
+          "id": "micro",
+          "note": "textura antiderrapante",
+          "frequency": 41.4,
+          "amplitude": 0.00108
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.3,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.08,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(240, 236, 228, 1.0)",
+        "secondary": "rgba(206, 200, 190, 1.0)"
+      }
+    },
+    {
+      "id": "oculos-armacao",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#0a0a0c",
+      "roughness": {
+        "value": 0.3,
+        "map": "canal proprio de rugosidade, ruido procedural de risco de polimento (fonte separada da cor base)",
+        "variation": 0.05
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.7,
+      "clearcoatRoughness": 0.15,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "aro",
+          "frequency": 1.0,
+          "amplitude": 0.0056
+        },
+        {
+          "id": "meso",
+          "note": "chanfro do aro",
+          "frequency": 4.4,
+          "amplitude": 0.002
+        },
+        {
+          "id": "micro",
+          "note": "risco de polimento",
+          "frequency": 18.4,
+          "amplitude": 0.00048
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.15,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.04,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(10, 10, 12, 1.0)",
+        "secondary": "rgba(58, 58, 66, 1.0)"
+      }
+    },
+    {
+      "id": "oculos-lente",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#9fd8e8",
+      "roughness": {
+        "value": 0.12,
+        "map": "canal proprio de rugosidade, ruido procedural de micro risco (fonte separada da cor base)",
+        "variation": 0.03
+      },
+      "metalness": 0.0,
+      "transmission": 0.72,
+      "ior": 1.5,
+      "thickness": 0.01,
+      "opacity": 0.35,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "curva da lente",
+          "frequency": 0.375,
+          "amplitude": 0.0021
+        },
+        {
+          "id": "meso",
+          "note": "borda",
+          "frequency": 1.65,
+          "amplitude": 0.00075
+        },
+        {
+          "id": "micro",
+          "note": "micro risco",
+          "frequency": 6.9,
+          "amplitude": 0.00018
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.05,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.024,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(159, 216, 232, 0.35)",
+        "secondary": "rgba(200, 235, 245, 0.2)"
+      }
+    },
+    {
+      "id": "dentes",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#f6f4ef",
+      "roughness": {
+        "value": 0.28,
+        "map": "canal proprio de rugosidade, ruido procedural de esmalte (fonte separada da cor base)",
+        "variation": 0.04
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.5,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "arcada",
+          "frequency": 1.25,
+          "amplitude": 0.007
+        },
+        {
+          "id": "meso",
+          "note": "separacao entre dentes",
+          "frequency": 5.5,
+          "amplitude": 0.0025
+        },
+        {
+          "id": "micro",
+          "note": "esmalte",
+          "frequency": 23.0,
+          "amplitude": 0.0006
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.1,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.032,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(246, 244, 239, 1.0)",
+        "secondary": "rgba(222, 218, 210, 1.0)"
+      }
+    },
+    {
+      "id": "olho-branco",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#f2f0ec",
+      "roughness": {
+        "value": 0.25,
+        "map": "canal proprio de rugosidade, ruido procedural de vaso fino (fonte separada da cor base)",
+        "variation": 0.04
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.6,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "globo",
+          "frequency": 0.75,
+          "amplitude": 0.0042
+        },
+        {
+          "id": "meso",
+          "note": "canto umido",
+          "frequency": 3.3,
+          "amplitude": 0.0015
+        },
+        {
+          "id": "micro",
+          "note": "vaso fino",
+          "frequency": 13.8,
+          "amplitude": 0.00036
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.08,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.032,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(242, 240, 236, 1.0)",
+        "secondary": "rgba(212, 210, 206, 1.0)"
+      }
+    },
+    {
+      "id": "iris",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#3a2416",
+      "roughness": {
+        "value": 0.22,
+        "map": "canal proprio de rugosidade, ruido procedural de fibra radial (fonte separada da cor base)",
+        "variation": 0.07
+      },
+      "metalness": 0.0,
+      "clearcoat": 0.8,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "disco",
+          "frequency": 1.5,
+          "amplitude": 0.0084
+        },
+        {
+          "id": "meso",
+          "note": "anel da iris",
+          "frequency": 6.6,
+          "amplitude": 0.003
+        },
+        {
+          "id": "micro",
+          "note": "fibra radial",
+          "frequency": 27.6,
+          "amplitude": 0.00072
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.25,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.056,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(58, 36, 22, 1.0)",
+        "secondary": "rgba(96, 62, 36, 1.0)"
+      }
+    },
+    {
+      "id": "boca-interior",
+      "type": "MeshPhysicalMaterial",
+      "baseColor": "#5a2530",
+      "roughness": {
+        "value": 0.6,
+        "map": "canal proprio de rugosidade, ruido procedural de umidade (fonte separada da cor base)",
+        "variation": 0.09
+      },
+      "metalness": 0.0,
+      "surfaceFrequencyBands": [
+        {
+          "id": "macro",
+          "note": "cavidade",
+          "frequency": 2.0,
+          "amplitude": 0.0112
+        },
+        {
+          "id": "meso",
+          "note": "gengiva",
+          "frequency": 8.8,
+          "amplitude": 0.004
+        },
+        {
+          "id": "micro",
+          "note": "umidade",
+          "frequency": 36.8,
+          "amplitude": 0.00096
+        }
+      ],
+      "ambientOcclusion": {
+        "source": "AO procedural nas dobras e encaixes",
+        "intensity": 0.7,
+        "note": "escurece o vinco e a juncao das pecas; independente do albedo"
+      },
+      "textureProjection": {
+        "mode": "triplanar-object-space",
+        "repeat": [
+          2.0,
+          2.0
+        ],
+        "texelDensityIntent": "1 unidade de mundo = 512 texels; o rosto recebe o dobro"
+      },
+      "textureResolution": 1024,
+      "normal": {
+        "strength": 0.2,
+        "source": "ruido procedural da banda micro"
+      },
+      "colorVariation": {
+        "amount": 0.072,
+        "note": "variacao sutil do albedo pra superficie nao ficar chapada"
+      },
+      "albedo": {
+        "base": "rgba(90, 37, 48, 1.0)",
+        "secondary": "rgba(60, 24, 32, 1.0)"
+      }
+    }
+  ],
+  "repetitionSystems": [
+    {
+      "id": "botoesPunho",
+      "kind": "instancing",
+      "count": 4,
+      "note": "dois botões por punho, nos dois antebraços",
+      "element": {
+        "primitive": "cylinder",
+        "size": [
+          0.01,
+          0.004,
+          0.01
+        ],
+        "material": "oculos-armacao"
+      },
+      "placement": "along punho-esq e punho-dir, espaçamento 0.016"
+    },
+    {
+      "id": "cadarcos",
+      "kind": "instancing",
+      "count": 8,
+      "note": "quatro travessas por tênis",
+      "element": {
+        "primitive": "box",
+        "size": [
+          0.052,
+          0.006,
+          0.008
+        ],
+        "material": "tenis-sola"
+      },
+      "placement": "escalonado no dorso de tenis-esq e tenis-dir"
+    }
+  ],
+  "buildPasses": [
+    {
+      "id": "blockout",
+      "goal": "Match head-unit proportions and pose silhouette.",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "Bust proportions and 3/4 pose read correctly without materials."
+      ]
+    },
+    {
+      "id": "structural-pass",
+      "goal": "arvore de componentes e cadeias articuladas montadas: quadril->torso->pescoco->cabeca, e as quatro cadeias de membro",
+      "acceptance": [
+        "44 componentes instanciados",
+        "toda junta com pivo proprio",
+        "sockets nas duas maos",
+        "nenhuma peca no ar"
+      ]
+    },
+    {
+      "id": "proportion-lock",
+      "goal": "Lock head/torso/limb head-unit ratios and pose angles.",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "Head-unit ratios match anatomy; silhouette matches reference."
+      ]
+    },
+    {
+      "id": "feature-placement",
+      "goal": "Place facial features, hair, glasses, headphones to landmarks.",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "Eyeline/nose/mouth on landmark lines; glasses and headphones placed as in reference."
+      ]
+    },
+    {
+      "id": "material-pass",
+      "goal": "paleta derivada da referencia: pele #c98a5e, blazer #4a4d55, camiseta/calca #131316-#151519, sola #f0ece4, armacao #0a0a0c. Zonas de acento: sola branca, underscore lime #c6ff3d, lente translucida.",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "paleta derivada da referencia por amostragem: cor base de cada material sai de rgba() medido na foto",
+        "zonas de cor secundaria e de acento presentes: sola branca, underscore lime, lente translucida",
+        "variacao de rugosidade por banda macro/meso/micro, cada uma com frequencia e amplitude numericas",
+        "resposta de normal/bump/displacement pela trama da la, pelo crespo do cabelo e pelo grao do couro"
+      ]
+    },
+    {
+      "id": "lighting-pass",
+      "goal": "key fria em cima-esquerda, fill hemisferico azul, rim LIME por tras, ACES com exposicao 1.1, sombra de contato sob os tenis",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "Readable under neutral light; reference-matched lighting added."
+      ]
+    },
+    {
+      "id": "interaction-pass",
+      "goal": "Rig-ready pivots and sockets.",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "Head/neck/arm pivots and face socket exposed."
+      ]
+    },
+    {
+      "id": "optimization-pass",
+      "goal": "Protect runtime performance.",
+      "componentRefs": [
+        "root",
+        "torso",
+        "shirt-decal",
+        "neck",
+        "head",
+        "hair",
+        "hair-front",
+        "brow-l",
+        "brow-r",
+        "nose",
+        "mouth",
+        "glasses-frame-l",
+        "glasses-frame-r",
+        "glasses-bridge",
+        "lens-l",
+        "lens-r",
+        "hp-band",
+        "hp-cup-l",
+        "hp-cup-r",
+        "arm-l",
+        "arm-r"
+      ],
+      "acceptance": [
+        "Triangle/draw-call budget documented."
+      ]
+    }
+  ],
+  "visualEvidence": [],
+  "reviewHistory": [],
+  "lodPlan": [
+    {
+      "tier": "near",
+      "distance": 0,
+      "strategy": "full component tree and material layers"
+    },
+    {
+      "tier": "far",
+      "distance": 30,
+      "strategy": "merge static components and reduce local feature geometry"
+    }
+  ],
+  "performanceBudget": {
+    "qualityPriority": "reference-fidelity",
+    "targetTriangles": 250000,
+    "maxDrawCalls": 160,
+    "textureSize": 2048,
+    "fpsTarget": 30,
+    "optimizationPolicy": "Reach accepted visual fidelity first, then optimize without removing reference-critical geometry or surface layers."
+  },
+  "lightingFromPhoto": [
+    {
+      "role": "key",
+      "type": "directional",
+      "direction": [
+        -0.55,
+        0.72,
+        0.42
+      ],
+      "color": "#eaf2ff",
+      "intensity": 2.1,
+      "note": "principal vinda de cima-esquerda; e o que modela o rosto na referencia"
+    },
+    {
+      "role": "fill",
+      "type": "hemisphere",
+      "skyColor": "#5b7fd4",
+      "groundColor": "#0a0c14",
+      "intensity": 0.65,
+      "note": "preenchimento frio do halo azul; segura a sombra sem apagar"
+    },
+    {
+      "role": "rim",
+      "type": "directional",
+      "direction": [
+        0.65,
+        0.35,
+        -0.7
+      ],
+      "color": "#c6ff3d",
+      "intensity": 1.25,
+      "note": "contra-luz LIME por tras: descola ele do fundo #04050b da pagina"
+    },
+    {
+      "role": "environment",
+      "type": "room",
+      "intensity": 0.35,
+      "note": "ambiente suave pro clearcoat da pele e da armacao ter o que refletir"
+    },
+    {
+      "role": "grading",
+      "toneMapping": "ACESFilmic",
+      "exposure": 1.1,
+      "note": "mesma curva ACES da intro 3D, pra ele nao destoar do resto da pagina"
+    },
+    {
+      "role": "contact",
+      "type": "contact shadow",
+      "note": "sombra de contato sob os tenis + ambient occlusion nas dobras; sem ela ele flutua"
+    }
+  ],
+  "proceduralStrategy": [
+    "Block out macro silhouette first.",
+    "Add component hierarchy and joints.",
+    "Create stable pivot groups, sockets, collider proxies, and destruction metadata before visual polish.",
+    "Refine forms with bevels, tapers, bends, and procedural noise.",
+    "Run reference PBR extraction for important source-image materials and stop when confidence is below the target threshold.",
+    "Add material variation before adding expensive micro-geometry."
+  ],
+  "animationAnchors": [
+    "root pivot node supports whole-object translation, rotation, scale, and visibility changes",
+    "component pivot groups support later local transforms without rebuilding geometry"
+  ],
+  "destructionAnchors": [
+    "actionProfile.destruction.fractureGroup marks detachable or breakable component sets",
+    "component seams and sockets define plausible break points instead of random explosions"
+  ],
+  "risks": [
+    {
+      "id": "sem-pbr-extraido",
+      "severity": "medium",
+      "note": "fidelidade de material e procedural, nao extraida; aceitavel na escala de uso, nao em close"
+    }
+  ],
+  "localSpecSearch": {
+    "collection": "core_3d",
+    "query": "Rodolfinho stylized humanoid character proportions head units walk cycle rig hips thighs shins feet procedural hair curly volume",
+    "index": {
+      "status": "hit",
+      "reason": "current",
+      "fingerprint": "ac4f0bc9028e34083dbb5d5531ae3df7699c8e7641d5f8e6d42e7492ea1be1d0"
+    },
+    "matches": [
+      {
+        "record_id": "core.coordinate-relative-units",
+        "file_path": "grimoire/glossary/3d_vocabulary.md",
+        "heading": "Geometry And Topology",
+        "key_path": null,
+        "score": 6.548517477049,
+        "snippets": [
+          "A bevel radius is sized in object-relative units."
+        ],
+        "source_refs": [
+          {
+            "path": "grimoire/glossary/3d_vocabulary.md",
+            "heading": "Geometry And Topology",
+            "key_path": null
+          },
+          {
+            "path": "grimoire/intake/image_analysis.md",
+            "heading": "Layer 2 — Overall form & silhouette",
+            "key_path": null
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "grimoire/glossary/3d_vocabulary.md"
+          },
+          {
+            "kind": "notebooklm-research",
+            "ref": "notebooklm:4b03c2f9-8393-411f-b5b4-039ab9532843",
+            "note": "Validated generic schema vocabulary; numeric claims remain backed by local source_refs."
+          }
+        ]
+      },
+      {
+        "record_id": "core.measurement-source-text",
+        "file_path": "grimoire/intake/image_analysis.md",
+        "heading": "Layer 2 — Overall form & silhouette",
+        "key_path": null,
+        "score": 5.268490296339,
+        "snippets": [
+          "Record proportions relative to a named reference dimension and keep observations separate from inference."
+        ],
+        "source_refs": [
+          {
+            "path": "grimoire/intake/image_analysis.md",
+            "heading": "Layer 2 — Overall form & silhouette",
+            "key_path": null
+          },
+          {
+            "path": "grimoire/intake/image_analysis.md",
+            "heading": "The Rule",
+            "key_path": null
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "grimoire/intake/image_analysis.md"
+          },
+          {
+            "kind": "notebooklm-research",
+            "ref": "notebooklm:4b03c2f9-8393-411f-b5b4-039ab9532843",
+            "note": "Validated generic schema vocabulary; numeric claims remain backed by local source_refs."
+          }
+        ]
+      },
+      {
+        "record_id": "core.shader-mapping-boxgeometry-slides-receivers-grips",
+        "file_path": "docs/raw/img2threejs-skill-dataset.json",
+        "heading": null,
+        "key_path": "categories.rendering_shader_mapping[5]",
+        "score": 3.982060806801,
+        "snippets": [
+          "... sub-assemblies. Ánh xạ tới các cụm lắp ráp hình chữ nhật/khối. Recognition cues: Flat-faced, roughly rectangular volume (pistol slide, receiver/frame, grip, panel) Dấu hiệu nhận diện: Khối gần chữ nhật với các mặt phẳng (khóa nòng ..."
+        ],
+        "source_refs": [
+          {
+            "path": "docs/raw/img2threejs-skill-dataset.json",
+            "heading": null,
+            "key_path": "categories.rendering_shader_mapping[5]"
+          }
+        ],
+        "evidence_refs": [
+          {
+            "kind": "source",
+            "ref": "docs/raw/img2threejs-skill-dataset.json",
+            "note": "img2threejs NotebookLM research distillation"
+          }
+        ]
+      }
+    ]
+  }
+}
