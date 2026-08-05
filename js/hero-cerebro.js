@@ -251,9 +251,17 @@ function iniciar() {
       grupo.position.y = Math.sin(t * 0.66) * 0.022;
     }
 
-    /* pulso global: o cérebro "acende" em ondas lentas */
+    /* RESPIRAÇÃO: um ciclo de ~4.8s, como respiração de descanso. A curva
+       é assimétrica de propósito — o expoente faz a subida (inspirar) ser
+       mais rápida que a descida (soltar), que é o desenho de uma
+       respiração de verdade; senoide pura parece metrônomo.
+       Com movimento reduzido ela fica parada no meio do ciclo. */
+    const resp = REDUZIDO ? 0.5 : Math.pow(0.5 + 0.5 * Math.sin(t * 1.31), 1.6);
+
     if (mat) {
-      mat.uniforms.pulso.value = 0.86 + 0.14 * Math.sin(t * 1.15);
+      mat.uniforms.resp.value = resp;
+      /* o brilho geral sobe junto com o peito cheio */
+      mat.uniforms.pulso.value = 0.84 + 0.20 * resp;
       mat.uniforms.opacidade.value = 1 - desmonte * 0.85;
       /* as duas luzes principais ficam OPOSTAS (esquerda e direita) e só a
          da direita deriva um pouco — é o que mantém os dois lados de cores
@@ -264,7 +272,7 @@ function iniciar() {
       mat.uniforms.dirC.value.set(0.05, -0.78, 0.30).normalize();
     }
 
-    moverParticulas(t);
+    moverParticulas(t, resp);
     moverFaiscas(dt);
 
     if (teia) teia.material.opacity = (1 - desmonte) * 0.10 * montagem;
@@ -273,12 +281,15 @@ function iniciar() {
     renderer.render(cena, camera);
   }
 
-  function moverParticulas(t) {
+  function moverParticulas(t, resp) {
     const pos = geo.attributes.position;
     const d = pontos.userData;
     const base = d.base, nrm = d.normais, fase = d.fase, atraso = d.atraso,
           origem = d.origem, dispersao = d.dispersao, deriva = d.deriva,
           peso = d.peso, n = d.n;
+    /* a respiração também é FÍSICA: a superfície infla no peito cheio.
+       É pequeno (1.6% do tamanho), mas somado à cor é o que convence. */
+    const inflar = (resp === undefined ? 0.5 : resp) * 0.018;
     const arr = pos.array;
     const invEsc = 1 / (grupo.scale.x || 1);
     /* queda acelerada: distância cresce com o quadrado, como gravidade */
@@ -293,7 +304,7 @@ function iniciar() {
 
     for (let i = 0; i < n; i++) {
       const j = i * 3;
-      const w = Math.sin(t * 1.5 + fase[i]) * 0.007;
+      const w = Math.sin(t * 1.5 + fase[i]) * 0.007 + inflar;
       let x = base[j] + nrm[j] * w;
       let y = base[j + 1] + nrm[j + 1] * w;
       let z = base[j + 2] + nrm[j + 2] * w;
@@ -497,6 +508,7 @@ function iniciar() {
         escala: { value: 400 },
         opacidade: { value: 1 },
         pulso: { value: 1 },
+        resp: { value: 0.5 },          // fase da respiração: 0 vazio, 1 cheio
         corA: { value: new THREE.Vector3().fromArray(pal.a) },
         corB: { value: new THREE.Vector3().fromArray(pal.b) },
         corC: { value: new THREE.Vector3().fromArray(pal.c) },
@@ -506,7 +518,7 @@ function iniciar() {
       },
       vertexShader: [
         'attribute float crista;',
-        'uniform float tamanho, escala, pulso;',
+        'uniform float tamanho, escala, pulso, resp;',
         'uniform vec3 corA, corB, corC, dirA, dirB, dirC;',
         'varying vec3 vCor;',
         'void main() {',
@@ -526,7 +538,13 @@ function iniciar() {
            duas — média de magenta com ciano é branco de novo. */
         '  float borda = pow(1.0 - abs(dot(nv, olho)), 3.0);',
         '  vec3 dominante = a > b ? corA : corB;',
-        '  vec3 luz = corA * a * 1.45 + corB * b * 1.35 + corC * c * 0.45;',
+        /* a RESPIRAÇÃO troca o equilíbrio das cores: no peito cheio o
+           magenta enche, no vazio o ciano assume. Os ganhos se cruzam —
+           a energia total quase não muda, o que muda é o TOM. Brilho
+           geral é papel do pulso, não daqui. */
+        '  float ganhoA = 0.78 + 0.52 * resp;',
+        '  float ganhoB = 1.14 - 0.36 * resp;',
+        '  vec3 luz = corA * a * 1.45 * ganhoA + corB * b * 1.35 * ganhoB + corC * c * 0.45;',
         /* crista acesa, sulco apagado: é a modulação que transforma a
            nuvem em DESENHO — as cristas dos giros viram linhas de vidro
            brilhando, como na referência de raio-X */
@@ -655,13 +673,18 @@ function iniciar() {
     paleta: function (i) { paleta = ((i | 0) % PALETAS.length + PALETAS.length) % PALETAS.length;
       aplicarPaleta(); return PALETAS[paleta].nome; },
     /* desenha um quadro fora do laço, com a montagem e o desmonte forçados */
-    posar: function (m, d, ry, rx) {
+    posar: function (m, d, ry, rx, resp) {
       montagem = m; desmonte = d;
+      const r = resp === undefined ? 0.5 : resp;
       grupo.rotation.set(rx || 0, ry || 0, 0);
-      if (mat) { mat.uniforms.opacidade.value = 1 - d * 0.85; mat.uniforms.pulso.value = 1; }
+      if (mat) {
+        mat.uniforms.opacidade.value = 1 - d * 0.85;
+        mat.uniforms.pulso.value = 0.84 + 0.20 * r;
+        mat.uniforms.resp.value = r;
+      }
       if (teia) teia.material.opacity = (1 - d) * 0.10 * m;
       if (faisca) faisca.visible = d < 0.9 && m > 0.6;
-      moverParticulas(1.0);
+      moverParticulas(1.0, r);
       moverFaiscas(0);
       renderer.render(cena, camera);
       return { montagem: m, desmonte: d, particulas: COUNT, arestas: arestas.length / 6 };
