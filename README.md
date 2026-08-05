@@ -38,6 +38,7 @@ acontece "lá dentro": o fundo de partículas continua o mesmo universo da intro
 | Tutores | trilho arrastável; clicar no card revela a bio |
 | Diploma | chega dentro de uma **carta lacrada**: o lacre de cera racha, a aba abre e o certificado sobe — desenhado 100% em CSS, com tilt 3D |
 | Tema | claro/escuro com um interruptor discreto; as "telas" continuam escuras nos dois temas, como ferramentas de dev de verdade |
+| Rodolfinho | o mascote entra no fim da página e oferece **duas pílulas**: a vermelha **desmonta o site de verdade** e reconstrói com você em HTML → CSS → JavaScript |
 
 ## Stack
 
@@ -61,12 +62,31 @@ modulado por ruído de valor, e três detalhes fazem ele ser reconhecido:
 
 Custo: **0 KB de asset** — contra alguns MB de um modelo anatômico de banco.
 
+### O desmonte não é simulado
+
+Quando o visitante toma a pílula vermelha, nada é imitado: o JavaScript
+desliga os `<link rel="stylesheet">` de verdade. O que sobra na tela é esta
+página sem CSS — e ela fica **quase duas vezes mais longa**, porque sem
+folha de estilo nada limita largura nem organiza em grade.
+
+Reconstruir é reverter na ordem em que se constrói de verdade:
+
+| passo | o que volta |
+|---|---|
+| `index.html` | o conteúdo aparece, sem nenhuma aparência |
+| `style.css` | as folhas voltam e o layout se organiza |
+| `script.js` | as telas 3D e as interações religam |
+
+A única folha que sobrevive ao desmonte é a `css/rodolfinho.css` — se ela
+caísse junto, o painel que guia a reconstrução cairia com ela. `Esc`
+devolve a página inteira a qualquer momento.
+
 
 ## Estrutura
 
 ```
 index.html          página única
-css/                v2.css (base) · intro-head.css · polish.css · theme.css
+css/                v2.css (base) · intro-head.css · polish.css · theme.css · rodolfinho.css
 js/
   intro-head.js     a intro 3D
   head-shared.js    degradê, sprite do ponto e corte da boca (intro + hero)
