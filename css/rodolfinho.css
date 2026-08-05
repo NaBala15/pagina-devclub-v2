@@ -26,7 +26,7 @@
   bottom:88px;
   height:min(62vh, 420px);
   width:auto;
-  transform:translateX(4vw);
+  transform:translateX(1.6vw);
   filter:drop-shadow(0 24px 34px rgba(0,0,0,.55));
 }
 /* Ele não anda mais: MONTA de partículas e SE DESFAZ nelas. O <img> fica
@@ -45,7 +45,7 @@
 /* ---------- balão de fala ---------- */
 .rodo-fala{
   position:absolute;
-  left:min(26vw, 300px); bottom:calc(min(46vh, 330px) + 88px);
+  left:min(23vw, 268px); bottom:calc(min(46vh, 330px) + 88px);
   max-width:min(440px, 74vw);
   padding:16px 20px;
   background:rgba(10,12,20,.94);
@@ -63,7 +63,7 @@
 /* ---------- as duas pílulas ---------- */
 .rodo-pilulas{
   position:absolute;
-  left:min(26vw, 300px); bottom:calc(min(30vh, 210px) + 88px);
+  left:min(23vw, 268px); bottom:calc(min(30vh, 210px) + 88px);
   display:flex; gap:14px;
   opacity:0; transform:translateY(8px);
   transition:opacity .45s, transform .45s;
