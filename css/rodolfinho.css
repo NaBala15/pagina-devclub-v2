@@ -93,11 +93,14 @@
    O DESMONTE — a partir daqui é o que segura a página "crua"
    ===================================================================== */
 
-/* fundo próprio: sem o v2.css o body não tem cor nenhuma */
+/* BRANCO, não escuro: página sem folha de estilo é branca com texto
+   preto no tipo padrão do navegador. Forçar um fundo escuro aqui seria
+   maquiar justamente o momento em que a página deveria estar nua.
+   A fonte fica de fora de propósito — sem o v2.css o body cai no serif
+   padrão do navegador sozinho, que é exatamente o que se quer ver. */
 html.rodo-nu, html.rodo-nu body{
-  background:#0b0d12 !important;
-  color:#c8d0d8 !important;
-  font-family:'JetBrains Mono', ui-monospace, monospace !important;
+  background:#fff !important;
+  color:#111 !important;
 }
 /* etapa 0: nada. Só o caret piscando, como um arquivo em branco. */
 html.rodo-nu body > *:not(.rodo):not(.rodo-obra){ display:none !important; }
@@ -165,14 +168,16 @@ html.rodo-nu:not(.rodo-js) #heroCerebro{ display:none !important; }
 }
 
 /* ---------- caret do "arquivo vazio" ---------- */
+/* sobre o branco: o lime da marca não tem contraste, então aqui ele vem
+   na versão escurecida que o tema claro já usa pra texto */
 .rodo-vazio{
   position:fixed; left:clamp(16px, 5vw, 60px); top:clamp(16px, 8vh, 90px);
   z-index:8999;
   font-family:'JetBrains Mono', ui-monospace, monospace;
-  font-size:14px; color:#5d6b7a;
+  font-size:14px; color:#6a7280;
 }
 .rodo-vazio[hidden]{ display:none; }
-.rodo-vazio i{ font-style:normal; color:#c6ff3d; animation:rodoPisca 1.05s steps(1) infinite; }
+.rodo-vazio i{ font-style:normal; color:#42690e; animation:rodoPisca 1.05s steps(1) infinite; }
 @keyframes rodoPisca{ 0%,49%{opacity:1} 50%,100%{opacity:0} }
 
 /* ---------- telas estreitas ---------- */

@@ -39,9 +39,21 @@
   /* ---------- máquina de escrever ----------
      Sequência por setTimeout, nunca por transitionend: transição
      congelada (aba oculta) não dispara evento e a fala travaria no meio. */
+  const LETRA = 30;          // ms por caractere digitado
+
+  /* Quanto a frase fica parada DEPOIS de terminar de escrever. É aqui que
+     estava o problema, não na digitação: 420ms fixos não davam tempo de
+     terminar de ler nada. Agora a pausa cresce com o tamanho da frase —
+     frase longa fica mais tempo na tela, que é como se lê. */
+  function tempoDeLeitura(texto) {
+    const limpo = texto.replace(/<[^>]*>/g, '');
+    return Math.min(4200, 1300 + limpo.length * 11);
+  }
+
   function escrever(html, aoFim) {
     fala.classList.add('is-on');
     const alvo = html;
+    const pausa = tempoDeLeitura(alvo);
     let i = 0;
     const passo = () => {
       /* anda por caractere, mas pula tags inteiras de uma vez pra não
@@ -49,10 +61,12 @@
       if (alvo[i] === '<') { i = alvo.indexOf('>', i) + 1; }
       else i++;
       fala.innerHTML = alvo.slice(0, i) + '<i class="rodo-cursor">▌</i>';
-      if (i < alvo.length) depois(REDUZIDO ? 0 : 17, passo);
-      else { fala.innerHTML = alvo; if (aoFim) depois(420, aoFim); }
+      if (i < alvo.length) depois(LETRA, passo);
+      else { fala.innerHTML = alvo; if (aoFim) depois(pausa, aoFim); }
     };
-    if (REDUZIDO) { fala.innerHTML = alvo; if (aoFim) depois(500, aoFim); }
+    /* movimento reduzido: a frase aparece inteira, mas o tempo de leitura
+       continua valendo — quem pediu menos animação não pediu menos tempo */
+    if (REDUZIDO) { fala.innerHTML = alvo; if (aoFim) depois(pausa, aoFim); }
     else passo();
   }
 
