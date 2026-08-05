@@ -70,6 +70,121 @@
     else passo();
   }
 
+  /* =====================================================================
+     A SAÍDA: ele se desfaz em partículas
+
+     Nada de andar de volta pra fora da tela. As partículas que o formam
+     se soltam e vão embora — a mesma linguagem do resto da página, onde
+     uma cabeça se forma de partículas na intro e o cérebro se desfaz
+     nelas na rolagem.
+
+     As partículas saem do PRÓPRIO recorte: cada uma carrega a cor do
+     pixel que ela era. Inventar as cores daria uma poeira genérica; ler
+     do recorte faz a poeira ser DELE — dá pra ver o cinza do blazer, o
+     lime do underscore e a sola branca se soltando.
+     ===================================================================== */
+  let poCanvas = null;
+
+  function desfazerEmParticulas(aoFim) {
+    palco.classList.remove('is-parado', 'is-entrando');
+
+    if (REDUZIDO || !eu.complete || !eu.naturalWidth) {
+      palco.classList.add('is-desfazendo');
+      depois(700, aoFim);
+      return;
+    }
+
+    const r = eu.getBoundingClientRect();
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+
+    /* lê o recorte numa resolução reduzida: cada pixel do reduzido vira
+       UMA partícula. É o que controla a contagem sem varrer a imagem
+       inteira — a ~5 mil ele fica denso e o laço continua barato. */
+    const PASSO = 3;
+    const lw = Math.max(1, Math.round(r.width / PASSO));
+    const lh = Math.max(1, Math.round(r.height / PASSO));
+    const leitor = document.createElement('canvas');
+    leitor.width = lw; leitor.height = lh;
+    const lg = leitor.getContext('2d', { willReadFrequently: true });
+    lg.drawImage(eu, 0, 0, lw, lh);
+
+    let dados;
+    try { dados = lg.getImageData(0, 0, lw, lh).data; }
+    catch (e) { palco.classList.add('is-desfazendo'); depois(700, aoFim); return; }
+
+    const ps = [];
+    for (let y = 0; y < lh; y++) {
+      for (let x = 0; x < lw; x++) {
+        const i = (y * lw + x) * 4;
+        if (dados[i + 3] < 60) continue;               // fora do recorte
+        ps.push({
+          x: x * PASSO, y: y * PASSO,
+          cor: 'rgb(' + dados[i] + ',' + dados[i + 1] + ',' + dados[i + 2] + ')',
+          /* sobem e derivam pra ESQUERDA — o lado por onde ele entrou.
+             Some na direção de quem vai embora, não pra um lado qualquer. */
+          vx: -18 - Math.random() * 46,
+          vy: -14 - Math.random() * 52,
+          /* atraso pela posição: a poeira começa embaixo e sobe, como
+             quem evapora dos pés pra cabeça */
+          atraso: (1 - y / lh) * 0.42 + Math.random() * 0.18,
+        });
+      }
+    }
+
+    if (!poCanvas) {
+      poCanvas = document.createElement('canvas');
+      poCanvas.className = 'rodo-po';
+      palco.appendChild(poCanvas);
+    }
+    poCanvas.hidden = false;
+    /* A caixa cresce pra caber a deriva, e cresce PRO LADO CERTO: as
+       partículas sobem e vão pra esquerda, então a folga tem que ficar
+       em cima e à esquerda. Folga embaixo não serviria de nada — elas
+       seriam cortadas na borda de cima justamente no fim, quando estão
+       mais espalhadas. */
+    const FOLGA_X = 260, FOLGA_Y = 220;
+    poCanvas.style.left = (r.left - FOLGA_X) + 'px';
+    poCanvas.style.top = (r.top - FOLGA_Y) + 'px';
+    poCanvas.style.width = (r.width + FOLGA_X) + 'px';
+    poCanvas.style.height = (r.height + FOLGA_Y) + 'px';
+    poCanvas.width = Math.round((r.width + FOLGA_X) * dpr);
+    poCanvas.height = Math.round((r.height + FOLGA_Y) * dpr);
+    const g = poCanvas.getContext('2d');
+    g.scale(dpr, dpr);
+
+    palco.classList.add('is-desfazendo');
+
+    const DUR = 1.9;
+    const t0 = performance.now();
+    const lado = PASSO * 0.9;
+    (function quadro(agora) {
+      const t = (agora - t0) / 1000;
+      g.clearRect(0, 0, poCanvas.width, poCanvas.height);
+      let vivos = 0;
+      for (let i = 0; i < ps.length; i++) {
+        const p = ps[i];
+        const u = (t - p.atraso) / (DUR - p.atraso);
+        if (u < 0) {                                   // ainda não soltou
+          g.globalAlpha = 1; g.fillStyle = p.cor;
+          g.fillRect(FOLGA_X + p.x, FOLGA_Y + p.y, lado, lado);
+          vivos++;
+          continue;
+        }
+        if (u >= 1) continue;
+        vivos++;
+        /* acelera enquanto sobe: parte devagar e ganha velocidade, que é
+           como poeira solta se comporta */
+        const e = u * u;
+        g.globalAlpha = 1 - u;
+        g.fillStyle = p.cor;
+        g.fillRect(FOLGA_X + p.x + p.vx * e, FOLGA_Y + p.y + p.vy * e, lado, lado);
+      }
+      g.globalAlpha = 1;
+      if (vivos > 0 && t < DUR + 0.2) requestAnimationFrame(quadro);
+      else { poCanvas.hidden = true; if (aoFim) aoFim(); }
+    })(t0);
+  }
+
   /* ---------- a entrada ---------- */
   function entrar() {
     if (apareceu) return;
@@ -97,10 +212,8 @@
     limpar();
     pilulas.classList.remove('is-on');
     escrever('Deixa pra lá, então. Vai se virar. 😄', () => {
-      palco.classList.remove('is-parado');
-      palco.classList.add('is-saindo');
       fala.classList.remove('is-on');
-      depois(2800, () => { palco.hidden = true; });
+      depois(320, () => desfazerEmParticulas(() => { palco.hidden = true; }));
     });
   }
 
@@ -189,10 +302,8 @@
     escrever('Pronto. <b>HTML</b>, <b>CSS</b> e <b>JavaScript</b> — é disso que a página ' +
       'inteira é feita. E é isso que você aprende aqui.', () => {
       depois(2600, () => {
-        palco.classList.remove('is-parado');
-        palco.classList.add('is-saindo');
         fala.classList.remove('is-on');
-        depois(2800, () => { palco.hidden = true; });
+        depois(320, () => desfazerEmParticulas(() => { palco.hidden = true; }));
       });
     });
   }
@@ -203,6 +314,8 @@
     folhas.forEach(l => { l.disabled = false; });
     obra.hidden = true;
     vazio.hidden = true;
+    if (poCanvas) poCanvas.hidden = true;
+    palco.classList.remove('is-desfazendo', 'is-entrando', 'is-parado');
     palco.hidden = true;
   }
 
@@ -269,6 +382,7 @@
     vermelho: caminhoVermelho,
     aplicar: aplicarPasso,
     restaurar: restaurar,
+    desfazer: desfazerEmParticulas,
     get _passo() { return passo; },
   };
 })();

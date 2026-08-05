@@ -32,7 +32,17 @@
    mas o corpo subindo e descendo no ritmo certo lê como caminhada */
 .rodo.is-entrando .rodo-eu{ transform:translateX(4vw); animation:rodoPassos .52s ease-in-out infinite; }
 .rodo.is-parado   .rodo-eu{ transform:translateX(4vw); }
-.rodo.is-saindo   .rodo-eu{ transform:translateX(-120%) scaleX(-1); animation:rodoPassos .52s ease-in-out infinite; }
+/* na saída ele NÃO anda de volta: se desfaz em partículas. O <img> some
+   no mesmo quadro em que o canvas de poeira assume — se os dois
+   aparecessem juntos, ele piscaria duplicado. */
+.rodo.is-desfazendo .rodo-eu{ opacity:0; }
+
+/* a poeira dele, no lugar exato onde ele estava */
+.rodo-po{
+  position:absolute;
+  pointer-events:none;
+}
+.rodo-po[hidden]{ display:none; }
 
 @keyframes rodoPassos{
   0%, 100%{ margin-bottom:0;   rotate:-.6deg; }
@@ -193,6 +203,7 @@ html.rodo-nu:not(.rodo-js) #heroCerebro{ display:none !important; }
   .rodo-eu{ transition:opacity .4s; }
   .rodo.is-entrando .rodo-eu,
   .rodo.is-parado .rodo-eu{ transform:translateX(4vw); animation:none; }
-  .rodo.is-saindo .rodo-eu{ opacity:0; animation:none; }
+  /* sem a poeira: quem pediu menos movimento não quer 5 mil partículas */
+  .rodo.is-desfazendo .rodo-eu{ opacity:0; transition:opacity .5s; }
   .rodo-vazio i{ animation:none; }
 }
