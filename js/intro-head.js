@@ -19,6 +19,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 import { gradientColor, dotTexture, removeMouthInterior } from 'head-shared';
 import { peleDePedra, luzesNeon } from 'head-skin';
+import { ponto, pesoGiro } from 'cerebro-geo';
 import { createBulbIcon } from './idea-icons.js';
 import { createHtml5Icon, createCssIcon, createJsIcon, createTerminalIcon, createThreeIcon }
   from './tool-icons.js';
@@ -109,7 +110,9 @@ function makeCodeScreen() {
 }
 
 /* "reflexo da PÁGINA": miniatura da própria página DevClub rolando devagar —
-   navbar fixa, título hero, botão CTA, console de stats e cards */
+   navbar fixa, título hero com o CÉREBRO ao lado, CTA, stats e cards.
+   O cérebro da miniatura sai da MESMA geometria do hero (cerebro-geo),
+   amostrada uma vez: o olho reflete a página que existe de verdade. */
 function makePageScreen() {
   const c = document.createElement('canvas');
   c.width = 256; c.height = 256;
@@ -117,6 +120,31 @@ function makePageScreen() {
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   let scroll = 0;
+
+  const miniCerebro = (() => {
+    const v = new THREE.Vector3();
+    const pts = [];
+    let tent = 0;
+    while (pts.length < 560 && tent < 22000) {
+      tent++;
+      let x, y, z, l;
+      do {
+        x = Math.random() * 2 - 1; y = Math.random() * 2 - 1; z = Math.random() * 2 - 1;
+        l = Math.hypot(x, y, z);
+      } while (l > 1 || l < 1e-4);
+      x /= l; y /= l; z /= l;
+      /* a mesma rejeição do hero: sulco vazio, giro cheio */
+      if (Math.random() > pesoGiro(x, y, z)) continue;
+      ponto(x, y, z, v);
+      const px = -v.x;                       // espelhado: na página ele olha pra esquerda
+      const t = Math.max(0, Math.min(1, (px + 1.15) / 2.3));
+      /* magenta na frente → ciano no fundo, como as luzes do hero */
+      const cor = 'rgba(' + Math.round(255 - t * 208) + ',' +
+        Math.round(42 + t * 174) + ',' + Math.round(157 + t * 98) + ',0.85)';
+      pts.push([px, v.y, cor]);
+    }
+    return pts;
+  })();
 
   function draw() {
     g.setTransform(1, 0, 0, 1, 0, 0);
@@ -144,6 +172,17 @@ function makePageScreen() {
     text('Ideias viram', 18, 40, 'bold 21px sans-serif', '#e8edef');
     text('código.', 18, 66, 'bold 21px sans-serif', '#c6ff3d');
     text('Pessoas viram devs.', 18, 92, 'bold 19px sans-serif', '#e8edef');
+
+    /* o cérebro de partículas do hero, à direita do título — os mesmos
+       pontos da geometria real, em miniatura */
+    for (let i = 0; i < miniCerebro.length; i++) {
+      const p = miniCerebro[i];
+      const bx = 244 + p[0] * 36;
+      const by = 60 - p[1] * 33;
+      const wy = by + off < -20 ? by + off + CONTENT_H : by + off;
+      g.fillStyle = p[2];
+      g.fillRect(bx, wy + 34, 1.3, 1.3);
+    }
     /* CTA pill */
     const yy = 110 + off < -20 ? 110 + off + CONTENT_H : 110 + off;
     g.fillStyle = '#c6ff3d';
