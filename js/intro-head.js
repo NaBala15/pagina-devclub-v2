@@ -184,13 +184,26 @@ function makePageScreen() {
     g.fillStyle = grad;
     g.fillText('devs.', 28, 326);
 
-    /* o cérebro de partículas, à direita do título — os mesmos pontos da
-       geometria real */
+    /* O cérebro entra BORRADO de propósito. No clímax do mergulho a textura
+       é ampliada muitas vezes, e aí ponto individual não lê como partícula:
+       lê como sujeira por cima do título. Borrado, ele vira uma massa que
+       diz "tem um cérebro ali" sem disputar com o texto — que é o que o
+       olho precisa entregar naquele instante.
+       Desenha num canvas à parte e compõe com blur: aplicar o filtro
+       direto nos 950 fillRect custaria um blur por retângulo. */
+    const cbCv = document.createElement('canvas');
+    cbCv.width = 210; cbCv.height = 200;
+    const cbG = cbCv.getContext('2d');
     for (let i = 0; i < miniCerebro.length; i++) {
       const p = miniCerebro[i];
-      g.fillStyle = p[2];
-      g.fillRect(392 + p[0] * 88, 238 - p[1] * 82, 1.7, 1.7);
+      cbG.fillStyle = p[2];
+      cbG.fillRect(105 + p[0] * 82, 100 - p[1] * 76, 2.4, 2.4);
     }
+    g.save();
+    g.filter = 'blur(2.5px)';
+    g.globalAlpha = 0.72;
+    g.drawImage(cbCv, 288, 140);
+    g.restore();
 
     /* CTA: pílula lime + fantasma, como na página */
     g.fillStyle = '#c6ff3d';
@@ -655,7 +668,12 @@ function run(onDone) {
     const melt = clamp01((dive - 0.62) / 0.26);
     if (melt > 0) {
       solidMat.opacity = solidIn * (1 - melt);
-      mat.opacity = 0.06 + melt * 0.5;              // partículas voltam a brilhar
+      /* as partículas sobem com o derretimento e SOMEM na chegada: no fim
+         do mergulho elas ficavam entre a câmera e a tela do olho, tapando
+         o hero que deveria ser o clímax. A câmera atravessa a poeira e a
+         poeira fica pra trás. */
+      const chegada = easeInOut(phase(now, T.FLASH - 0.30, T.FLASH + 0.10));
+      mat.opacity = (0.06 + melt * 0.5) * (1 - chegada);
     }
 
     /* 4. cabeça vira de frente */
@@ -715,7 +733,9 @@ function debugCapture(simNow = 3.8, eyePos = null) {
   const meltD = clamp01((diveD - 0.62) / 0.26);
   if (meltD > 0) {
     solidMat.opacity = solidInD * (1 - meltD);
-    mat.opacity = 0.06 + meltD * 0.5;
+    /* mesmo fade da chegada do frame loop: a poeira some perto do olho */
+    const chegadaD = easeInOut(phase(simNow, T.FLASH - 0.30, T.FLASH + 0.10));
+    mat.opacity = (0.06 + meltD * 0.5) * (1 - chegadaD);
   }
   const turn = easeInOut(phase(simNow, T.TURN_START, T.TURN_END));
   head.rotation.y = -1.15 * (1 - turn);
