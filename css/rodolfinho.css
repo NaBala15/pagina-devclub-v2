@@ -19,22 +19,20 @@
 
 /* ---------- o boneco ---------- */
 .rodo-eu{
-  position:absolute; left:0; bottom:0;
+  position:absolute; left:0;
+  /* acima do rodapé: com bottom:0 os pés dele pisavam em cima do
+     "main · build passing". O rodapé mede 73px, então 88px deixa uma
+     folga de 15px — ele fica NO rodapé, não EM CIMA do texto. */
+  bottom:88px;
   height:min(62vh, 420px);
   width:auto;
-  transform:translateX(-120%);
-  transition:transform 2.6s cubic-bezier(.32,.06,.28,1);
+  transform:translateX(4vw);
   filter:drop-shadow(0 24px 34px rgba(0,0,0,.55));
-  will-change:transform;
 }
-/* entra andando: o translate leva ele até o lugar e a "passada" é um
-   balanço vertical curto por cima — imagem parada não dobra o joelho,
-   mas o corpo subindo e descendo no ritmo certo lê como caminhada */
-.rodo.is-entrando .rodo-eu{ transform:translateX(4vw); animation:rodoPassos .52s ease-in-out infinite; }
-.rodo.is-parado   .rodo-eu{ transform:translateX(4vw); }
-/* na saída ele NÃO anda de volta: se desfaz em partículas. O <img> some
-   no mesmo quadro em que o canvas de poeira assume — se os dois
-   aparecessem juntos, ele piscaria duplicado. */
+/* Ele não anda mais: MONTA de partículas e SE DESFAZ nelas. O <img> fica
+   invisível enquanto o canvas de poeira está no ar — se os dois
+   aparecessem no mesmo quadro ele piscaria duplicado. */
+.rodo.is-parado     .rodo-eu{ opacity:1; transition:opacity .25s; }
 .rodo.is-desfazendo .rodo-eu{ opacity:0; }
 
 /* a poeira dele, no lugar exato onde ele estava */
@@ -44,15 +42,10 @@
 }
 .rodo-po[hidden]{ display:none; }
 
-@keyframes rodoPassos{
-  0%, 100%{ margin-bottom:0;   rotate:-.6deg; }
-  50%     { margin-bottom:9px; rotate:.6deg; }
-}
-
 /* ---------- balão de fala ---------- */
 .rodo-fala{
   position:absolute;
-  left:min(26vw, 300px); bottom:min(46vh, 330px);
+  left:min(26vw, 300px); bottom:calc(min(46vh, 330px) + 88px);
   max-width:min(440px, 74vw);
   padding:16px 20px;
   background:rgba(10,12,20,.94);
@@ -70,7 +63,7 @@
 /* ---------- as duas pílulas ---------- */
 .rodo-pilulas{
   position:absolute;
-  left:min(26vw, 300px); bottom:min(30vh, 210px);
+  left:min(26vw, 300px); bottom:calc(min(30vh, 210px) + 88px);
   display:flex; gap:14px;
   opacity:0; transform:translateY(8px);
   transition:opacity .45s, transform .45s;
@@ -192,18 +185,16 @@ html.rodo-nu:not(.rodo-js) #heroCerebro{ display:none !important; }
 
 /* ---------- telas estreitas ---------- */
 @media (max-width:760px){
-  .rodo-eu{ height:min(38vh, 260px); }
-  .rodo-fala{ left:12px; right:12px; bottom:min(40vh, 280px); max-width:none; font-size:14px; }
-  .rodo-pilulas{ left:12px; bottom:min(26vh, 190px); }
+  .rodo-eu{ height:min(38vh, 260px); bottom:76px; }
+  .rodo-fala{ left:12px; right:12px; bottom:calc(min(40vh, 280px) + 76px); max-width:none; font-size:14px; }
+  .rodo-pilulas{ left:12px; bottom:calc(min(26vh, 190px) + 76px); }
   .rodo-obra{ right:10px; left:10px; width:auto; }
 }
 
 /* ---------- movimento reduzido: ele aparece, não desfila ---------- */
 @media (prefers-reduced-motion: reduce){
-  .rodo-eu{ transition:opacity .4s; }
-  .rodo.is-entrando .rodo-eu,
-  .rodo.is-parado .rodo-eu{ transform:translateX(4vw); animation:none; }
-  /* sem a poeira: quem pediu menos movimento não quer 5 mil partículas */
-  .rodo.is-desfazendo .rodo-eu{ opacity:0; transition:opacity .5s; }
+  /* sem poeira: quem pediu menos movimento não quer 6 mil partículas.
+     Ele simplesmente aparece e simplesmente some. */
+  .rodo-eu{ transition:opacity .5s; }
   .rodo-vazio i{ animation:none; }
 }
