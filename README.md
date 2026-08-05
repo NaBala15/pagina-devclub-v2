@@ -61,15 +61,6 @@ modulado por ruído de valor, e três detalhes fazem ele ser reconhecido:
 
 Custo: **0 KB de asset** — contra alguns MB de um modelo anatômico de banco.
 
-## Rodando localmente
-
-Qualquer servidor estático serve:
-
-```bash
-python -m http.server 4173
-```
-
-Depois abra `http://localhost:4173`. Atalho útil: `?nointro` pula a intro 3D.
 
 ## Estrutura
 
